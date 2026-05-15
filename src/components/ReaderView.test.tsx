@@ -19,6 +19,18 @@ describe("ReaderView", () => {
     expect(screen.queryByText(item.title)).not.toBeInTheDocument();
   });
 
+  it("removes the invisible hotspot while the back button is visible", async () => {
+    const user = userEvent.setup();
+    const onBack = vi.fn();
+    render(<ReaderView item={item} onBack={onBack} onFavorite={() => {}} onProgress={() => {}} />);
+
+    await user.click(screen.getByLabelText("显示返回按钮"));
+
+    expect(screen.queryByLabelText("显示返回按钮")).not.toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: /返回书架/i }));
+    expect(onBack).toHaveBeenCalledTimes(1);
+  });
+
   it("auto-hides the minimal back button after a short delay", async () => {
     vi.useFakeTimers();
     render(<ReaderView item={item} onBack={() => {}} onFavorite={() => {}} onProgress={() => {}} />);

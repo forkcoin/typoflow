@@ -95,7 +95,7 @@ export default function ReaderView({ item, onBack, onProgress }: ReaderViewProps
 
   return (
     <section className="reader-screen">
-      <button className="reader-hotspot" aria-label="显示返回按钮" onClick={revealBackButton} />
+      {!backVisible ? <button className="reader-hotspot" aria-label="显示返回按钮" onClick={revealBackButton} /> : null}
       {backVisible ? (
         <button className="reader-back-float" aria-label="返回书架" onClick={onBack}>
           <ChevronLeft size={18} />
