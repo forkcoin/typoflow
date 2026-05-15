@@ -1,0 +1,750 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Seedance 2.0 边做边学：短剧入门训练</title>
+  <style>
+    :root {
+      --bg: #fbfaf7;
+      --ink: #202329;
+      --soft: #626870;
+      --faint: #9aa0a6;
+      --line: rgba(32, 35, 41, 0.14);
+      --card: rgba(255, 255, 255, 0.8);
+      --rose: #c83d57;
+      --blue: #2868c7;
+      --green: #2e7c62;
+      --gold: #9a6a24;
+      --shadow: 0 20px 52px rgba(32, 35, 41, 0.12);
+      --title-font: "Songti SC", "Noto Serif SC", "STSong", serif;
+      --body-font: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+      --title: clamp(2.25rem, 7vw, 5rem);
+      --headline: clamp(1.65rem, 4.7vw, 3.2rem);
+      --body: clamp(1.05rem, 2.35vw, 1.24rem);
+      --small: clamp(1rem, 2vw, 1.05rem);
+      --pad: clamp(2rem, 6vw, 5rem);
+      --gap: clamp(1.15rem, 3.2vw, 2.5rem);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-snap-type: y mandatory;
+      background: var(--bg);
+    }
+
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      color: var(--ink);
+      font-family: var(--body-font);
+      letter-spacing: 0;
+      background:
+        linear-gradient(90deg, rgba(32, 35, 41, 0.035) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(32, 35, 41, 0.035) 1px, transparent 1px),
+        var(--bg);
+      background-size: 44px 44px;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(251, 250, 247, 0.95), rgba(251, 250, 247, 0.72)),
+        radial-gradient(circle at 18% 20%, rgba(200, 61, 87, 0.1), transparent 27%),
+        radial-gradient(circle at 84% 76%, rgba(40, 104, 199, 0.08), transparent 27%);
+    }
+
+    .progress {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 10;
+      height: 4px;
+      background: rgba(32, 35, 41, 0.08);
+    }
+
+    .progress span {
+      display: block;
+      width: 100%;
+      height: 100%;
+      transform-origin: left;
+      background: linear-gradient(90deg, var(--rose), var(--blue), var(--green));
+      animation: progress linear both;
+      animation-timeline: scroll(root);
+    }
+
+    .screen {
+      position: relative;
+      min-height: 100svh;
+      display: grid;
+      align-items: center;
+      padding: var(--pad);
+      scroll-snap-align: start;
+    }
+
+    .stage {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: var(--gap);
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 1.02fr) minmax(300px, 0.98fr);
+      gap: clamp(2rem, 5vw, 4.5rem);
+      align-items: center;
+    }
+
+    .kicker {
+      color: var(--rose);
+      font-size: var(--small);
+      font-weight: 800;
+    }
+
+    h1, h2 {
+      margin: 0;
+      font-family: var(--title-font);
+      font-weight: 900;
+      line-height: 1.16;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 10.5em;
+      font-size: var(--title);
+    }
+
+    h2 {
+      max-width: 12em;
+      font-size: var(--headline);
+    }
+
+    p {
+      max-width: 30em;
+      margin: 0;
+      color: var(--soft);
+      font-size: var(--body);
+      line-height: 1.72;
+    }
+
+    strong { color: var(--ink); font-weight: 800; }
+
+    .big {
+      max-width: 11em;
+      font-family: var(--title-font);
+      font-size: clamp(1.8rem, 5.6vw, 4.2rem);
+      font-weight: 900;
+      line-height: 1.22;
+    }
+
+    .card, .box, .prompt, .beat, .check {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .cards, .beats, .checks {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .beats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .checks { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .card, .beat, .check {
+      min-height: 210px;
+      padding: 1rem;
+      display: grid;
+      align-content: start;
+      gap: 1rem;
+    }
+
+    .card b, .beat b, .check b {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-size: clamp(1.12rem, 2.5vw, 1.38rem);
+    }
+
+    .card span, .beat span, .check span {
+      color: var(--soft);
+      font-size: var(--small);
+      line-height: 1.58;
+    }
+
+    .badge, .time {
+      width: max-content;
+      min-width: 2.7rem;
+      min-height: 2.3rem;
+      display: inline-grid;
+      place-items: center;
+      padding: 0.35rem 0.66rem;
+      border-radius: 999px;
+      color: #fff;
+      background: var(--ink);
+      font-size: var(--small);
+      font-weight: 900;
+    }
+
+    .card:nth-child(2) .badge, .beat:nth-child(2) .time { background: var(--rose); }
+    .card:nth-child(3) .badge, .beat:nth-child(3) .time { background: var(--blue); }
+    .card:nth-child(4) .badge, .beat:nth-child(4) .time { background: var(--green); }
+
+    .prompt {
+      padding: clamp(1.1rem, 3.5vw, 2rem);
+      border-top: 3px solid var(--ink);
+      border-bottom: 3px solid var(--ink);
+      font-size: clamp(1.12rem, 3vw, 1.72rem);
+      line-height: 1.72;
+    }
+
+    .prompt small {
+      color: var(--faint);
+      font-size: 0.78em;
+    }
+
+    .mention {
+      display: inline-flex;
+      align-items: center;
+      min-height: 2.15em;
+      padding: 0 0.62em;
+      border: 1px solid rgba(40, 104, 199, 0.24);
+      border-radius: 999px;
+      color: var(--blue);
+      background: rgba(40, 104, 199, 0.08);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .case {
+      min-height: min(68svh, 640px);
+      position: relative;
+      display: grid;
+      align-items: end;
+      overflow: hidden;
+      padding: clamp(1.3rem, 4vw, 2.8rem);
+      border-radius: var(--radius);
+      color: #fff;
+      background:
+        linear-gradient(135deg, rgba(32, 35, 41, 0.88), rgba(32, 35, 41, 0.54)),
+        linear-gradient(90deg, #332a45, #85526d 38%, #b96850 68%, #2e584d);
+      box-shadow: var(--shadow);
+    }
+
+    .case::before, .case::after {
+      content: "";
+      position: absolute;
+      border: 2px solid rgba(255, 255, 255, 0.34);
+      transform: rotate(12deg);
+      width: min(42vw, 340px);
+      aspect-ratio: 4 / 5;
+      right: 9%;
+      top: 14%;
+    }
+
+    .case::after {
+      width: min(26vw, 210px);
+      right: auto;
+      left: 8%;
+      top: auto;
+      bottom: 13%;
+      transform: rotate(-10deg);
+    }
+
+    .case h2, .case p, .case .kicker {
+      position: relative;
+      color: #fff;
+    }
+
+    .case p { color: rgba(255,255,255,0.78); }
+
+    .warn {
+      border-left: 4px solid var(--rose);
+      padding: 1rem 0 1rem 1rem;
+    }
+
+    .number {
+      position: absolute;
+      right: clamp(1rem, 3vw, 2rem);
+      bottom: clamp(1rem, 3vw, 2rem);
+      color: rgba(32, 35, 41, 0.32);
+      font-size: var(--small);
+      font-weight: 800;
+    }
+
+    .reveal { animation: rise 760ms ease both; }
+    .d1 { animation-delay: 100ms; }
+    .d2 { animation-delay: 220ms; }
+    .d3 { animation-delay: 340ms; }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(1rem); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes progress {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+
+    @media (max-width: 860px) {
+      html { scroll-snap-type: y proximity; }
+      .screen {
+        min-height: 100svh;
+        padding-top: clamp(3rem, 12vw, 5rem);
+        padding-bottom: clamp(3rem, 12vw, 5rem);
+      }
+      .split, .cards, .beats, .checks { grid-template-columns: 1fr; }
+      .card, .beat, .check { min-height: auto; }
+      .case { min-height: 560px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" aria-hidden="true"><span></span></div>
+  <main>
+    <section class="screen">
+      <div class="stage">
+        <div class="kicker reveal">Seedance 2.0 短剧入门训练</div>
+        <h1 class="reveal d1">直接做一条 15 秒短剧</h1>
+        <p class="reveal d2">这版不是讲功能清单，而是带新手做一条短剧：从故事想法、人物关系、冲突、台词、镜头，到生成后怎么改。</p>
+      </div>
+      <div class="number">01 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">短剧和商品短片不一样</div>
+          <h2 class="reveal d1">短剧先要有“人”和“事”</h2>
+          <p class="reveal d2">短剧不是把画面拍漂亮就够了。观众要知道：谁遇到了什么事，为什么紧张，最后发生了什么反转。</p>
+        </div>
+        <div class="cards reveal d3">
+          <div class="card"><span class="badge">人</span><div><b>人物关系</b><span>谁和谁？室友、情侣、同事、姐妹、老板和员工。</span></div></div>
+          <div class="card"><span class="badge">事</span><div><b>冲突事件</b><span>误会、迟到、秘密、争吵、反转、选择。</span></div></div>
+          <div class="card"><span class="badge">话</span><div><b>关键台词</b><span>短剧靠台词推动，不要只写“他们聊天”。</span></div></div>
+          <div class="card"><span class="badge">变</span><div><b>情绪变化</b><span>从生气到心虚，从委屈到释然，从冷淡到爆发。</span></div></div>
+        </div>
+      </div>
+      <div class="number">02 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <div class="kicker reveal">今天的练习题</div>
+        <div class="big reveal d1">室友误会反转短剧</div>
+        <p class="reveal d2">剧情很简单：一个女生以为室友偷吃了她的蛋糕，准备发火，结果发现室友是在偷偷给她准备生日惊喜。</p>
+      </div>
+      <div class="number">03 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">为什么选这个案例</div>
+          <h2 class="reveal d1">它适合初学者</h2>
+          <p class="reveal d2">这个故事不靠大场面，也不需要复杂特效。它能教会新手短剧最重要的四件事：误会、台词、情绪、反转。</p>
+        </div>
+        <div class="checks reveal d3">
+          <div class="check"><b>场景少</b><span>宿舍或客厅就够了。</span></div>
+          <div class="check"><b>人物少</b><span>两个角色最容易控制。</span></div>
+          <div class="check"><b>冲突清楚</b><span>蛋糕不见了，谁吃的？</span></div>
+          <div class="check"><b>反转明确</b><span>不是偷吃，是生日惊喜。</span></div>
+          <div class="check"><b>台词好写</b><span>每句都有情绪任务。</span></div>
+          <div class="check"><b>容易修改</b><span>不满意时能单独改某一段。</span></div>
+        </div>
+      </div>
+      <div class="number">04 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <div class="kicker reveal">第一步：先写人话版故事</div>
+        <h2 class="reveal d1">不用一开始就写专业提示词</h2>
+        <div class="prompt reveal d2">
+          我想做一条 15 秒短剧。<br>
+          女生回家发现冰箱里的蛋糕不见了，以为室友偷吃。<br>
+          她生气质问室友。<br>
+          最后发现室友其实在给她准备生日惊喜。
+        </div>
+        <p class="reveal d3">这一步只要说清楚故事，不需要写镜头术语。</p>
+      </div>
+      <div class="number">05 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">提示词的真相</div>
+          <h2 class="reveal d1">专业提示词可以让 AI 先帮你写</h2>
+          <p class="reveal d2">新手不需要硬背“中景、推镜、切特写”。你先把故事说清楚，再让 AI 帮你整理成短剧提示词。</p>
+        </div>
+        <div class="prompt reveal d3">
+          请把这个故事整理成 Seedance 2.0 可用提示词。<br>
+          按 0-15 秒拆成短剧分镜。<br>
+          写清楚人物、场景、动作、表情、台词、镜头和情绪变化。
+        </div>
+      </div>
+      <div class="number">06 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <div class="kicker reveal">短剧提示词的骨架</div>
+        <h2 class="reveal d1">先按 6 件事写</h2>
+        <div class="checks reveal d2">
+          <div class="check"><b>人物</b><span>主角是谁？另一个人是谁？关系是什么？</span></div>
+          <div class="check"><b>场景</b><span>故事发生在哪里？宿舍、客厅、办公室？</span></div>
+          <div class="check"><b>冲突</b><span>主角为什么生气、紧张或误会？</span></div>
+          <div class="check"><b>台词</b><span>哪几句台词一定要出现？</span></div>
+          <div class="check"><b>情绪</b><span>每一段情绪怎么变？</span></div>
+          <div class="check"><b>结尾</b><span>最后一秒停在哪里？观众看到什么？</span></div>
+        </div>
+      </div>
+      <div class="number">07 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <div class="case reveal">
+          <div>
+            <div class="kicker">现在开始做</div>
+            <h2>15 秒室友误会反转短剧</h2>
+            <p>目标不是一次做出完美成片，而是学会把短剧拆成 Seedance 能理解的任务。</p>
+          </div>
+        </div>
+      </div>
+      <div class="number">08 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <div class="kicker reveal">先定人物</div>
+        <h2 class="reveal d1">短剧要先让关系成立</h2>
+        <div class="prompt reveal d2">
+          人物 A：刚下班回家的女生，今天有点疲惫，发现蛋糕不见后立刻委屈。<br>
+          人物 B：她的室友，看起来心虚，其实是在准备生日惊喜。<br>
+          两人关系：熟悉的室友，平时关系不错，所以误会才更有戏。
+        </div>
+      </div>
+      <div class="number">09 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">再定场景</div>
+          <h2 class="reveal d1">场景越具体，画面越稳</h2>
+          <p class="reveal d2">不要只写“家里”。短剧需要可拍的空间：门口、冰箱、餐桌、客厅角落，这些都能变成镜头。</p>
+        </div>
+        <div class="cards reveal d3">
+          <div class="card"><span class="badge">门</span><div><b>进门</b><span>主角疲惫回家，放下包。</span></div></div>
+          <div class="card"><span class="badge">箱</span><div><b>冰箱</b><span>发现蛋糕盒空了。</span></div></div>
+          <div class="card"><span class="badge">桌</span><div><b>餐桌</b><span>质问室友，情绪升高。</span></div></div>
+          <div class="card"><span class="badge">角</span><div><b>客厅角落</b><span>灯亮起，生日惊喜出现。</span></div></div>
+        </div>
+      </div>
+      <div class="number">10 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <div class="kicker reveal">然后定冲突</div>
+        <h2 class="reveal d1">短剧要有一个马上能懂的问题</h2>
+        <div class="prompt reveal d2">
+          冲突：主角准备晚上吃的蛋糕不见了。<br>
+          误会：她以为室友偷吃，还装不知道。<br>
+          观众疑问：室友到底是不是故意的？<br>
+          反转：蛋糕没有被偷吃，而是被拿去做生日布置。
+        </div>
+      </div>
+      <div class="number">11 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <div class="kicker reveal">15 秒怎么拆</div>
+        <h2 class="reveal d1">短剧不要平均用力</h2>
+        <div class="beats reveal d2">
+          <div class="beat"><span class="time">0-3 秒</span><div><b>发现问题</b><span>回家、开冰箱、蛋糕不见。</span></div></div>
+          <div class="beat"><span class="time">3-7 秒</span><div><b>误会升级</b><span>质问室友，室友眼神躲闪。</span></div></div>
+          <div class="beat"><span class="time">7-11 秒</span><div><b>情绪爆点</b><span>主角说出委屈台词，气氛紧张。</span></div></div>
+          <div class="beat"><span class="time">11-15 秒</span><div><b>反转收尾</b><span>灯亮，生日惊喜出现。</span></div></div>
+        </div>
+      </div>
+      <div class="number">12 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">第 1 段</div>
+          <h2 class="reveal d1">0-3 秒：先让观众看懂问题</h2>
+          <p class="reveal d2">开头不要铺垫太久。短剧第一段要快速交代“发生了什么”。</p>
+        </div>
+        <div class="prompt reveal d3">
+          0-3 秒：女生疲惫地推门回家，随手放下包。<br>
+          她打开冰箱，看见原本放蛋糕的位置空了。<br>
+          镜头切到她愣住的表情和空蛋糕盒。
+        </div>
+      </div>
+      <div class="number">13 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">第 2 段</div>
+          <h2 class="reveal d1">3-7 秒：让误会升级</h2>
+          <p class="reveal d2">短剧需要情绪推进。室友不能只是站着，要有“看起来心虚”的动作。</p>
+        </div>
+        <div class="prompt reveal d3">
+          3-7 秒：女生转头看向餐桌旁的室友，语气压着火问：“我的蛋糕呢？”<br>
+          室友手里拿着纸袋，眼神躲闪，支支吾吾说：“我……我不知道啊。”
+        </div>
+      </div>
+      <div class="number">14 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">第 3 段</div>
+          <h2 class="reveal d1">7-11 秒：给一句情绪台词</h2>
+          <p class="reveal d2">短剧的台词不是越多越好。15 秒里保留一句最有情绪的台词，观众才记得住。</p>
+        </div>
+        <div class="prompt reveal d3">
+          7-11 秒：女生红着眼眶，声音提高：“那是我留给自己的生日蛋糕。”<br>
+          室友一愣，手里的纸袋差点掉下，气氛突然安静。
+        </div>
+      </div>
+      <div class="number">15 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">第 4 段</div>
+          <h2 class="reveal d1">11-15 秒：反转要清楚落地</h2>
+          <p class="reveal d2">不要只写“反转”。要让观众看见反转是什么。</p>
+        </div>
+        <div class="prompt reveal d3">
+          11-15 秒：客厅灯串突然亮起，桌上出现新的生日蛋糕和小卡片。<br>
+          室友小声说：“我只是想给你一个惊喜。”<br>
+          女生愣住后笑了，镜头停在蛋糕和两人的手部动作上。
+        </div>
+      </div>
+      <div class="number">16 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <div class="kicker reveal">把四段合起来</div>
+        <h2 class="reveal d1">第一版完整短剧提示词</h2>
+        <div class="prompt reveal d2">
+          生成一条 15 秒室友误会反转短剧。场景是温暖的小客厅和厨房区域。<br>
+          0-3 秒：女生疲惫回家，打开冰箱发现蛋糕不见，看到空蛋糕盒后愣住。<br>
+          3-7 秒：她质问室友“我的蛋糕呢？”室友拿着纸袋，眼神躲闪，说“我不知道啊”。<br>
+          7-11 秒：女生委屈地说“那是我留给自己的生日蛋糕”，气氛变安静。<br>
+          11-15 秒：客厅灯串亮起，新的生日蛋糕和卡片出现，室友解释是在准备惊喜，女生从委屈变成笑。
+        </div>
+      </div>
+      <div class="number">17 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">还要补镜头要求</div>
+          <h2 class="reveal d1">镜头不用多，但要服务剧情</h2>
+          <p class="reveal d2">初学者不要写太多复杂运镜。短剧先保证观众看懂人物、道具和情绪。</p>
+        </div>
+        <div class="prompt reveal d3">
+          镜头要求：开头中景跟随女生进门；冰箱处切手部和空蛋糕盒特写；质问时切到两人中近景；反转时镜头慢慢拉到生日蛋糕和灯串。<br>
+          整体节奏清楚，不要频繁乱切。
+        </div>
+      </div>
+      <div class="number">18 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">再补表演要求</div>
+          <h2 class="reveal d1">短剧要写清情绪变化</h2>
+          <p class="reveal d2">如果只写“她很生气”，画面可能很单一。要写出从哪里变到哪里。</p>
+        </div>
+        <div class="prompt reveal d3">
+          表演要求：女生从疲惫、疑惑、委屈，到最后释然地笑。<br>
+          室友从紧张躲闪，到小心解释，再到松一口气。<br>
+          情绪要自然，不要夸张咆哮。
+        </div>
+      </div>
+      <div class="number">19 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">素材怎么用</div>
+          <h2 class="reveal d1">短剧也要给素材分工</h2>
+          <p class="reveal d2">如果你上传了图、视频或音频，要告诉 Seedance 每个素材负责什么，不要让它猜。</p>
+        </div>
+        <div class="prompt reveal d3">
+          <span class="mention">@图片1</span> 参考小客厅和厨房布局。<br>
+          <span class="mention">@图片2</span> 参考生日蛋糕和灯串布置。<br>
+          <span class="mention">@视频1</span> 只参考生活化短剧的对话节奏。<br>
+          <span class="mention">@音频1</span> 作为温暖轻松的结尾音乐。
+        </div>
+      </div>
+      <div class="number">20 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <div class="kicker reveal">生成前检查</div>
+        <h2 class="reveal d1">短剧提示词先查这 8 项</h2>
+        <div class="checks reveal d2">
+          <div class="check"><b>人物</b><span>两个人是谁，关系清楚吗？</span></div>
+          <div class="check"><b>场景</b><span>在哪里发生，空间清楚吗？</span></div>
+          <div class="check"><b>冲突</b><span>观众一眼知道问题吗？</span></div>
+          <div class="check"><b>道具</b><span>蛋糕、纸袋、灯串有用吗？</span></div>
+          <div class="check"><b>台词</b><span>关键台词是否短而有情绪？</span></div>
+          <div class="check"><b>情绪</b><span>每段情绪有变化吗？</span></div>
+          <div class="check"><b>结尾</b><span>反转有没有看得见的落点？</span></div>
+          <div class="check"><b>限制</b><span>有没有写不希望出现的内容？</span></div>
+          <div class="check"><b>素材</b><span>@素材名是否分工清楚？</span></div>
+        </div>
+      </div>
+      <div class="number">21 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">新手最该写的禁止项</div>
+          <h2 class="reveal d1">告诉 AI 不要什么</h2>
+          <p class="reveal d2">短剧很容易跑偏：表演太夸张、镜头乱切、角色关系不清楚。生成前先写清楚不要什么。</p>
+        </div>
+        <div class="prompt reveal d3">
+          不要夸张咆哮。<br>
+          不要恐怖氛围。<br>
+          不要突然出现第三个人。<br>
+          不要把生日惊喜提前暴露。<br>
+          不要改变“误会到反转”的故事结构。
+        </div>
+      </div>
+      <div class="number">22 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">第一次生成后</div>
+          <h2 class="reveal d1">不要重写，先诊断问题</h2>
+          <p class="reveal d2">短剧第一版不满意很正常。关键是判断问题在哪里，再让 AI 帮你改提示词。</p>
+        </div>
+        <div class="cards reveal d3">
+          <div class="card"><span class="badge">情</span><div><b>情绪不对</b><span>补每一段情绪变化。</span></div></div>
+          <div class="card"><span class="badge">话</span><div><b>台词不自然</b><span>把台词改短、改口语。</span></div></div>
+          <div class="card"><span class="badge">镜</span><div><b>镜头太乱</b><span>减少切镜，指定关键特写。</span></div></div>
+          <div class="card"><span class="badge">尾</span><div><b>反转不清</b><span>明确灯串、蛋糕、卡片同时出现。</span></div></div>
+        </div>
+      </div>
+      <div class="number">23 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <div class="kicker reveal">可以这样让 AI 帮你改</div>
+        <h2 class="reveal d1">只改一个问题，最稳</h2>
+        <div class="prompt reveal d2">
+          第一版短剧里反转不够清楚。<br>
+          请保留原故事和时间线，<br>
+          只加强 11-15 秒的生日惊喜画面：灯串亮起、蛋糕出现、卡片上写着生日快乐，室友解释是在准备惊喜。<br>
+          不要提前暴露反转。
+        </div>
+      </div>
+      <div class="number">24 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">入口选择</div>
+          <h2 class="reveal d1">短剧练习建议走全能参考</h2>
+          <p class="reveal d2">如果只有文字，也可以直接生成。但新手培训更建议配几张场景图、道具图或参考视频，这样更容易理解素材分工。</p>
+        </div>
+        <div class="cards reveal d3">
+          <div class="card"><span class="badge">文</span><div><b>只有文字</b><span>适合先练故事和提示词结构。</span></div></div>
+          <div class="card"><span class="badge">全</span><div><b>全能参考</b><span>适合加入场景图、道具图、节奏视频和音频。</span></div></div>
+        </div>
+      </div>
+      <div class="number">25 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <div class="kicker reveal">短剧新手公式</div>
+        <h2 class="reveal d1">以后做别的短剧，也按这个来</h2>
+        <div class="prompt reveal d2">
+          一个关系：谁和谁。<br>
+          一个冲突：发生了什么误会或问题。<br>
+          一句关键台词：情绪最重的一句。<br>
+          一个反转：观众最后明白了什么。<br>
+          一条时间线：每几秒发生什么。
+        </div>
+      </div>
+      <div class="number">26 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">给学员的练习</div>
+          <h2 class="reveal d1">换一个故事，但保留结构</h2>
+          <p class="reveal d2">学完这一条后，可以让学员只换“冲突”和“反转”，保留同样的制作方法。</p>
+        </div>
+        <div class="prompt reveal d3">
+          练习 1：以为朋友放鸽子，其实在准备惊喜。<br>
+          练习 2：以为同事抢功，其实在替她挡锅。<br>
+          练习 3：以为男友忘记纪念日，其实在偷偷布置现场。
+        </div>
+      </div>
+      <div class="number">27 / 28</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">最后提醒</div>
+          <h2 class="reveal d1">短剧训练的目标，是把故事说清楚</h2>
+          <p class="reveal d2">先不要追求大片感。初学者先练会：人物清楚、冲突清楚、台词清楚、反转清楚。画面会随着提示词越来越清楚而变稳。</p>
+        </div>
+        <div class="warn reveal d3">
+          <p><strong>重要限制：</strong>当前不支持上传包含写实真人脸部的图片或视频素材。培训练习可以优先使用非写实角色、背影、手部、局部动作、场景和道具素材。</p>
+          <p>体验入口：https://jimeng.jianying.com/</p>
+        </div>
+      </div>
+      <div class="number">28 / 28</div>
+    </section>
+  </main>
+</body>
+</html>
