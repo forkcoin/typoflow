@@ -27,7 +27,21 @@
     "assets": []
   },
   {
+    "path": "/samples/Vibe Coding/textcine-acceptance-chapter.html",
+    "assets": [
+      "/samples/Vibe Coding/yan-chu-fa-sui-text-film/verify.mjs"
+    ],
+    "folderName": "Vibe Coding"
+  },
+  {
     "path": "/samples/Vibe Coding/textcine-ai-work-ability.html",
+    "assets": [
+      "/samples/Vibe Coding/yan-chu-fa-sui-text-film/verify.mjs"
+    ],
+    "folderName": "Vibe Coding"
+  },
+  {
+    "path": "/samples/Vibe Coding/textcine-idea-card-chapter.html",
     "assets": [
       "/samples/Vibe Coding/yan-chu-fa-sui-text-film/verify.mjs"
     ],

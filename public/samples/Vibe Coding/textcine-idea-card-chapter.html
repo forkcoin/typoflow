@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>先别急着提示：把脑里的画面落成任务</title>
+  <style>
+    :root {
+      --color-bg: #f6f1e8;
+      --color-paper: #fffaf1;
+      --color-ink: #181512;
+      --color-muted: #746d62;
+      --color-line: rgba(24, 21, 18, 0.18);
+      --color-accent: #b43a2f;
+      --color-soft: #eadfcf;
+      --font-title: "Noto Serif SC", "Songti SC", "STSong", serif;
+      --font-body: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      --size-title: clamp(2.4rem, 8vw, 6.8rem);
+      --size-headline: clamp(1.75rem, 4.6vw, 4.1rem);
+      --size-body: clamp(1rem, 2vw, 1.28rem);
+      --size-caption: clamp(0.78rem, 1.5vw, 0.92rem);
+      --leading-tight: 1.16;
+      --leading-normal: 1.75;
+      --leading-loose: 1.95;
+      --spacing-screen: clamp(2rem, 6vw, 5.6rem);
+      --max-line-width: 27em;
+      --motion-slow: 900ms;
+      --motion-med: 620ms;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-snap-type: y mandatory;
+      background: var(--color-bg);
+    }
+
+    body {
+      margin: 0;
+      color: var(--color-ink);
+      background:
+        linear-gradient(90deg, rgba(180, 58, 47, 0.06) 1px, transparent 1px),
+        linear-gradient(rgba(24, 21, 18, 0.035) 1px, transparent 1px),
+        var(--color-bg);
+      background-size: 64px 64px, 64px 64px, auto;
+      font-family: var(--font-body);
+      overflow-x: hidden;
+    }
+
+    main {
+      width: 100%;
+    }
+
+    .screen {
+      position: relative;
+      min-height: 100vh;
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: var(--spacing-screen);
+      scroll-snap-align: start;
+      isolation: isolate;
+    }
+
+    .screen::before {
+      content: "";
+      position: absolute;
+      inset: clamp(0.75rem, 2.2vw, 1.5rem);
+      border: 1px solid var(--color-line);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .screen::after {
+      content: attr(data-no);
+      position: absolute;
+      right: clamp(1rem, 3vw, 2.4rem);
+      top: clamp(1rem, 3vw, 2.4rem);
+      font-family: "Inter", Arial, sans-serif;
+      font-size: var(--size-caption);
+      color: var(--color-muted);
+      letter-spacing: 0;
+    }
+
+    .panel {
+      width: min(100%, 1080px);
+      display: grid;
+      gap: clamp(1rem, 3vw, 2.2rem);
+    }
+
+    .eyebrow {
+      width: fit-content;
+      border-top: 1px solid var(--color-accent);
+      padding-top: 0.65rem;
+      color: var(--color-accent);
+      font-size: var(--size-caption);
+      font-weight: 600;
+    }
+
+    h1,
+    h2,
+    .hero-line {
+      margin: 0;
+      font-family: var(--font-title);
+      font-weight: 900;
+      line-height: var(--leading-tight);
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 9em;
+      font-size: var(--size-title);
+    }
+
+    h2,
+    .hero-line {
+      max-width: 12em;
+      font-size: var(--size-headline);
+    }
+
+    p {
+      margin: 0;
+      max-width: var(--max-line-width);
+      color: var(--color-muted);
+      font-size: var(--size-body);
+      line-height: var(--leading-normal);
+    }
+
+    .accent {
+      color: var(--color-accent);
+    }
+
+    .quote {
+      position: relative;
+      max-width: 920px;
+      padding: clamp(1.4rem, 4vw, 3rem);
+      background: rgba(255, 250, 241, 0.72);
+      border-left: 5px solid var(--color-accent);
+      box-shadow: 0 18px 60px rgba(52, 43, 32, 0.08);
+    }
+
+    .quote strong {
+      display: block;
+      font-family: var(--font-title);
+      font-size: clamp(1.7rem, 5vw, 4rem);
+      line-height: 1.24;
+      letter-spacing: 0;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(1rem, 4vw, 4rem);
+      align-items: stretch;
+    }
+
+    .side {
+      padding: clamp(1.2rem, 3vw, 2.2rem);
+      background: rgba(255, 250, 241, 0.7);
+      border: 1px solid var(--color-line);
+    }
+
+    .side b {
+      display: block;
+      margin-bottom: 1rem;
+      color: var(--color-accent);
+      font-family: var(--font-title);
+      font-size: clamp(1.35rem, 3vw, 2.4rem);
+      line-height: 1.25;
+    }
+
+    .six-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      border: 1px solid var(--color-line);
+      background: rgba(255, 250, 241, 0.74);
+    }
+
+    .cell {
+      min-height: 150px;
+      padding: clamp(1rem, 2.6vw, 2rem);
+      border-right: 1px solid var(--color-line);
+      border-bottom: 1px solid var(--color-line);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .cell:nth-child(3n) {
+      border-right: 0;
+    }
+
+    .cell:nth-last-child(-n + 3) {
+      border-bottom: 0;
+    }
+
+    .cell span {
+      color: var(--color-muted);
+      font-size: var(--size-caption);
+    }
+
+    .cell strong {
+      font-family: var(--font-title);
+      font-size: clamp(1.45rem, 3.8vw, 2.8rem);
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .card-table {
+      overflow: hidden;
+      border: 1px solid var(--color-line);
+      background: var(--color-paper);
+      box-shadow: 0 20px 80px rgba(52, 43, 32, 0.1);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: minmax(7rem, 0.34fr) minmax(0, 1fr);
+      border-bottom: 1px solid var(--color-line);
+    }
+
+    .row:last-child {
+      border-bottom: 0;
+    }
+
+    .row div {
+      padding: clamp(0.8rem, 2vw, 1.35rem);
+      font-size: clamp(1rem, 1.8vw, 1.1rem);
+      line-height: 1.65;
+    }
+
+    .row div:first-child {
+      color: var(--color-accent);
+      font-weight: 700;
+      border-right: 1px solid var(--color-line);
+      background: rgba(180, 58, 47, 0.05);
+    }
+
+    .rail {
+      position: fixed;
+      left: clamp(0.8rem, 2vw, 1.4rem);
+      top: 50%;
+      z-index: 3;
+      display: grid;
+      gap: 0.5rem;
+      transform: translateY(-50%);
+    }
+
+    .rail i {
+      width: 0.45rem;
+      height: 0.45rem;
+      border-radius: 50%;
+      background: rgba(24, 21, 18, 0.25);
+    }
+
+    .mark {
+      display: inline-block;
+      padding: 0 0.18em;
+      background: linear-gradient(transparent 58%, rgba(180, 58, 47, 0.22) 58%);
+    }
+
+    .fade-up {
+      animation: fadeUp var(--motion-slow) ease both;
+    }
+
+    .delay-1 {
+      animation-delay: 150ms;
+    }
+
+    .delay-2 {
+      animation-delay: 320ms;
+    }
+
+    .delay-3 {
+      animation-delay: 520ms;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(1.25rem);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .screen {
+        padding: clamp(1.3rem, 6vw, 2rem);
+      }
+
+      .screen::before {
+        inset: 0.6rem;
+      }
+
+      .split,
+      .six-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cell,
+      .cell:nth-child(3n),
+      .cell:nth-last-child(-n + 3) {
+        min-height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--color-line);
+      }
+
+      .cell:last-child {
+        border-bottom: 0;
+      }
+
+      .row {
+        grid-template-columns: 1fr;
+      }
+
+      .row div:first-child {
+        border-right: 0;
+        border-bottom: 1px solid var(--color-line);
+      }
+
+      .rail {
+        display: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="rail" aria-hidden="true">
+    <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+  </div>
+
+  <main>
+    <section class="screen" data-no="01">
+      <div class="panel">
+        <div class="eyebrow fade-up">第 1 章</div>
+        <h1 class="fade-up delay-1">先别急着提示</h1>
+        <p class="fade-up delay-2">把脑里的画面，先落成一张能执行、能检查的小卡片。</p>
+      </div>
+    </section>
+
+    <section class="screen" data-no="02">
+      <div class="panel">
+        <div class="quote fade-up">
+          <strong>“帮我做一个灵感待办小工具。”</strong>
+        </div>
+        <p class="fade-up delay-2">这句话不是没有方向。问题是，它让 AI 猜了太多：谁用、先做什么、保存什么、展示什么、哪些不要做。</p>
+      </div>
+    </section>
+
+    <section class="screen" data-no="03">
+      <div class="panel">
+        <h2 class="fade-up">缺的不是更长的提示词。</h2>
+        <p class="fade-up delay-1">缺的是能让第一版站住的部件：动作要能发生，结果要能看见，边界要能守住。</p>
+        <p class="fade-up delay-2"><span class="mark">AI 补得越快，你越容易被带到一个看似合理、但不是你真正想做的方向。</span></p>
+      </div>
+    </section>
+
+    <section class="screen" data-no="04">
+      <div class="panel">
+        <div class="eyebrow fade-up">六个最小部件</div>
+        <div class="six-grid fade-up delay-1">
+          <div class="cell"><span>做出什么</span><strong>对象</strong></div>
+          <div class="cell"><span>谁怎样用</span><strong>动作</strong></div>
+          <div class="cell"><span>交给系统什么</span><strong>输入</strong></div>
+          <div class="cell"><span>看到或拿到什么</span><strong>输出</strong></div>
+          <div class="cell"><span>哪些现在不做</span><strong>约束</strong></div>
+          <div class="cell"><span>怎样算没跑偏</span><strong>验收</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" data-no="05">
+      <div class="panel">
+        <div class="split">
+          <div class="side fade-up">
+            <b>待办服务完成</b>
+            <p>它会自然长出截止日期、优先级、完成率和提醒。</p>
+          </div>
+          <div class="side fade-up delay-1">
+            <b>灵感库服务记录</b>
+            <p>它先保护一句尚未成形的话，让它暂时不用变成任务。</p>
+          </div>
+        </div>
+        <p class="fade-up delay-2">第一版要先选方向：这个列表到底服务记录，还是服务完成。</p>
+      </div>
+    </section>
+
+    <section class="screen" data-no="06">
+      <div class="panel">
+        <div class="eyebrow fade-up">想法落地卡</div>
+        <div class="card-table fade-up delay-1">
+          <div class="row"><div>任务对象</div><div>一个本地运行的灵感记录小页面。</div></div>
+          <div class="row"><div>用户动作</div><div>快速新增一条灵感，之后查看、标记状态、删除误记。</div></div>
+          <div class="row"><div>输入</div><div>灵感文字；可选标签；状态默认为“刚记下”。</div></div>
+          <div class="row"><div>输出</div><div>按创建时间倒序排列的灵感卡片，显示内容、时间、状态和标签。</div></div>
+          <div class="row"><div>约束</div><div>单页网页；数据存在本地；不做登录、提醒、截止日期、AI 分类。</div></div>
+          <div class="row"><div>验收</div><div>新增立刻显示；刷新仍保留；状态可切换；手机窄屏能录入和查看。</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" data-no="07">
+      <div class="panel">
+        <h2 class="fade-up">启动卡不是完整需求。</h2>
+        <p class="fade-up delay-1">它只负责保护第一轮：让 AI 能做，让你能看，让项目不会一开始就长成另一个东西。</p>
+        <p class="fade-up delay-2">写太少，是把不清楚交给 AI 猜；写太满，是用堆功能掩盖不清楚。</p>
+      </div>
+    </section>
+
+    <section class="screen" data-no="08">
+      <div class="panel">
+        <div class="hero-line fade-up">可控，<br><span class="accent">比一次说完更重要。</span></div>
+        <p class="fade-up delay-1">下一次开工前，先写一句原始想法，再填六格卡片，最后只用三条验收项检查第一版。</p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

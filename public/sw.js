@@ -1,5 +1,5 @@
-const CACHE_NAME = "typoflow-shell-v2";
-const SHELL_URLS = ["/", "/index.html", "/manifest.webmanifest", "/icons/icon.svg"];
+const CACHE_NAME = "ziying-shell-v3";
+const SHELL_URLS = ["/", "/index.html", "/icons/icon.svg"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -33,6 +33,11 @@ self.addEventListener("fetch", (event) => {
   }
 
   if (url.pathname.startsWith("/samples/")) {
+    event.respondWith(fetch(request));
+    return;
+  }
+
+  if (url.pathname === "/manifest.webmanifest") {
     event.respondWith(fetch(request));
     return;
   }

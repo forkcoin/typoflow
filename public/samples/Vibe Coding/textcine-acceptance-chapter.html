@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI 做出来了，怎么算真的做对</title>
+  <style>
+    :root {
+      --color-bg: #f7f8f5;
+      --color-paper: #fffdfa;
+      --color-ink: #151719;
+      --color-muted: #636a70;
+      --color-line: rgba(21, 23, 25, 0.16);
+      --color-accent: #c8322a;
+      --color-pass: #1f7a5b;
+      --color-blue: #dfe9ee;
+      --font-title: "Noto Serif SC", "Songti SC", "STSong", serif;
+      --font-body: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      --size-title: clamp(2.35rem, 7.5vw, 6.5rem);
+      --size-headline: clamp(1.72rem, 4.7vw, 4.2rem);
+      --size-body: clamp(16px, 2vw, 20px);
+      --size-caption: 16px;
+      --leading-tight: 1.16;
+      --leading-normal: 1.72;
+      --spacing-screen: clamp(1.8rem, 5.6vw, 5.2rem);
+      --motion-slow: 880ms;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-snap-type: y mandatory;
+      background: var(--color-bg);
+    }
+
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      color: var(--color-ink);
+      background:
+        linear-gradient(90deg, rgba(200, 50, 42, 0.045) 1px, transparent 1px),
+        linear-gradient(rgba(21, 23, 25, 0.035) 1px, transparent 1px),
+        var(--color-bg);
+      background-size: 72px 72px, 72px 72px, auto;
+      font-family: var(--font-body);
+    }
+
+    main {
+      width: 100%;
+    }
+
+    .screen {
+      position: relative;
+      min-height: 100vh;
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: var(--spacing-screen);
+      scroll-snap-align: start;
+      isolation: isolate;
+    }
+
+    .screen::before {
+      content: "";
+      position: absolute;
+      inset: clamp(0.7rem, 2vw, 1.45rem);
+      border: 1px solid var(--color-line);
+      background: linear-gradient(135deg, rgba(255, 253, 250, 0.5), rgba(255, 253, 250, 0));
+      z-index: -1;
+    }
+
+    .screen::after {
+      content: attr(data-no);
+      position: absolute;
+      top: clamp(1rem, 2.8vw, 2.2rem);
+      right: clamp(1rem, 2.8vw, 2.2rem);
+      color: var(--color-muted);
+      font-size: var(--size-caption);
+      font-weight: 700;
+    }
+
+    .panel {
+      width: min(100%, 1100px);
+      display: grid;
+      gap: clamp(1rem, 3vw, 2.2rem);
+    }
+
+    h1,
+    h2,
+    .finale {
+      margin: 0;
+      max-width: 11em;
+      font-family: var(--font-title);
+      font-weight: 900;
+      line-height: var(--leading-tight);
+      letter-spacing: 0;
+    }
+
+    h1 {
+      font-size: var(--size-title);
+    }
+
+    h2,
+    .finale {
+      font-size: var(--size-headline);
+    }
+
+    p {
+      margin: 0;
+      max-width: 28em;
+      color: var(--color-muted);
+      font-size: var(--size-body);
+      line-height: var(--leading-normal);
+    }
+
+    .eyebrow {
+      width: fit-content;
+      border-top: 2px solid var(--color-accent);
+      padding-top: 0.6rem;
+      color: var(--color-accent);
+      font-size: var(--size-caption);
+      font-weight: 700;
+    }
+
+    .red {
+      color: var(--color-accent);
+    }
+
+    .stamp-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(1rem, 4vw, 4rem);
+      align-items: stretch;
+    }
+
+    .stamp {
+      min-height: 220px;
+      padding: clamp(1.2rem, 3vw, 2.2rem);
+      border: 1px solid var(--color-line);
+      background: rgba(255, 253, 250, 0.72);
+      display: grid;
+      align-content: space-between;
+      gap: 1rem;
+    }
+
+    .stamp b {
+      font-family: var(--font-title);
+      font-size: clamp(1.6rem, 4vw, 3.4rem);
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    .stamp.pass b {
+      color: var(--color-pass);
+    }
+
+    .stamp.fail b {
+      color: var(--color-accent);
+    }
+
+    .issue-list,
+    .chips,
+    .checklist,
+    .triad {
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    .issue {
+      display: grid;
+      grid-template-columns: 2.4rem minmax(0, 1fr);
+      gap: 0.8rem;
+      align-items: start;
+      padding: clamp(0.8rem, 2vw, 1.15rem);
+      background: rgba(255, 253, 250, 0.78);
+      border: 1px solid var(--color-line);
+      font-size: var(--size-body);
+      line-height: 1.55;
+    }
+
+    .issue span {
+      width: 2.1rem;
+      height: 2.1rem;
+      display: grid;
+      place-items: center;
+      border: 2px solid var(--color-accent);
+      color: var(--color-accent);
+      font-weight: 900;
+      border-radius: 50%;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(1rem, 3vw, 2rem);
+    }
+
+    .column {
+      padding: clamp(1rem, 2.8vw, 2rem);
+      background: var(--color-paper);
+      border: 1px solid var(--color-line);
+    }
+
+    .column strong {
+      display: block;
+      margin-bottom: 0.9rem;
+      color: var(--color-accent);
+      font-family: var(--font-title);
+      font-size: clamp(1.35rem, 3vw, 2.2rem);
+      line-height: 1.2;
+    }
+
+    .chip-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+
+    .chip {
+      min-height: 120px;
+      padding: 1rem;
+      background: var(--color-paper);
+      border: 1px solid var(--color-line);
+      display: grid;
+      align-content: center;
+      text-align: center;
+      color: var(--color-ink);
+      font-size: clamp(16px, 1.8vw, 17px);
+      line-height: 1.45;
+      font-weight: 700;
+    }
+
+    .checklist {
+      border: 1px solid var(--color-line);
+      background: var(--color-paper);
+    }
+
+    .check-row {
+      display: grid;
+      grid-template-columns: minmax(7.5rem, 0.32fr) minmax(0, 1fr);
+      border-bottom: 1px solid var(--color-line);
+    }
+
+    .check-row:last-child {
+      border-bottom: 0;
+    }
+
+    .check-row div {
+      padding: clamp(0.85rem, 2vw, 1.25rem);
+      font-size: clamp(1rem, 1.8vw, 1.08rem);
+      line-height: 1.6;
+    }
+
+    .check-row div:first-child {
+      color: var(--color-accent);
+      font-weight: 800;
+      border-right: 1px solid var(--color-line);
+      background: rgba(200, 50, 42, 0.055);
+    }
+
+    .triad {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .triad-card {
+      min-height: 230px;
+      padding: clamp(1rem, 2.6vw, 1.8rem);
+      background: var(--color-paper);
+      border: 1px solid var(--color-line);
+      display: grid;
+      align-content: space-between;
+      gap: 1rem;
+    }
+
+    .triad-card b {
+      font-family: var(--font-title);
+      color: var(--color-accent);
+      font-size: clamp(1.35rem, 3vw, 2.45rem);
+      line-height: 1.2;
+    }
+
+    .note {
+      position: relative;
+      padding: clamp(1rem, 2.6vw, 2rem);
+      background: var(--color-paper);
+      border: 1px solid var(--color-line);
+      box-shadow: 0 18px 70px rgba(21, 23, 25, 0.08);
+    }
+
+    .note::before {
+      content: "未通过";
+      position: absolute;
+      top: -0.9rem;
+      right: 1rem;
+      padding: 0.2rem 0.6rem;
+      border: 2px solid var(--color-accent);
+      color: var(--color-accent);
+      background: var(--color-paper);
+      font-weight: 900;
+      transform: rotate(-4deg);
+    }
+
+    .fade-up {
+      animation: fadeUp var(--motion-slow) ease both;
+    }
+
+    .delay-1 {
+      animation-delay: 160ms;
+    }
+
+    .delay-2 {
+      animation-delay: 340ms;
+    }
+
+    .delay-3 {
+      animation-delay: 520ms;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(1rem);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 780px) {
+      .screen {
+        padding: clamp(1.25rem, 5.4vw, 2rem);
+      }
+
+      .stamp-row,
+      .split,
+      .triad,
+      .chip-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stamp,
+      .triad-card,
+      .chip {
+        min-height: auto;
+      }
+
+      .check-row {
+        grid-template-columns: 1fr;
+      }
+
+      .check-row div:first-child {
+        border-right: 0;
+        border-bottom: 1px solid var(--color-line);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="screen" data-no="01">
+      <div class="panel">
+        <div class="eyebrow fade-up">第 2 章</div>
+        <h1 class="fade-up delay-1">AI 做出来了，怎么算真的做对</h1>
+        <p class="fade-up delay-2">别只看页面能不能打开。先看它有没有守住你真正要完成的事。</p>
+      </div>
+    </section>
+
+    <section class="screen" data-no="02">
+      <div class="panel">
+        <div class="stamp-row">
+          <div class="stamp pass fade-up">
+            <b>能运行</b>
+            <p>页面打开了，按钮能点，样式也不算难看。</p>
+          </div>
+          <div class="stamp fail fade-up delay-1">
+            <b>未必做对</b>
+            <p>目标可能变了，内容可能泛了，边界可能被扩大了。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" data-no="03">
+      <div class="panel">
+        <h2 class="fade-up">个人主页看起来完整，却没有保住信息优先级。</h2>
+        <div class="issue-list fade-up delay-1">
+          <div class="issue"><span>×</span><div>第一屏是“创造未来的数字体验”，但没有姓名和当前方向。</div></div>
+          <div class="issue"><span>×</span><div>项目描述变成泛化口号，访客看不出项目到底是什么。</div></div>
+          <div class="issue"><span>×</span><div>联系方式比项目入口更抢眼，页面目的被挤到后面。</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" data-no="04">
+      <div class="panel">
+        <h2 class="fade-up">验收先管目标，<span class="red">不先管喜好。</span></h2>
+        <div class="split fade-up delay-1">
+          <div class="column">
+            <strong>先修正</strong>
+            <p>信息顺序错、核心链接不可见、内容不真实、手机端读不到重点。</p>
+          </div>
+          <div class="column">
+            <strong>先观察</strong>
+            <p>颜色想换、按钮想圆、以后想加深色模式、动效想更细。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" data-no="05">
+      <div class="panel">
+        <div class="eyebrow fade-up">什么叫可观察</div>
+        <h2 class="fade-up delay-1">标准不是一句“更清楚”，而是能被检查的动作。</h2>
+        <div class="chip-grid fade-up delay-2">
+          <div class="chip">打开页面</div>
+          <div class="chip">点击链接</div>
+          <div class="chip">阅读文字</div>
+          <div class="chip">缩到手机</div>
+          <div class="chip">对照资料</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" data-no="06">
+      <div class="panel">
+        <div class="eyebrow fade-up">验收清单</div>
+        <div class="checklist fade-up delay-1">
+          <div class="check-row"><div>目标</div><div>这个产物最重要的使用目的是什么？</div></div>
+          <div class="check-row"><div>可观察条件</div><div>做到什么，才算满足目标？</div></div>
+          <div class="check-row"><div>检查方式</div><div>你准备怎么查：看、点、缩小、对照，还是运行？</div></div>
+          <div class="check-row"><div>偏差记录</div><div>没通过时，不写“怪”，写具体偏在哪里。</div></div>
+          <div class="check-row"><div>修正请求</div><div>只改和偏差有关的内容，不顺手加新功能。</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" data-no="07">
+      <div class="panel">
+        <h2 class="fade-up">审查 AI 产物，先看三类偏差。</h2>
+        <div class="triad fade-up delay-1">
+          <div class="triad-card">
+            <b>目标偏移</b>
+            <p>做出了常见形态，却没有完成这次的使用目的。</p>
+          </div>
+          <div class="triad-card">
+            <b>内容偏移</b>
+            <p>看起来顺，但内容不真实、不具体，或变成泛化表达。</p>
+          </div>
+          <div class="triad-card">
+            <b>边界偏移</b>
+            <p>加入任务外功能，把第一版扩成更大的项目。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" data-no="08">
+      <div class="panel">
+        <div class="note fade-up">
+          <h2>课程资料索引页，不是学习资料平台首页。</h2>
+          <p>需求是按主题快速找到资料链接。AI 却加入博客、会员、登录和订阅；资料没有备注，链接也不可点。</p>
+        </div>
+        <p class="fade-up delay-2">修正请求要收住：删掉平台入口，补齐标题、链接和备注，把主题区提前。</p>
+      </div>
+    </section>
+
+    <section class="screen" data-no="09">
+      <div class="panel">
+        <div class="finale fade-up">按清单修，<br><span class="red">不按感觉漂。</span></div>
+        <p class="fade-up delay-1">没过的先修；想再调的先记下。这样，AI 的下一版才不会越改越散。</p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
