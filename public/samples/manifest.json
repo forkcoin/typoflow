@@ -15,11 +15,20 @@
     "folderName": "AI学伴成长记"
   },
   {
-    "path": "/samples/chapter-00-personal-ceo.html",
-    "assets": []
+    "path": "/samples/AI学伴成长记/textcine-clear-question-lesson.html",
+    "assets": [],
+    "folderName": "AI学伴成长记"
   },
   {
     "path": "/samples/textcine-beauty-symbol-system.html",
+    "assets": []
+  },
+  {
+    "path": "/samples/textcine-moving-box-landing-pack.html",
+    "assets": []
+  },
+  {
+    "path": "/samples/textcine-taste-classification.html",
     "assets": []
   },
   {
@@ -28,30 +37,47 @@
   },
   {
     "path": "/samples/Vibe Coding/textcine-acceptance-chapter.html",
-    "assets": [
-      "/samples/Vibe Coding/yan-chu-fa-sui-text-film/verify.mjs"
-    ],
+    "assets": [],
     "folderName": "Vibe Coding"
   },
   {
     "path": "/samples/Vibe Coding/textcine-ai-work-ability.html",
-    "assets": [
-      "/samples/Vibe Coding/yan-chu-fa-sui-text-film/verify.mjs"
-    ],
+    "assets": [],
+    "folderName": "Vibe Coding"
+  },
+  {
+    "path": "/samples/Vibe Coding/textcine-chapter-3-prototype-bias.html",
+    "assets": [],
     "folderName": "Vibe Coding"
   },
   {
     "path": "/samples/Vibe Coding/textcine-idea-card-chapter.html",
-    "assets": [
-      "/samples/Vibe Coding/yan-chu-fa-sui-text-film/verify.mjs"
-    ],
+    "assets": [],
     "folderName": "Vibe Coding"
   },
   {
     "path": "/samples/Vibe Coding/yan-chu-fa-sui-text-film/index.html",
-    "assets": [
-      "/samples/Vibe Coding/yan-chu-fa-sui-text-film/verify.mjs"
-    ],
+    "assets": [],
     "folderName": "Vibe Coding"
+  },
+  {
+    "path": "/samples/个人CEO/chapter-00-personal-ceo.html",
+    "assets": [],
+    "folderName": "个人CEO"
+  },
+  {
+    "path": "/samples/个人CEO/textcine-personal-balance-sheet.html",
+    "assets": [],
+    "folderName": "个人CEO"
+  },
+  {
+    "path": "/samples/个人CEO/textcine-personal-business-model-canvas.html",
+    "assets": [],
+    "folderName": "个人CEO"
+  },
+  {
+    "path": "/samples/个人CEO/textcine-swot-pest-positioning.html",
+    "assets": [],
+    "folderName": "个人CEO"
   }
 ]

@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>个人资产负债表：先看清你的家底</title>
+  <style>
+    :root {
+      --color-bg: #f4f0e8;
+      --color-panel: #fffaf0;
+      --color-ink: #1f2522;
+      --color-muted: #69716b;
+      --color-line: #d9cbb8;
+      --color-accent: #b94e32;
+      --color-deep: #24372f;
+      --color-debt: #463836;
+      --color-good: #2c7158;
+      --font-serif: "Songti SC", "STSong", "Noto Serif SC", serif;
+      --font-sans: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+      --size-title: clamp(2.6rem, 8vw, 6.4rem);
+      --size-headline: clamp(1.8rem, 5vw, 3.8rem);
+      --size-subhead: clamp(1.15rem, 3vw, 1.7rem);
+      --size-body: clamp(1rem, 2.4vw, 1.24rem);
+      --size-note: clamp(1rem, 2.2vw, 1.02rem);
+      --screen-pad: clamp(2rem, 6vw, 5.5rem);
+      --max-width: 1120px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--color-bg);
+    }
+
+    body {
+      margin: 0;
+      color: var(--color-ink);
+      font-family: var(--font-sans);
+      background:
+        linear-gradient(90deg, rgba(36, 55, 47, 0.07) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(36, 55, 47, 0.045) 1px, transparent 1px),
+        var(--color-bg);
+      background-size: 42px 42px;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 20% 8%, rgba(185, 78, 50, 0.12), transparent 28rem),
+        linear-gradient(180deg, rgba(255, 250, 240, 0.82), rgba(244, 240, 232, 0.72));
+      z-index: -1;
+    }
+
+    .progress {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 4px;
+      z-index: 20;
+      background: rgba(31, 37, 34, 0.08);
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: var(--color-accent);
+      transition: width 120ms linear;
+    }
+
+    main {
+      width: 100%;
+    }
+
+    .scene {
+      min-height: 100svh;
+      padding: var(--screen-pad);
+      display: grid;
+      align-items: center;
+      position: relative;
+      isolation: isolate;
+    }
+
+    .scene-inner {
+      width: min(100%, var(--max-width));
+      margin: 0 auto;
+      display: grid;
+      gap: clamp(1.2rem, 3vw, 2.4rem);
+    }
+
+    .kicker {
+      margin: 0;
+      color: var(--color-accent);
+      font-size: var(--size-note);
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    h1,
+    h2 {
+      margin: 0;
+      font-family: var(--font-serif);
+      line-height: 1.16;
+      letter-spacing: 0;
+      text-wrap: balance;
+    }
+
+    h1 {
+      font-size: var(--size-title);
+      max-width: 9em;
+    }
+
+    h2 {
+      font-size: var(--size-headline);
+      max-width: 12em;
+    }
+
+    p {
+      margin: 0;
+      max-width: 34em;
+      color: var(--color-muted);
+      font-size: var(--size-body);
+      line-height: 1.82;
+    }
+
+    strong {
+      color: var(--color-ink);
+      font-weight: 700;
+    }
+
+    .title-grid {
+      grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.78fr);
+      align-items: end;
+    }
+
+    .ledger {
+      border: 1px solid var(--color-line);
+      background: rgba(255, 250, 240, 0.74);
+      box-shadow: 0 24px 70px rgba(36, 55, 47, 0.13);
+      padding: clamp(1.2rem, 3vw, 2rem);
+      display: grid;
+      gap: 1rem;
+    }
+
+    .ledger-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid rgba(217, 203, 184, 0.8);
+      font-size: var(--size-body);
+    }
+
+    .ledger-row:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .ledger-row span {
+      color: var(--color-muted);
+    }
+
+    .ledger-row b {
+      color: var(--color-ink);
+      font-family: var(--font-serif);
+      font-size: 1.15em;
+      font-weight: 800;
+    }
+
+    .split {
+      grid-template-columns: minmax(0, 0.9fr) minmax(300px, 1fr);
+      align-items: center;
+    }
+
+    .compare {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .compare-card {
+      min-height: 11rem;
+      border: 1px solid var(--color-line);
+      padding: clamp(1.1rem, 3vw, 1.7rem);
+      background: rgba(255, 250, 240, 0.76);
+      display: grid;
+      align-content: space-between;
+    }
+
+    .compare-card small,
+    .tag {
+      color: var(--color-muted);
+      font-size: var(--size-note);
+      line-height: 1.6;
+    }
+
+    .compare-card b {
+      display: block;
+      margin-top: 0.8rem;
+      font-family: var(--font-serif);
+      font-size: clamp(1.45rem, 4vw, 2.7rem);
+      line-height: 1.25;
+      color: var(--color-ink);
+    }
+
+    .definition {
+      min-height: 100svh;
+      color: #fff9ed;
+      background:
+        linear-gradient(135deg, rgba(36, 55, 47, 0.96), rgba(31, 37, 34, 0.98)),
+        var(--color-deep);
+    }
+
+    .definition p,
+    .definition .kicker,
+    .debt p,
+    .debt .kicker {
+      color: rgba(255, 249, 237, 0.76);
+    }
+
+    .definition h2,
+    .debt h2 {
+      color: #fff9ed;
+    }
+
+    .underline {
+      display: inline;
+      background: linear-gradient(180deg, transparent 58%, rgba(185, 78, 50, 0.46) 58%);
+    }
+
+    .checks {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(1rem, 2.4vw, 1.4rem);
+    }
+
+    .check {
+      border-left: 4px solid var(--color-accent);
+      padding: 1rem 1rem 1rem 1.2rem;
+      background: rgba(255, 250, 240, 0.72);
+      min-height: 10rem;
+      display: grid;
+      align-content: center;
+      gap: 0.5rem;
+    }
+
+    .check b {
+      font-family: var(--font-serif);
+      font-size: clamp(1.35rem, 4vw, 2.4rem);
+      line-height: 1.22;
+    }
+
+    .asset-grid,
+    .debt-grid,
+    .quality-grid,
+    .decision-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: clamp(0.7rem, 1.6vw, 1rem);
+    }
+
+    .asset,
+    .debt-item,
+    .quality,
+    .decision,
+    .action-card {
+      border: 1px solid var(--color-line);
+      background: rgba(255, 250, 240, 0.76);
+      padding: clamp(1rem, 2vw, 1.35rem);
+    }
+
+    .asset {
+      min-height: 13rem;
+      display: grid;
+      align-content: space-between;
+      gap: 1.4rem;
+    }
+
+    .asset .number,
+    .debt-item .number {
+      font-family: Georgia, serif;
+      color: var(--color-accent);
+      font-size: 1rem;
+    }
+
+    .asset b,
+    .debt-item b,
+    .quality b,
+    .decision b {
+      display: block;
+      font-family: var(--font-serif);
+      font-size: clamp(1.25rem, 3vw, 1.8rem);
+      line-height: 1.25;
+    }
+
+    .asset span,
+    .debt-item span,
+    .quality span,
+    .decision span {
+      display: block;
+      margin-top: 0.8rem;
+      color: var(--color-muted);
+      font-size: var(--size-note);
+      line-height: 1.65;
+    }
+
+    .table-card {
+      overflow: hidden;
+      border: 1px solid var(--color-line);
+      background: rgba(255, 250, 240, 0.82);
+    }
+
+    .table-row {
+      display: grid;
+      grid-template-columns: 0.75fr 1.2fr 1.2fr;
+      min-height: 4.1rem;
+      border-bottom: 1px solid rgba(217, 203, 184, 0.82);
+    }
+
+    .table-row:last-child {
+      border-bottom: 0;
+    }
+
+    .table-row > div {
+      padding: 1rem;
+      display: grid;
+      align-items: center;
+      border-right: 1px solid rgba(217, 203, 184, 0.82);
+      font-size: var(--size-note);
+      line-height: 1.5;
+    }
+
+    .table-row > div:last-child {
+      border-right: 0;
+    }
+
+    .table-row.header {
+      background: rgba(36, 55, 47, 0.08);
+      color: var(--color-ink);
+      font-weight: 700;
+    }
+
+    .debt {
+      color: #fff9ed;
+      background:
+        linear-gradient(180deg, rgba(70, 56, 54, 0.96), rgba(31, 37, 34, 0.98)),
+        var(--color-debt);
+    }
+
+    .debt-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .debt-item {
+      border-color: var(--color-line);
+      background: rgba(255, 250, 240, 0.78);
+    }
+
+    .debt-item b {
+      color: var(--color-ink);
+    }
+
+    .debt-item span {
+      color: var(--color-muted);
+    }
+
+    .quality-grid,
+    .decision-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .quality {
+      min-height: 15rem;
+    }
+
+    .quality.good {
+      border-top: 6px solid var(--color-good);
+    }
+
+    .quality.sleep {
+      border-top: 6px solid #aa8040;
+    }
+
+    .quality.toxic {
+      border-top: 6px solid var(--color-accent);
+    }
+
+    .decision {
+      min-height: 15rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .decision::after {
+      content: "";
+      position: absolute;
+      left: 1.2rem;
+      right: 1.2rem;
+      bottom: 1.1rem;
+      height: 3px;
+      background: linear-gradient(90deg, var(--color-accent), transparent);
+    }
+
+    .assignment {
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 0.9fr);
+      align-items: center;
+    }
+
+    .action-stack {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .action-card {
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .action-card b {
+      font-family: var(--font-serif);
+      font-size: clamp(1.2rem, 3vw, 1.65rem);
+      line-height: 1.3;
+    }
+
+    .closing-line {
+      padding: clamp(1.1rem, 3vw, 1.5rem);
+      border-left: 4px solid var(--color-accent);
+      background: rgba(185, 78, 50, 0.08);
+      color: var(--color-ink);
+      font-size: var(--size-body);
+      line-height: 1.8;
+    }
+
+    .appear {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: rise 800ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    .delay-1 { animation-delay: 120ms; }
+    .delay-2 { animation-delay: 240ms; }
+    .delay-3 { animation-delay: 360ms; }
+    .delay-4 { animation-delay: 480ms; }
+    .delay-5 { animation-delay: 600ms; }
+
+    @keyframes rise {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .title-grid,
+      .split,
+      .assignment {
+        grid-template-columns: 1fr;
+      }
+
+      .asset-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .debt-grid,
+      .quality-grid,
+      .decision-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .checks {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .scene {
+        min-height: auto;
+        padding: 4.2rem 1.1rem;
+      }
+
+      h1 {
+        font-size: clamp(2.45rem, 13vw, 4.3rem);
+      }
+
+      .asset-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .table-row {
+        grid-template-columns: 1fr;
+      }
+
+      .table-row > div {
+        border-right: 0;
+        border-bottom: 1px solid rgba(217, 203, 184, 0.62);
+      }
+
+      .table-row > div:last-child {
+        border-bottom: 0;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+
+      .appear {
+        opacity: 1;
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+  <main>
+    <section class="scene">
+      <div class="scene-inner title-grid">
+        <div>
+          <p class="kicker appear">第 1 章 · 个人 CEO 的第一张表</p>
+          <h1 class="appear delay-1">个人资产负债表</h1>
+          <p class="appear delay-2">先看清你的家底。不是为了给自己打分，而是为了知道：你在积累什么、消耗什么、还能选择什么。</p>
+        </div>
+        <div class="ledger appear delay-3" aria-label="个人经营摘要">
+          <div class="ledger-row"><span>资产</span><b>能产生选择</b></div>
+          <div class="ledger-row"><span>负债</span><b>持续消耗系统</b></div>
+          <div class="ledger-row"><span>决策</span><b>先处理最卡住的地方</b></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="scene-inner split">
+        <div>
+          <p class="kicker appear">误解转向</p>
+          <h2 class="appear delay-1">你的家底，不只在账户里。</h2>
+          <p class="appear delay-2">银行卡、房子、贷款、信用卡当然重要。但对一个正在成长、转型、赚钱或寻找第二曲线的人来说，它们还不够。</p>
+        </div>
+        <div class="compare">
+          <div class="compare-card appear delay-2">
+            <small>容易先看到</small>
+            <b>钱、房子、贷款、账单</b>
+          </div>
+          <div class="compare-card appear delay-3">
+            <small>更需要一起看见</small>
+            <b>能力、关系、可信度、身体、注意力、选择权</b>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene definition">
+      <div class="scene-inner">
+        <p class="kicker appear">核心定义</p>
+        <h2 class="appear delay-1">资产是未来能帮你<span class="underline">产生选择</span>的东西。</h2>
+        <p class="appear delay-2">一笔存款给你缓冲；一项技能让你能换岗位、接项目或谈判；一个稳定信任你的人，可能在关键时刻给你信息、机会、反馈或背书。</p>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="scene-inner split">
+        <div>
+          <p class="kicker appear">两个检查问题</p>
+          <h2 class="appear delay-1">别把“拥有”误认成“资产”。</h2>
+          <p class="appear delay-2">课程、联系人、体面的工作，都不自动成为资产。关键是它能不能在未来帮你打开选择。</p>
+        </div>
+        <div class="checks">
+          <div class="check appear delay-2">
+            <span class="tag">检查 01</span>
+            <b>如果明天环境改变，它还能不能跟着你走？</b>
+          </div>
+          <div class="check appear delay-3">
+            <span class="tag">检查 02</span>
+            <b>当你需要时，它能不能被调用？</b>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="scene-inner">
+        <div>
+          <p class="kicker appear">五类资产</p>
+          <h2 class="appear delay-1">钱、技能、人、信任和身体。</h2>
+          <p class="appear delay-2">某一类暂时为空也没关系。重点是看清楚，而不是把表填得漂亮。</p>
+        </div>
+        <div class="asset-grid">
+          <div class="asset appear delay-1"><span class="number">01</span><b>金融资产</b><span>现金、存款、应急金、可变现资源，以及基本财务秩序。</span></div>
+          <div class="asset appear delay-2"><span class="number">02</span><b>技能资产</b><span>不是学过什么，而是能稳定做出什么结果。</span></div>
+          <div class="asset appear delay-3"><span class="number">03</span><b>人脉资产</b><span>不是认识多少人，而是多少人愿意和你发生真实连接。</span></div>
+          <div class="asset appear delay-4"><span class="number">04</span><b>品牌资产</b><span>别人提到你时，能否想起清楚、可信、具体的印象。</span></div>
+          <div class="asset appear delay-5"><span class="number">05</span><b>健康资产</b><span>睡眠、体力、情绪稳定、专注力和恢复能力。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="scene-inner split">
+        <div>
+          <p class="kicker appear">资产快照</p>
+          <h2 class="appear delay-1">不要写理想状态，只写已经存在的东西。</h2>
+          <p class="appear delay-2">空白本身就是信息。它告诉你下一阶段可能需要建设哪一类资产。</p>
+        </div>
+        <div class="table-card appear delay-3" role="table" aria-label="资产快照">
+          <div class="table-row header" role="row">
+            <div role="columnheader">资产类型</div>
+            <div role="columnheader">请写具体项目</div>
+            <div role="columnheader">它带来什么选择</div>
+          </div>
+          <div class="table-row" role="row"><div>金融</div><div>现金、应急金、可变现资源</div><div>缓冲、拒绝低质量机会</div></div>
+          <div class="table-row" role="row"><div>技能</div><div>能稳定做出的结果</div><div>求职、接项目、谈判</div></div>
+          <div class="table-row" role="row"><div>人脉</div><div>愿意反馈、介绍、合作的人</div><div>信息、机会、纠偏</div></div>
+          <div class="table-row" role="row"><div>品牌</div><div>作品、案例、口碑</div><div>被看见、被信任</div></div>
+          <div class="table-row" role="row"><div>健康</div><div>睡眠、体力、恢复能力</div><div>长期行动、持续交付</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene debt">
+      <div class="scene-inner">
+        <p class="kicker appear">负债定义</p>
+        <h2 class="appear delay-1">负债不只是欠款，也包括消耗你的系统。</h2>
+        <p class="appear delay-2">那些持续消耗你钱、时间、注意力、情绪和选择权的东西，都应该进入负债清单。</p>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="scene-inner">
+        <div>
+          <p class="kicker appear">四类负债</p>
+          <h2 class="appear delay-1">把“压力很大”写成具体项目。</h2>
+          <p class="appear delay-2">负债越具体，越有机会被处理。</p>
+        </div>
+        <div class="debt-grid">
+          <div class="debt-item appear delay-1"><span class="number">01</span><b>金融负债</b><span>贷款、分期、信用卡欠款、超出承受能力的固定支出。</span></div>
+          <div class="debt-item appear delay-2"><span class="number">02</span><b>时间负债</b><span>低效会议、无边界加班、没有成长的杂活、总被打断。</span></div>
+          <div class="debt-item appear delay-3"><span class="number">03</span><b>情绪负债</b><span>长期讨好、无法拒绝、替别人兜底、反复自证。</span></div>
+          <div class="debt-item appear delay-4"><span class="number">04</span><b>信息负债</b><span>过量、混乱、互相矛盾的信息输入，让行动变少。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="scene-inner">
+        <div>
+          <p class="kicker appear">质量标签</p>
+          <h2 class="appear delay-1">不要急着给自己打分，先给每一项贴标签。</h2>
+        </div>
+        <div class="quality-grid">
+          <div class="quality good appear delay-1"><b>优质资产</b><span>能持续产生价值，能在不同场景迁移，也能被别人识别。</span></div>
+          <div class="quality sleep appear delay-2"><b>沉睡资产</b><span>已经存在，但没有被使用。它不一定要从零开始，只需要被唤醒、整理和展示。</span></div>
+          <div class="quality toxic appear delay-3"><b>有毒负债</b><span>持续消耗你，却很少带来沉淀；让你更难拒绝糟糕机会；越拖越难处理。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="scene-inner">
+        <div>
+          <p class="kicker appear">CEO 决策</p>
+          <h2 class="appear delay-1">先处理最卡住系统的地方。</h2>
+          <p class="appear delay-2">不是哪个目标听起来高级，就先做哪个。你要问：如果这个问题改善，我的选择权会不会明显增加？</p>
+        </div>
+        <div class="decision-grid">
+          <div class="decision appear delay-1"><b>投资技能</b><span>当你说不清能稳定解决什么问题，也没有作品或案例。</span></div>
+          <div class="decision appear delay-2"><b>变现人脉</b><span>当你有案例、有口碑，但别人不知道你现在能提供什么。</span></div>
+          <div class="decision appear delay-3"><b>清理负债</b><span>当钱、时间、身体或情绪空间太紧，增长没有地方发生。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="scene-inner assignment">
+        <div>
+          <p class="kicker appear">本章作业</p>
+          <h2 class="appear delay-1">用 40-60 分钟，完成第一版个人资产负债表。</h2>
+          <p class="appear delay-2">不要追求一次准确。第一张表不会完美，但它会让你从模糊焦虑走向具体经营。</p>
+          <div class="closing-line appear delay-3">我当前最值得优先处理的是 ________，因为它会影响我的 ________。接下来 30 天，我要做的最小动作是 ________。</div>
+        </div>
+        <div class="action-stack">
+          <div class="action-card appear delay-1"><span class="tag">第一步</span><b>填写五类资产</b><span>至少写 8 个具体项目。</span></div>
+          <div class="action-card appear delay-2"><span class="tag">第二步</span><b>填写四类负债</b><span>至少写 5 个具体项目，并写清楚消耗了什么。</span></div>
+          <div class="action-card appear delay-3"><span class="tag">第三步</span><b>选一个 30 天动作</b><span>只选一个，不要同时开太多战线。</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script>
+    const progressBar = document.getElementById("progressBar");
+    const updateProgress = () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
+      progressBar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+    };
+    updateProgress();
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    window.addEventListener("resize", updateProgress);
+  </script>
+</body>
+</html>

@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>第 3 章：用一个小原型看见偏差</title>
+  <style>
+    :root {
+      --color-bg: #f6f0e6;
+      --color-paper: #fffaf1;
+      --color-paper-soft: #eee5d7;
+      --color-text-primary: #20201d;
+      --color-text-secondary: #68645b;
+      --color-accent: #007f78;
+      --color-accent-2: #b45b35;
+      --color-line: rgba(32, 32, 29, 0.16);
+      --color-shadow: rgba(47, 38, 25, 0.12);
+      --font-serif: "Songti SC", "Noto Serif SC", "STSong", serif;
+      --font-sans: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+      --size-title: 3.6rem;
+      --size-headline: 2.25rem;
+      --size-kicker: 0.9rem;
+      --size-body: 1.15rem;
+      --size-small: 0.92rem;
+      --leading-tight: 1.25;
+      --leading-normal: 1.75;
+      --spacing-screen: 5rem;
+      --spacing-section: 2rem;
+      --radius: 8px;
+      --duration-slow: 780ms;
+      --duration-fast: 360ms;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--color-bg);
+    }
+
+    body {
+      margin: 0;
+      color: var(--color-text-primary);
+      font-family: var(--font-sans);
+      line-height: var(--leading-normal);
+      background:
+        linear-gradient(90deg, rgba(0,0,0,0.025) 1px, transparent 1px) 0 0 / 36px 36px,
+        linear-gradient(0deg, rgba(0,0,0,0.018) 1px, transparent 1px) 0 0 / 36px 36px,
+        var(--color-bg);
+      overflow-x: hidden;
+    }
+
+    main {
+      width: 100%;
+    }
+
+    .scene {
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: var(--spacing-screen) 1.4rem;
+      position: relative;
+      scroll-snap-align: start;
+    }
+
+    .stage {
+      width: min(100%, 1040px);
+      position: relative;
+    }
+
+    .narrow {
+      width: min(100%, 820px);
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.7rem;
+      color: var(--color-accent);
+      font-size: var(--size-kicker);
+      font-weight: 700;
+      letter-spacing: 0;
+      margin-bottom: 1.2rem;
+    }
+
+    .kicker::before {
+      content: "";
+      width: 2.4rem;
+      height: 1px;
+      background: currentColor;
+      transform-origin: left;
+    }
+
+    h1,
+    h2,
+    .lead,
+    .final-line {
+      margin: 0;
+      font-family: var(--font-serif);
+      font-weight: 800;
+      line-height: var(--leading-tight);
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 10em;
+      font-size: var(--size-title);
+    }
+
+    h2,
+    .lead {
+      max-width: 13em;
+      font-size: var(--size-headline);
+    }
+
+    p {
+      max-width: 28em;
+      margin: 1.2rem 0 0;
+      color: var(--color-text-secondary);
+      font-size: var(--size-body);
+    }
+
+    strong {
+      color: var(--color-text-primary);
+      font-weight: 700;
+    }
+
+    .mark {
+      color: var(--color-accent);
+    }
+
+    .warm {
+      color: var(--color-accent-2);
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .paper {
+      background: var(--color-paper);
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      box-shadow: 0 18px 50px var(--color-shadow);
+      padding: 1.4rem;
+      position: relative;
+    }
+
+    .paper::after {
+      content: "";
+      position: absolute;
+      inset: 0.7rem;
+      border: 1px solid rgba(0, 127, 120, 0.14);
+      border-radius: 5px;
+      pointer-events: none;
+    }
+
+    .ab-line {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 1rem;
+      align-items: center;
+      margin-top: 2.2rem;
+      max-width: 620px;
+    }
+
+    .ab-token {
+      min-height: 7.5rem;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--color-line);
+      background: rgba(255, 250, 241, 0.72);
+      border-radius: var(--radius);
+      font-family: var(--font-serif);
+      font-size: 4rem;
+      font-weight: 900;
+    }
+
+    .arrow {
+      color: var(--color-accent-2);
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .lamp {
+      width: min(100%, 440px);
+      aspect-ratio: 1;
+      margin-inline: auto;
+      display: grid;
+      place-items: center;
+      position: relative;
+      background:
+        radial-gradient(circle at 50% 46%, rgba(255, 250, 241, 0.98) 0 16%, rgba(245, 204, 118, 0.42) 17% 32%, transparent 33%),
+        conic-gradient(from 210deg at 50% 50%, transparent 0 12%, rgba(0, 127, 120, 0.12) 12% 31%, transparent 31% 100%);
+      border: 1px solid var(--color-line);
+      border-radius: 50%;
+    }
+
+    .lamp span {
+      width: 12rem;
+      text-align: center;
+      font-family: var(--font-serif);
+      font-size: 1.7rem;
+      line-height: 1.35;
+      color: var(--color-text-primary);
+    }
+
+    .book-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      margin-top: 1.2rem;
+    }
+
+    .book-row {
+      display: grid;
+      grid-template-columns: 1.1fr 0.8fr 1.2fr;
+      gap: 0.75rem;
+      padding: 0.8rem;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      color: var(--color-text-secondary);
+      background: rgba(255, 250, 241, 0.7);
+      font-size: 0.95rem;
+    }
+
+    .next-panel {
+      border: 2px solid rgba(0, 127, 120, 0.38);
+      background: #f8fbf6;
+      margin-bottom: 1rem;
+    }
+
+    .next-panel .label,
+    .book-row .label {
+      color: var(--color-accent);
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-bottom: 0.15rem;
+    }
+
+    .next-title {
+      margin: 0;
+      font-family: var(--font-serif);
+      font-size: 1.75rem;
+      line-height: 1.35;
+      color: var(--color-text-primary);
+    }
+
+    .checkline {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.9rem;
+      margin-top: 1.4rem;
+      font-size: 1.12rem;
+      color: var(--color-text-primary);
+    }
+
+    .checkline::before {
+      content: "";
+      flex: 0 0 1.2rem;
+      width: 1.2rem;
+      height: 1.2rem;
+      margin-top: 0.25rem;
+      border: 2px solid var(--color-accent);
+      border-radius: 4px;
+      background: linear-gradient(135deg, transparent 48%, var(--color-accent) 49% 56%, transparent 57%);
+    }
+
+    .feedback-card {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      overflow: hidden;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-paper);
+      box-shadow: 0 18px 50px var(--color-shadow);
+      margin-top: 2rem;
+    }
+
+    .feedback-cell {
+      min-height: 13rem;
+      padding: 1.2rem;
+      border-right: 1px solid var(--color-line);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .feedback-cell:last-child {
+      border-right: 0;
+    }
+
+    .cell-title {
+      color: var(--color-accent);
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+
+    .cell-copy {
+      color: var(--color-text-primary);
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      line-height: 1.5;
+      margin-top: 1rem;
+    }
+
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+      background: rgba(255, 250, 241, 0.7);
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      font-size: 0.98rem;
+    }
+
+    .mini-table th,
+    .mini-table td {
+      text-align: left;
+      padding: 0.85rem;
+      border-bottom: 1px solid var(--color-line);
+      vertical-align: top;
+    }
+
+    .mini-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .mini-table th {
+      color: var(--color-accent);
+      font-size: 0.86rem;
+      background: rgba(0, 127, 120, 0.06);
+    }
+
+    .bias-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .bias-card {
+      min-height: 17rem;
+      padding: 1.3rem;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-paper);
+      box-shadow: 0 14px 34px var(--color-shadow);
+    }
+
+    .bias-card .num {
+      font-family: var(--font-serif);
+      font-size: 2.5rem;
+      line-height: 1;
+      color: var(--color-accent-2);
+      margin-bottom: 1rem;
+    }
+
+    .bias-card h3 {
+      margin: 0;
+      font-size: 1.2rem;
+      color: var(--color-text-primary);
+    }
+
+    .bias-card p {
+      font-size: 1rem;
+      margin-top: 0.8rem;
+    }
+
+    .repair {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 1.4rem;
+      align-items: stretch;
+      margin-top: 2rem;
+    }
+
+    .repair-box {
+      padding: 1.3rem;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-paper);
+    }
+
+    .repair-box .tag {
+      color: var(--color-accent-2);
+      font-weight: 800;
+      font-size: 0.88rem;
+      margin-bottom: 0.7rem;
+    }
+
+    .repair-box.good .tag {
+      color: var(--color-accent);
+    }
+
+    .repair-arrow {
+      display: grid;
+      place-items: center;
+      color: var(--color-accent);
+      font-size: 2.2rem;
+      font-weight: 800;
+    }
+
+    .submit-list {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-top: 2rem;
+      counter-reset: item;
+    }
+
+    .submit-item {
+      counter-increment: item;
+      min-height: 11rem;
+      padding: 1.2rem;
+      border-top: 3px solid var(--color-accent);
+      background: rgba(255, 250, 241, 0.76);
+      border-radius: 0 0 var(--radius) var(--radius);
+    }
+
+    .submit-item::before {
+      content: counter(item, decimal-leading-zero);
+      display: block;
+      margin-bottom: 1.4rem;
+      color: var(--color-accent-2);
+      font-family: var(--font-serif);
+      font-size: 2.4rem;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .final-line {
+      max-width: 11em;
+      font-size: 3.2rem;
+    }
+
+    .footnote {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--color-line);
+      color: var(--color-text-secondary);
+      font-size: var(--size-small);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(1.2rem);
+      transition: opacity var(--duration-slow) ease, transform var(--duration-slow) ease;
+    }
+
+    .reveal.in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .delay-1 {
+      transition-delay: 120ms;
+    }
+
+    .delay-2 {
+      transition-delay: 240ms;
+    }
+
+    .delay-3 {
+      transition-delay: 360ms;
+    }
+
+    @media (max-width: 900px) {
+      :root {
+        --size-title: 2.7rem;
+        --size-headline: 1.85rem;
+        --size-body: 1.05rem;
+        --spacing-screen: 4rem;
+      }
+
+      .split,
+      .repair {
+        grid-template-columns: 1fr;
+      }
+
+      .repair-arrow {
+        min-height: 2rem;
+      }
+
+      .feedback-card,
+      .bias-grid,
+      .submit-list {
+        grid-template-columns: 1fr;
+      }
+
+      .feedback-cell {
+        min-height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--color-line);
+      }
+
+      .feedback-cell:last-child {
+        border-bottom: 0;
+      }
+    }
+
+    @media (max-width: 560px) {
+      :root {
+        --size-title: 1.95rem;
+        --size-headline: 1.55rem;
+        --size-body: 1rem;
+        --spacing-screen: 3rem;
+      }
+
+      .scene {
+        min-height: auto;
+        padding: 3.2rem 1rem;
+      }
+
+      .ab-line,
+      .book-row {
+        grid-template-columns: 1fr;
+      }
+
+      .arrow {
+        text-align: center;
+        transform: rotate(90deg);
+      }
+
+      .paper,
+      .bias-card,
+      .repair-box,
+      .submit-item {
+        padding: 1rem;
+      }
+
+      .mini-table {
+        font-size: 0.92rem;
+      }
+
+      .mini-table th,
+      .mini-table td {
+        padding: 0.65rem;
+      }
+
+      .final-line {
+        font-size: 2rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+
+      .reveal {
+        opacity: 1;
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="scene">
+      <div class="stage narrow">
+        <div class="kicker reveal">第 3 章</div>
+        <h1 class="reveal delay-1">用一个小原型看见偏差</h1>
+        <p class="reveal delay-2">有些偏差，写任务时看不见。只有把想法放进一个能点、能看、能判断的东西里，它才会浮出来。</p>
+        <div class="ab-line reveal delay-3" aria-label="A 到 B 的偏差示意">
+          <div class="ab-token">A</div>
+          <div class="arrow">→</div>
+          <div class="ab-token warm">B</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">原型不是承诺</div>
+          <h2 class="reveal delay-1">它不是缩水版产品，<br>更像一盏小灯。</h2>
+          <p class="reveal delay-2">它只照一下最关键的动作：这个核心动作，按我现在的想法走，真的顺吗？</p>
+        </div>
+        <div class="lamp reveal delay-2"><span>照亮<br>核心动作</span></div>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">读书计划追踪器</div>
+          <h2 class="reveal delay-1">你以为要管理书单，试过才发现要恢复阅读。</h2>
+          <p class="reveal delay-2">真正的摩擦不是“书能不能加进去”，而是隔几天回来以后，能不能立刻知道该继续哪一本。</p>
+        </div>
+        <div class="paper reveal delay-2">
+          <div class="next-panel paper">
+            <div class="label">下一次阅读</div>
+            <p class="next-title">继续《程序员修炼之道》第 4 章前半</p>
+            <p>预计 20 分钟</p>
+          </div>
+          <div class="book-grid">
+            <div class="book-row">
+              <div><div class="label">在读</div>《程序员修炼之道》</div>
+              <div>第 3 章</div>
+              <div>明天读第 4 章前半</div>
+            </div>
+            <div class="book-row">
+              <div><div class="label">暂停</div>《写作这回事》</div>
+              <div>60 页</div>
+              <div>周末再决定</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="stage narrow">
+        <div class="kicker reveal">先判断一下</div>
+        <h2 class="reveal delay-1">第一轮最该验证的，不是最像功能的那一块。</h2>
+        <div class="checkline reveal delay-2">打开页面后，能不能很快知道下一次读什么。</div>
+        <p class="reveal delay-3">新增书籍也重要，但它服务于这个动作。统计、封面、长笔记，都不是第一轮要抢的位置。</p>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="stage">
+        <div class="kicker reveal">第一轮反馈卡</div>
+        <h2 class="reveal delay-1">原型的价值，不在于像不像成品，而在于你知道自己要看什么。</h2>
+        <div class="feedback-card reveal delay-2">
+          <div class="feedback-cell">
+            <div class="cell-title">核心动作</div>
+            <div class="cell-copy">打开页面后，决定下一次读哪本书。</div>
+          </div>
+          <div class="feedback-cell">
+            <div class="cell-title">预期观察</div>
+            <div class="cell-copy">第一屏能看到一条明确建议。</div>
+          </div>
+          <div class="feedback-cell">
+            <div class="cell-title">实际偏差</div>
+            <div class="cell-copy">页面显示完整书单，用户仍要自己判断。</div>
+          </div>
+          <div class="feedback-cell">
+            <div class="cell-title">下一步修正</div>
+            <div class="cell-copy">第一屏改成“下一次阅读”区域。</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">边界提醒</div>
+          <h2 class="reveal delay-1">这张小表，甚至可以没有保存功能。</h2>
+          <p class="reveal delay-2">如果你要验证的是“打开后能不能决定读什么”，三条假数据已经足够。技术实现可以稍后再做，方向判断应该更早发生。</p>
+        </div>
+        <table class="mini-table reveal delay-2">
+          <thead>
+            <tr>
+              <th>书名</th>
+              <th>状态</th>
+              <th>下一步</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>程序员修炼之道</td>
+              <td>在读</td>
+              <td>第 4 章前半</td>
+            </tr>
+            <tr>
+              <td>写作这回事</td>
+              <td>暂停</td>
+              <td>周末再决定</td>
+            </tr>
+            <tr>
+              <td>设计心理学</td>
+              <td>想读</td>
+              <td>先不加入本周</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="stage">
+        <div class="kicker reveal">三种常见偏差</div>
+        <h2 class="reveal delay-1">不要把所有问题都写成“体验不好”。</h2>
+        <div class="bias-grid">
+          <div class="bias-card reveal delay-1">
+            <div class="num">01</div>
+            <h3>对象偏差</h3>
+            <p>你以为在做书籍管理工具，实际需要的是阅读恢复入口。</p>
+          </div>
+          <div class="bias-card reveal delay-2">
+            <div class="num">02</div>
+            <h3>动作偏差</h3>
+            <p>你验证了新增书籍，却没有验证回来后能不能继续读。</p>
+          </div>
+          <div class="bias-card reveal delay-3">
+            <div class="num">03</div>
+            <h3>结果偏差</h3>
+            <p>页面把信息列出来了，但没有帮用户少做一个判断。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="stage narrow">
+        <div class="kicker reveal">从反馈改下一步</div>
+        <h2 class="reveal delay-1">反馈不是“整体优化一下”。</h2>
+        <div class="repair reveal delay-2">
+          <div class="repair-box">
+            <div class="tag">太宽</div>
+            页面有点乱，体验不太好，整体再简洁一点。
+          </div>
+          <div class="repair-arrow">→</div>
+          <div class="repair-box good">
+            <div class="tag">可执行</div>
+            第一屏只保留下一次阅读建议；完整书单移到下方。
+          </div>
+        </div>
+        <p class="reveal delay-3">先找偏差来源，再只选一个修正方向，最后写成新的小任务。</p>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="stage">
+        <div class="kicker reveal">独立检验</div>
+        <h2 class="reveal delay-1">这一章要提交的，不是完整产品。</h2>
+        <div class="submit-list">
+          <div class="submit-item reveal delay-1">核心动作：本轮只验证哪一个动作。</div>
+          <div class="submit-item reveal delay-2">原型方案：用什么低成本形式模拟。</div>
+          <div class="submit-item reveal delay-3">第一轮反馈卡：预期、偏差、修正。</div>
+          <div class="submit-item reveal delay-3">自检说明：为什么不用做完整原型。</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="stage narrow">
+        <div class="kicker reveal">片尾</div>
+        <p class="lead reveal delay-1">原型只要足够回答本轮问题，就已经完成任务。</p>
+        <p class="final-line reveal delay-2">范围越小，偏差越容易被看见。</p>
+        <div class="footnote reveal delay-3">多出来的精致，可能反而挡住问题。</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add('in');
+      });
+    }, { threshold: 0.22 });
+
+    document.querySelectorAll('.reveal').forEach((item) => observer.observe(item));
+  </script>
+</body>
+</html>

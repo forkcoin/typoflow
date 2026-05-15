@@ -4,8 +4,16 @@ import { fileURLToPath } from "node:url";
 
 const samplesDir = path.resolve("public/samples");
 const manifestPath = path.join(samplesDir, "manifest.json");
-const ignoredNames = new Set(["manifest.json", ".DS_Store"]);
-const ignoredDirectoryNames = new Set(["screenshots", "screenshots-svg", "__screenshots__", ".git"]);
+const ignoredNames = new Set([
+  "manifest.json",
+  ".DS_Store",
+  "README.md",
+  "readme.md",
+  "package.json",
+  "package-lock.json",
+  "verify.mjs",
+]);
+const ignoredDirectoryNames = new Set(["screenshots", "screenshots-svg", "__screenshots__", ".git", "node_modules"]);
 
 function toPublicPath(filePath) {
   return `/${path.relative("public", filePath).split(path.sep).join("/")}`;

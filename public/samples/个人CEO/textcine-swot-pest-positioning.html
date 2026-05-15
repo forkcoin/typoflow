@@ -1,0 +1,839 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SWOT x PEST：在变化里找位置</title>
+  <style>
+    :root {
+      --color-bg: #eef1ea;
+      --color-panel: #fbf7ed;
+      --color-ink: #202722;
+      --color-muted: #667066;
+      --color-line: #c9d0c2;
+      --color-accent: #b34d38;
+      --color-blue: #315d72;
+      --color-green: #47745e;
+      --color-gold: #a97834;
+      --color-dark: #1f2c28;
+      --font-serif: "Songti SC", "STSong", "Noto Serif SC", serif;
+      --font-sans: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+      --size-title: clamp(2.5rem, 8vw, 6.1rem);
+      --size-headline: clamp(1.8rem, 5vw, 3.7rem);
+      --size-body: clamp(1rem, 2.35vw, 1.24rem);
+      --size-note: clamp(1rem, 2.15vw, 1.03rem);
+      --screen-pad: clamp(2rem, 6vw, 5.4rem);
+      --max-width: 1120px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--color-bg);
+    }
+
+    body {
+      margin: 0;
+      color: var(--color-ink);
+      font-family: var(--font-sans);
+      background:
+        linear-gradient(90deg, rgba(49, 93, 114, 0.09) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(49, 93, 114, 0.07) 1px, transparent 1px),
+        var(--color-bg);
+      background-size: 44px 44px;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      background:
+        radial-gradient(circle at 80% 12%, rgba(179, 77, 56, 0.14), transparent 25rem),
+        radial-gradient(circle at 12% 72%, rgba(49, 93, 114, 0.12), transparent 28rem),
+        linear-gradient(180deg, rgba(251, 247, 237, 0.8), rgba(238, 241, 234, 0.76));
+    }
+
+    .progress {
+      position: fixed;
+      inset: 0 0 auto;
+      height: 4px;
+      z-index: 20;
+      background: rgba(32, 39, 34, 0.08);
+    }
+
+    .progress span {
+      display: block;
+      width: 0%;
+      height: 100%;
+      background: var(--color-accent);
+      transition: width 120ms linear;
+    }
+
+    .scene {
+      min-height: 100svh;
+      padding: var(--screen-pad);
+      display: grid;
+      align-items: center;
+      position: relative;
+      isolation: isolate;
+    }
+
+    .scene-inner {
+      width: min(100%, var(--max-width));
+      margin: 0 auto;
+      display: grid;
+      gap: clamp(1.25rem, 3vw, 2.4rem);
+    }
+
+    .split {
+      grid-template-columns: minmax(0, 0.92fr) minmax(300px, 1fr);
+      align-items: center;
+    }
+
+    .kicker {
+      margin: 0;
+      color: var(--color-accent);
+      font-size: var(--size-note);
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    h1,
+    h2 {
+      margin: 0;
+      font-family: var(--font-serif);
+      line-height: 1.15;
+      letter-spacing: 0;
+      text-wrap: balance;
+    }
+
+    h1 {
+      font-size: var(--size-title);
+      max-width: 9em;
+    }
+
+    h2 {
+      font-size: var(--size-headline);
+      max-width: 12em;
+    }
+
+    p {
+      margin: 0;
+      max-width: 34em;
+      color: var(--color-muted);
+      font-size: var(--size-body);
+      line-height: 1.82;
+    }
+
+    .map-panel,
+    .noise-panel,
+    .bridge,
+    .matrix,
+    .radar,
+    .table-card,
+    .check-card,
+    .false-card,
+    .action-card {
+      border: 1px solid var(--color-line);
+      background: rgba(251, 247, 237, 0.78);
+      box-shadow: 0 24px 70px rgba(31, 44, 40, 0.11);
+    }
+
+    .map-panel {
+      min-height: 24rem;
+      padding: clamp(1.2rem, 3vw, 1.8rem);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .map-panel::before,
+    .map-panel::after {
+      content: "";
+      position: absolute;
+      background: var(--color-blue);
+      opacity: 0.35;
+    }
+
+    .map-panel::before {
+      left: 12%;
+      right: 12%;
+      top: 50%;
+      height: 2px;
+    }
+
+    .map-panel::after {
+      top: 12%;
+      bottom: 12%;
+      left: 50%;
+      width: 2px;
+    }
+
+    .pin {
+      position: absolute;
+      width: clamp(5.6rem, 14vw, 8rem);
+      aspect-ratio: 1;
+      border: 2px solid var(--color-accent);
+      background: rgba(251, 247, 237, 0.94);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 0.7rem;
+      border-radius: 50%;
+      color: var(--color-ink);
+      font-family: var(--font-serif);
+      font-size: clamp(1rem, 3vw, 1.35rem);
+      line-height: 1.25;
+      z-index: 2;
+    }
+
+    .pin.one { left: 8%; top: 16%; }
+    .pin.two { right: 9%; top: 20%; border-color: var(--color-green); }
+    .pin.three { left: 19%; bottom: 14%; border-color: var(--color-gold); }
+    .pin.four { right: 15%; bottom: 12%; border-color: var(--color-blue); }
+    .pin.center {
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--color-dark);
+      color: #fbf7ed;
+      border-color: var(--color-dark);
+    }
+
+    .word-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-content: center;
+      min-height: 20rem;
+    }
+
+    .word-cloud span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 3rem;
+      padding: 0.65rem 0.9rem;
+      border: 1px solid var(--color-line);
+      background: rgba(251, 247, 237, 0.76);
+      color: var(--color-muted);
+      font-size: var(--size-note);
+      line-height: 1.35;
+    }
+
+    .word-cloud span:nth-child(2n) { color: var(--color-blue); }
+    .word-cloud span:nth-child(3n) { color: var(--color-accent); }
+
+    .dark {
+      color: #fbf7ed;
+      background:
+        linear-gradient(135deg, rgba(31, 44, 40, 0.97), rgba(32, 39, 34, 0.99)),
+        var(--color-dark);
+    }
+
+    .dark h2,
+    .dark .kicker {
+      color: #fbf7ed;
+    }
+
+    .dark p {
+      color: rgba(251, 247, 237, 0.74);
+    }
+
+    .bridge {
+      min-height: 21rem;
+      padding: clamp(1.2rem, 3vw, 2rem);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(1rem, 3vw, 2rem);
+      align-items: center;
+      position: relative;
+    }
+
+    .bridge::before {
+      content: "";
+      position: absolute;
+      left: 18%;
+      right: 18%;
+      top: 50%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--color-blue), var(--color-accent));
+      transform: translateY(-50%);
+      opacity: 0.72;
+    }
+
+    .bridge-side {
+      min-height: 10rem;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 1rem;
+      background: rgba(251, 247, 237, 0.92);
+      border: 1px solid var(--color-line);
+      z-index: 2;
+    }
+
+    .bridge-side b,
+    .keyword b,
+    .matrix-cell b,
+    .radar-item b,
+    .check-card b,
+    .false-card b,
+    .action-card b {
+      display: block;
+      font-family: var(--font-serif);
+      font-size: clamp(1.25rem, 3vw, 1.9rem);
+      line-height: 1.28;
+      color: var(--color-ink);
+    }
+
+    .bridge-side span,
+    .keyword span,
+    .matrix-cell span,
+    .radar-item span,
+    .check-card span,
+    .false-card span,
+    .action-card span {
+      display: block;
+      margin-top: 0.65rem;
+      color: var(--color-muted);
+      font-size: var(--size-note);
+      line-height: 1.62;
+    }
+
+    .keyword-grid,
+    .check-grid,
+    .false-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(0.8rem, 2vw, 1rem);
+    }
+
+    .keyword,
+    .check-card,
+    .false-card {
+      min-height: 14rem;
+      padding: clamp(1rem, 2.2vw, 1.4rem);
+    }
+
+    .keyword {
+      border-left: 5px solid var(--color-blue);
+      background: rgba(251, 247, 237, 0.76);
+    }
+
+    .keyword:nth-child(2) { border-left-color: var(--color-green); }
+    .keyword:nth-child(3) { border-left-color: var(--color-accent); }
+
+    .matrix {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      overflow: hidden;
+    }
+
+    .matrix-cell {
+      min-height: 13rem;
+      padding: clamp(1rem, 2.5vw, 1.5rem);
+      border-right: 1px solid var(--color-line);
+      border-bottom: 1px solid var(--color-line);
+      background: rgba(251, 247, 237, 0.74);
+    }
+
+    .matrix-cell:nth-child(2n) { border-right: 0; }
+    .matrix-cell:nth-child(n+3) { border-bottom: 0; }
+
+    .matrix-cell small,
+    .label {
+      color: var(--color-accent);
+      font-weight: 700;
+      font-size: var(--size-note);
+      line-height: 1.4;
+    }
+
+    .table-card {
+      overflow: hidden;
+    }
+
+    .table-row {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      border-bottom: 1px solid var(--color-line);
+    }
+
+    .table-row:last-child { border-bottom: 0; }
+
+    .table-row div {
+      padding: 1rem;
+      font-size: var(--size-note);
+      line-height: 1.58;
+      border-right: 1px solid var(--color-line);
+      color: var(--color-muted);
+    }
+
+    .table-row div:last-child { border-right: 0; color: var(--color-ink); }
+
+    .radar {
+      min-height: 26rem;
+      position: relative;
+      padding: clamp(1.2rem, 3vw, 2rem);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .radar::before {
+      content: "";
+      width: min(74%, 25rem);
+      aspect-ratio: 1;
+      border: 1px solid var(--color-line);
+      border-radius: 50%;
+      position: absolute;
+      box-shadow: 0 0 0 4rem rgba(49, 93, 114, 0.04), 0 0 0 8rem rgba(49, 93, 114, 0.025);
+    }
+
+    .radar-item {
+      position: absolute;
+      width: min(42%, 13rem);
+      padding: 1rem;
+      background: rgba(251, 247, 237, 0.94);
+      border: 1px solid var(--color-line);
+    }
+
+    .radar-item:nth-child(1) { top: 8%; left: 50%; transform: translateX(-50%); }
+    .radar-item:nth-child(2) { right: 5%; top: 42%; }
+    .radar-item:nth-child(3) { bottom: 8%; left: 50%; transform: translateX(-50%); }
+    .radar-item:nth-child(4) { left: 5%; top: 42%; }
+
+    .filter-line {
+      padding: clamp(1.2rem, 3vw, 1.6rem);
+      border-left: 5px solid var(--color-accent);
+      background: rgba(251, 247, 237, 0.78);
+      font-size: clamp(1.2rem, 3.2vw, 1.9rem);
+      line-height: 1.55;
+      font-family: var(--font-serif);
+    }
+
+    .cross-map {
+      min-height: 26rem;
+      border: 1px solid var(--color-line);
+      background: rgba(251, 247, 237, 0.78);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cross-map::before,
+    .cross-map::after {
+      content: "";
+      position: absolute;
+      background: rgba(49, 93, 114, 0.55);
+    }
+
+    .cross-map::before {
+      left: 9%;
+      right: 9%;
+      top: 50%;
+      height: 2px;
+    }
+
+    .cross-map::after {
+      top: 9%;
+      bottom: 9%;
+      left: 50%;
+      width: 2px;
+    }
+
+    .axis {
+      position: absolute;
+      color: var(--color-muted);
+      font-size: var(--size-note);
+      line-height: 1.4;
+    }
+
+    .axis.x1 { left: 8%; top: calc(50% + 0.8rem); }
+    .axis.x2 { right: 8%; top: calc(50% + 0.8rem); }
+    .axis.y1 { left: calc(50% + 0.8rem); top: 8%; }
+    .axis.y2 { left: calc(50% + 0.8rem); bottom: 8%; }
+
+    .window-dot {
+      position: absolute;
+      left: 58%;
+      top: 33%;
+      width: clamp(8rem, 24vw, 13rem);
+      min-height: 8rem;
+      transform: translate(-50%, -50%);
+      padding: 1rem;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      background: var(--color-dark);
+      color: #fbf7ed;
+      border: 2px solid var(--color-accent);
+      font-family: var(--font-serif);
+      font-size: clamp(1.2rem, 3.4vw, 1.8rem);
+      line-height: 1.25;
+      z-index: 2;
+    }
+
+    .check-card {
+      border-top: 6px solid var(--color-green);
+      background: rgba(251, 247, 237, 0.78);
+    }
+
+    .false-card {
+      border-top: 6px solid var(--color-accent);
+      background: rgba(251, 247, 237, 0.78);
+    }
+
+    .assignment {
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 0.9fr);
+      align-items: center;
+    }
+
+    .action-stack {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .action-card {
+      padding: clamp(1rem, 2.4vw, 1.35rem);
+    }
+
+    .sentence {
+      padding: clamp(1.1rem, 3vw, 1.5rem);
+      border-left: 5px solid var(--color-accent);
+      background: rgba(179, 77, 56, 0.08);
+      color: var(--color-ink);
+      font-size: var(--size-body);
+      line-height: 1.78;
+    }
+
+    .appear {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: rise 760ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    .delay-1 { animation-delay: 120ms; }
+    .delay-2 { animation-delay: 240ms; }
+    .delay-3 { animation-delay: 360ms; }
+    .delay-4 { animation-delay: 480ms; }
+    .delay-5 { animation-delay: 600ms; }
+
+    @keyframes rise {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .split,
+      .assignment {
+        grid-template-columns: 1fr;
+      }
+
+      .keyword-grid,
+      .check-grid,
+      .false-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .bridge {
+        grid-template-columns: 1fr;
+      }
+
+      .bridge::before {
+        top: 18%;
+        bottom: 18%;
+        left: 50%;
+        right: auto;
+        width: 4px;
+        height: auto;
+        transform: translateX(-50%);
+      }
+    }
+
+    @media (max-width: 620px) {
+      .scene {
+        min-height: auto;
+        padding: 4.1rem 1.1rem;
+      }
+
+      h1 { font-size: clamp(2.35rem, 12vw, 4.2rem); }
+
+      .map-panel,
+      .radar,
+      .cross-map {
+        min-height: 31rem;
+      }
+
+      .pin {
+        width: 6.1rem;
+        font-size: 1rem;
+      }
+
+      .pin.one { left: 3%; top: 10%; }
+      .pin.two { right: 3%; top: 14%; }
+      .pin.three { left: 4%; bottom: 10%; }
+      .pin.four { right: 4%; bottom: 9%; }
+
+      .matrix {
+        grid-template-columns: 1fr;
+      }
+
+      .matrix-cell,
+      .matrix-cell:nth-child(2n),
+      .matrix-cell:nth-child(n+3) {
+        border-right: 0;
+        border-bottom: 1px solid var(--color-line);
+      }
+
+      .matrix-cell:last-child {
+        border-bottom: 0;
+      }
+
+      .table-row {
+        grid-template-columns: 1fr;
+      }
+
+      .table-row div {
+        border-right: 0;
+        border-bottom: 1px solid var(--color-line);
+      }
+
+      .table-row div:last-child {
+        border-bottom: 0;
+      }
+
+      .radar {
+        display: grid;
+        gap: 0.8rem;
+        place-items: stretch;
+      }
+
+      .radar::before {
+        display: none;
+      }
+
+      .radar-item,
+      .radar-item:nth-child(1),
+      .radar-item:nth-child(2),
+      .radar-item:nth-child(3),
+      .radar-item:nth-child(4) {
+        position: static;
+        width: auto;
+        transform: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+
+      .appear {
+        opacity: 1;
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+  <main>
+    <section class="scene">
+      <div class="scene-inner split">
+        <div>
+          <p class="kicker appear">第 2 章 · 外部环境定位</p>
+          <h1 class="appear delay-1">SWOT x PEST</h1>
+          <p class="appear delay-2">在变化里找位置。不是追每一个风口，而是判断：哪一个变化，真的能被你接住。</p>
+        </div>
+        <div class="map-panel appear delay-3" aria-label="机会定位地图">
+          <div class="pin one">内部条件</div>
+          <div class="pin two">外部变化</div>
+          <div class="pin three">低成本验证</div>
+          <div class="pin four">停止条件</div>
+          <div class="pin center">机会窗口</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="scene-inner split">
+        <div>
+          <p class="kicker appear">问题建立</p>
+          <h2 class="appear delay-1">变化太多了。</h2>
+          <p class="appear delay-2">每个词都像机会，每个词又都让人焦虑。只跟着热闹走，很容易从一个风口跳到另一个风口。</p>
+        </div>
+        <div class="word-cloud appear delay-3" aria-label="变化热词">
+          <span>AI</span><span>副业</span><span>银发经济</span><span>出海</span><span>个人 IP</span><span>知识付费</span><span>低空经济</span><span>情绪价值</span><span>疗愈经济</span><span>平台规则</span><span>组织用人变化</span><span>消费习惯变化</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene dark">
+      <div class="scene-inner split">
+        <div>
+          <p class="kicker appear">核心定义</p>
+          <h2 class="appear delay-1">机会不是风口，而是你能接住的变化。</h2>
+          <p class="appear delay-2">风口属于环境。机会属于你和环境的匹配。</p>
+        </div>
+        <div class="bridge appear delay-3">
+          <div class="bridge-side"><b>外部变化</b><span>行业、技术、消费、人口、规则正在改变。</span></div>
+          <div class="bridge-side"><b>内部条件</b><span>你的资产、短板、时间、现金流和经验能不能接住。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="scene-inner">
+        <div>
+          <p class="kicker appear">三个关键词</p>
+          <h2 class="appear delay-1">真正的机会，要能被验证。</h2>
+          <p class="appear delay-2">如果一个方向只让你兴奋，却说不清为什么适合你，也说不清下一步怎样验证，它暂时还不是机会。</p>
+        </div>
+        <div class="keyword-grid">
+          <div class="keyword appear delay-1"><b>外部变化</b><span>没有变化，很难出现新的空间。</span></div>
+          <div class="keyword appear delay-2"><b>内部条件</b><span>你有没有相关资产，短板会不会限制你。</span></div>
+          <div class="keyword appear delay-3"><b>可以验证</b><span>找 5 个目标用户聊聊，做一次低成本服务，先看反馈。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="scene-inner split">
+        <div>
+          <p class="kicker appear">个人 SWOT</p>
+          <h2 class="appear delay-1">先把内部条件说清楚。</h2>
+          <p class="appear delay-2">SWOT 不该变成自我介绍。它要帮你看见哪些资产能用，哪些短板会限制你。</p>
+        </div>
+        <div class="matrix appear delay-3" role="table" aria-label="个人 SWOT">
+          <div class="matrix-cell"><small>S Strengths</small><b>优势</b><span>已经存在、能被调用的资产。</span></div>
+          <div class="matrix-cell"><small>W Weaknesses</small><b>劣势</b><span>限制你接住机会的短板。</span></div>
+          <div class="matrix-cell"><small>O Opportunities</small><b>机会</b><span>外部可能出现的空间。</span></div>
+          <div class="matrix-cell"><small>T Threats</small><b>威胁</b><span>可能增加成本或失败率的因素。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="scene-inner split">
+        <div>
+          <p class="kicker appear">从感觉表到判断表</p>
+          <h2 class="appear delay-1">每一条，都要加一个证据。</h2>
+          <p class="appear delay-2">优势后面写证据，劣势后面写代价，机会后面写来源，威胁后面写可能后果。</p>
+        </div>
+        <div class="table-card appear delay-3" role="table" aria-label="SWOT 写法对照">
+          <div class="table-row"><div>我沟通能力强</div><div>我能在会议后整理行动清单，过去三个项目都被继续使用。</div></div>
+          <div class="table-row"><div>我不够自律</div><div>我下班后注意力下降，连续三次线上课只完成第一周。</div></div>
+          <div class="table-row"><div>AI 是机会</div><div>我观察到身边小团队在试工具，但没人能接进日常流程。</div></div>
+          <div class="table-row"><div>竞争很激烈</div><div>同类账号很多，没有细分对象和案例，很难被记住。</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="scene-inner split">
+        <div>
+          <p class="kicker appear">PEST 观察</p>
+          <h2 class="appear delay-1">从四个方向看外部变化。</h2>
+          <p class="appear delay-2">PEST 不负责给答案。它只负责扩大你的观察面，避免你只写已经听过的热词。</p>
+        </div>
+        <div class="radar appear delay-3" aria-label="PEST 四方向">
+          <div class="radar-item"><b>P 政策/规则</b><span>行业规范、平台规则、资质要求、公司制度。</span></div>
+          <div class="radar-item"><b>E 经济/成本</b><span>消费意愿、企业预算、就业稳定性、外包需求。</span></div>
+          <div class="radar-item"><b>S 社会/人群</b><span>生活方式、家庭结构、工作方式、消费心理。</span></div>
+          <div class="radar-item"><b>T 技术</b><span>工具降低了什么成本，又放大了什么能力。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="scene-inner">
+        <p class="kicker appear">经营信息过滤器</p>
+        <h2 class="appear delay-1">PEST 不是新闻摘抄。</h2>
+        <p class="appear delay-2">每一条外部变化后面，都要接一句：这对我意味着什么。如果接不上，它暂时就不是你的经营信息。</p>
+        <div class="filter-line appear delay-3">我观察到 ________，这可能意味着 ________，但我还需要确认 ________。</div>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="scene-inner split">
+        <div>
+          <p class="kicker appear">交叉匹配</p>
+          <h2 class="appear delay-1">两张表分开写，只是资料。交叉起来，才有判断。</h2>
+          <p class="appear delay-2">最重要的一组交叉，是优势 x 外部机会。它回答：我已有的资产，能不能接住外部变化？</p>
+        </div>
+        <div class="cross-map appear delay-3" aria-label="机会窗口坐标">
+          <div class="axis x1">内部资产弱</div>
+          <div class="axis x2">内部资产强</div>
+          <div class="axis y1">外部变化强</div>
+          <div class="axis y2">外部变化弱</div>
+          <div class="window-dot">机会窗口</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="scene-inner">
+        <div>
+          <p class="kicker appear">进入验证前</p>
+          <h2 class="appear delay-1">机会窗口不是最赚钱的方向。</h2>
+          <p class="appear delay-2">它是当前最值得验证的匹配点。</p>
+        </div>
+        <div class="check-grid">
+          <div class="check-card appear delay-1"><b>有外部变化</b><span>不是纯想象，也不是只因为别人晒结果。</span></div>
+          <div class="check-card appear delay-2"><b>有内部资产能接住</b><span>不是从零硬冲，也不靠短期兴奋支撑。</span></div>
+          <div class="check-card appear delay-3"><b>有小测试可以验证</b><span>不是直接豪赌，也不是一开始就押上全部身家。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="scene-inner">
+        <div>
+          <p class="kicker appear">避开三种假机会</p>
+          <h2 class="appear delay-1">不是让你保守，而是让勇气用在正确的位置。</h2>
+        </div>
+        <div class="false-grid">
+          <div class="false-card appear delay-1"><b>假热闹</b><span>别人都在做，所以我也想做。热闹属于别人，不一定属于你。</span></div>
+          <div class="false-card appear delay-2"><b>假优势</b><span>我喜欢，所以我适合。喜欢只是入口，优势还需要证据。</span></div>
+          <div class="false-card appear delay-3"><b>假确定</b><span>我已经想清楚了，所以可以大投入。真正值得做的事，经得起验证。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="scene-inner assignment">
+        <div>
+          <p class="kicker appear">本章作业</p>
+          <h2 class="appear delay-1">用 60 分钟，画出你的个人机会地图。</h2>
+          <p class="appear delay-2">你要得到的不是一个宏大方向，而是一两个值得低成本验证的机会假设。</p>
+          <div class="sentence appear delay-3">因为我有 ________，同时我观察到 ________，所以我想验证 ________ 是否需要 ________。</div>
+        </div>
+        <div class="action-stack">
+          <div class="action-card appear delay-1"><span class="label">第一步</span><b>完成个人 SWOT</b><span>每格写 3-5 条，来自真实资产和真实限制。</span></div>
+          <div class="action-card appear delay-2"><span class="label">第二步</span><b>完成 PEST 观察</b><span>每条变化后面写：对我意味着什么。</span></div>
+          <div class="action-card appear delay-3"><span class="label">第三步</span><b>做 2-3 组机会配对</b><span>写清对应优势、外部变化、主要风险和最小验证动作。</span></div>
+          <div class="action-card appear delay-4"><span class="label">第四步</span><b>写停止条件</b><span>保护你不把小错误拖成大损失。</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script>
+    const progressBar = document.getElementById("progressBar");
+    const updateProgress = () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
+      progressBar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+    };
+    updateProgress();
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    window.addEventListener("resize", updateProgress);
+  </script>
+</body>
+</html>

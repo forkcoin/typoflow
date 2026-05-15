@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>第3课：说清楚才有好答案</title>
+  <style>
+    :root {
+      --color-bg: #f5f1e6;
+      --color-paper: #fffaf0;
+      --color-ink: #202b36;
+      --color-muted: #64727f;
+      --color-line: #d7cbb8;
+      --color-accent: #226c73;
+      --color-warm: #c7633b;
+      --color-soft: #e9f2ee;
+      --color-bad: #8d6b5c;
+      --color-good: #3f7654;
+      --color-shadow: rgba(64, 47, 29, 0.13);
+      --size-title: clamp(2.25rem, 8vw, 5rem);
+      --size-headline: clamp(1.55rem, 5vw, 3rem);
+      --size-body: clamp(1rem, 2.6vw, 1.28rem);
+      --size-caption: clamp(1rem, 2.1vw, 1.05rem);
+      --leading-tight: 1.22;
+      --leading-normal: 1.68;
+      --spacing-screen: clamp(2.25rem, 7vw, 5rem);
+      --spacing-section: clamp(1.25rem, 4vw, 2.8rem);
+      --radius: 22px;
+      --max-line-width: 27em;
+      --motion: 760ms;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      margin: 0;
+      min-height: 100%;
+      overflow-x: hidden;
+      background: var(--color-bg);
+      color: var(--color-ink);
+      font-size: 16px;
+      font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+      scroll-snap-type: y mandatory;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100%;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 16px 16px, rgba(34, 108, 115, 0.07) 1.2px, transparent 1.2px),
+        var(--color-bg);
+      background-size: 34px 34px;
+    }
+
+    main {
+      width: 100%;
+    }
+
+    .screen {
+      position: relative;
+      min-height: 100svh;
+      width: 100%;
+      display: grid;
+      place-items: center;
+      padding: var(--spacing-screen) clamp(1.1rem, 5vw, 4.5rem);
+      scroll-snap-align: start;
+      isolation: isolate;
+    }
+
+    .screen::before {
+      content: "";
+      position: absolute;
+      inset: clamp(0.7rem, 2vw, 1.45rem);
+      border: 1px solid rgba(100, 114, 127, 0.2);
+      border-radius: clamp(18px, 4vw, 34px);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .stage {
+      width: min(100%, 1000px);
+      display: grid;
+      gap: var(--spacing-section);
+      align-content: center;
+    }
+
+    .kicker {
+      color: var(--color-accent);
+      font-size: var(--size-caption);
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    .hero-line {
+      margin: 0;
+      max-width: 10em;
+      font-family: "Noto Serif SC", "Songti SC", "STSong", serif;
+      font-weight: 900;
+      line-height: var(--leading-tight);
+      letter-spacing: 0;
+      text-wrap: balance;
+    }
+
+    h1 {
+      font-size: var(--size-title);
+    }
+
+    h2,
+    .hero-line {
+      font-size: var(--size-headline);
+    }
+
+    p {
+      margin: 0;
+      max-width: var(--max-line-width);
+      color: var(--color-muted);
+      font-size: var(--size-body);
+      line-height: var(--leading-normal);
+    }
+
+    .lead {
+      color: var(--color-ink);
+      font-size: clamp(1.08rem, 3vw, 1.55rem);
+      font-weight: 800;
+    }
+
+    .badge {
+      display: inline-flex;
+      width: fit-content;
+      max-width: 100%;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.72rem 0.92rem;
+      border-radius: 999px;
+      border: 1px solid rgba(34, 108, 115, 0.24);
+      background: rgba(255, 250, 240, 0.88);
+      color: var(--color-accent);
+      font-size: var(--size-caption);
+      font-weight: 800;
+      line-height: 1.42;
+    }
+
+    .badge::before {
+      content: "";
+      width: 0.64rem;
+      height: 0.64rem;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: var(--color-accent);
+    }
+
+    .compare {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(0.9rem, 3vw, 1.45rem);
+    }
+
+    .card,
+    .chat-card,
+    .detail,
+    .practice,
+    .parent-card {
+      border: 1px solid rgba(100, 114, 127, 0.18);
+      border-radius: var(--radius);
+      background: rgba(255, 250, 240, 0.9);
+      box-shadow: 0 18px 48px var(--color-shadow);
+    }
+
+    .card {
+      min-height: 215px;
+      padding: clamp(1rem, 3vw, 1.55rem);
+      display: grid;
+      align-content: space-between;
+      gap: 1rem;
+    }
+
+    .card.bad {
+      border-color: rgba(141, 107, 92, 0.25);
+    }
+
+    .card.good {
+      border-color: rgba(63, 118, 84, 0.28);
+      background: rgba(233, 242, 238, 0.92);
+    }
+
+    .label {
+      width: fit-content;
+      padding-bottom: 0.25rem;
+      border-bottom: 3px solid rgba(34, 108, 115, 0.24);
+      color: var(--color-accent);
+      font-size: var(--size-caption);
+      font-weight: 900;
+    }
+
+    .card.bad .label {
+      color: var(--color-bad);
+      border-bottom-color: rgba(141, 107, 92, 0.28);
+    }
+
+    .card.good .label {
+      color: var(--color-good);
+      border-bottom-color: rgba(63, 118, 84, 0.3);
+    }
+
+    .quote {
+      color: var(--color-ink);
+      font-size: clamp(1.25rem, 4vw, 2rem);
+      font-weight: 900;
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+
+    .small {
+      color: var(--color-muted);
+      font-size: var(--size-caption);
+      line-height: 1.55;
+    }
+
+    .center-copy {
+      display: grid;
+      justify-items: center;
+      text-align: center;
+      gap: 1.2rem;
+    }
+
+    .center-copy .hero-line {
+      max-width: 11em;
+    }
+
+    .highlight {
+      color: var(--color-warm);
+    }
+
+    .chat-compare {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(0.9rem, 3vw, 1.35rem);
+    }
+
+    .chat-card {
+      padding: clamp(1rem, 3vw, 1.35rem);
+      display: grid;
+      gap: 0.8rem;
+      align-content: start;
+    }
+
+    .bubble {
+      width: fit-content;
+      max-width: 100%;
+      padding: 0.82rem 0.95rem;
+      border-radius: 19px;
+      color: var(--color-ink);
+      font-size: var(--size-body);
+      line-height: 1.58;
+    }
+
+    .bubble.ask {
+      background: #ffffff;
+      border: 1px solid rgba(100, 114, 127, 0.16);
+      border-bottom-left-radius: 6px;
+    }
+
+    .bubble.answer {
+      justify-self: end;
+      background: var(--color-soft);
+      border: 1px solid rgba(34, 108, 115, 0.18);
+      border-bottom-right-radius: 6px;
+    }
+
+    .judgement {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(0.9rem, 3vw, 1.35rem);
+    }
+
+    .judgement .card {
+      min-height: 180px;
+    }
+
+    .details {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: clamp(0.75rem, 2.2vw, 1rem);
+    }
+
+    .detail {
+      min-height: 165px;
+      padding: clamp(0.95rem, 2.5vw, 1.25rem);
+      display: grid;
+      align-content: center;
+      gap: 0.7rem;
+      text-align: center;
+    }
+
+    .detail b {
+      color: var(--color-accent);
+      font-size: clamp(1.12rem, 3vw, 1.42rem);
+      line-height: 1.3;
+    }
+
+    .detail span {
+      color: var(--color-muted);
+      font-size: var(--size-caption);
+      line-height: 1.45;
+    }
+
+    .formula {
+      color: var(--color-ink);
+      font-family: "Noto Serif SC", "Songti SC", "STSong", serif;
+      font-size: clamp(1.35rem, 4.2vw, 2.35rem);
+      font-weight: 900;
+      line-height: 1.4;
+      letter-spacing: 0;
+    }
+
+    .experiment {
+      display: grid;
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: clamp(0.9rem, 3vw, 1.35rem);
+      align-items: stretch;
+    }
+
+    .picture-card {
+      min-height: 230px;
+      padding: clamp(1rem, 3vw, 1.45rem);
+      border-radius: var(--radius);
+      border: 1px solid rgba(100, 114, 127, 0.18);
+      background: rgba(255, 250, 240, 0.9);
+      display: grid;
+      align-content: center;
+      gap: 0.9rem;
+    }
+
+    .picture-card.rich {
+      background:
+        linear-gradient(135deg, rgba(255, 250, 240, 0.92), rgba(233, 242, 238, 0.96));
+      border-color: rgba(63, 118, 84, 0.3);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .chip {
+      padding: 0.46rem 0.65rem;
+      border-radius: 999px;
+      background: #ffffff;
+      border: 1px solid rgba(34, 108, 115, 0.18);
+      color: var(--color-accent);
+      font-size: var(--size-caption);
+      font-weight: 800;
+      line-height: 1.25;
+    }
+
+    .practice {
+      width: min(100%, 800px);
+      padding: clamp(1rem, 3.6vw, 1.8rem);
+      display: grid;
+      gap: 1rem;
+    }
+
+    .practice-row {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 0.8rem;
+      align-items: center;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid rgba(100, 114, 127, 0.16);
+    }
+
+    .practice-row:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .prompt {
+      color: var(--color-ink);
+      font-size: var(--size-body);
+      font-weight: 900;
+      line-height: 1.5;
+    }
+
+    .line {
+      min-height: 2rem;
+      border-bottom: 2px solid rgba(100, 114, 127, 0.26);
+    }
+
+    .final-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(0.9rem, 3vw, 1.35rem);
+    }
+
+    .parent-card {
+      padding: clamp(1rem, 3vw, 1.5rem);
+      display: grid;
+      gap: 0.75rem;
+      align-content: start;
+    }
+
+    .parent-card h3 {
+      margin: 0;
+      color: var(--color-accent);
+      font-size: clamp(1.15rem, 3vw, 1.42rem);
+      line-height: 1.35;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 0.7rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      color: var(--color-ink);
+      font-size: var(--size-body);
+      line-height: 1.55;
+    }
+
+    .checklist li {
+      position: relative;
+      padding-left: 1.7rem;
+    }
+
+    .checklist li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.36rem;
+      width: 0.9rem;
+      height: 0.9rem;
+      border: 2px solid var(--color-good);
+      border-radius: 4px;
+      background: rgba(63, 118, 84, 0.08);
+    }
+
+    [data-animate] {
+      opacity: 0;
+      transform: translateY(18px);
+      animation: rise var(--motion) ease forwards;
+    }
+
+    [data-delay="1"] { animation-delay: 120ms; }
+    [data-delay="2"] { animation-delay: 240ms; }
+    [data-delay="3"] { animation-delay: 360ms; }
+    [data-delay="4"] { animation-delay: 500ms; }
+
+    @keyframes rise {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .compare,
+      .chat-compare,
+      .judgement,
+      .details,
+      .experiment,
+      .practice-row,
+      .final-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card,
+      .detail,
+      .picture-card {
+        min-height: auto;
+      }
+
+      .center-copy {
+        text-align: left;
+        justify-items: start;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-delay: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="screen">
+      <div class="stage">
+        <div class="kicker" data-animate>第3课 · 会提问</div>
+        <h1 data-animate data-delay="1">说清楚才有好答案</h1>
+        <p class="lead" data-animate data-delay="2">今天学一个让 AI 更懂你的小魔法。</p>
+        <div class="badge" data-animate data-delay="3">把普通问题，加上具体细节。</div>
+      </div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <h2 data-animate>同样是生日礼物，说法不一样</h2>
+        <div class="compare">
+          <div class="card bad" data-animate data-delay="1">
+            <span class="label">模糊</span>
+            <div class="quote">我想要一个玩具。</div>
+            <p>玩具太多了，妈妈只能猜。</p>
+          </div>
+          <div class="card good" data-animate data-delay="2">
+            <span class="label">清晰</span>
+            <div class="quote">我想要能拼出大城堡的乐高积木。</div>
+            <p>这下妈妈就知道该买什么了。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen">
+      <div class="stage center-copy">
+        <div class="hero-line" data-animate>你说得越<span class="highlight">清楚</span>，AI 的答案越贴近你的心意。</div>
+        <p data-animate data-delay="1">不是 AI 会读心，而是你给了它足够多的线索。</p>
+      </div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <h2 data-animate>看一组对比</h2>
+        <div class="chat-compare">
+          <div class="chat-card" data-animate data-delay="1">
+            <span class="label">模糊问题</span>
+            <div class="bubble ask">给我讲个故事。</div>
+            <div class="bubble answer">从前，有一只小兔子，它生活在森林里……</div>
+            <p>答案可能普通，也可能不是你想听的。</p>
+          </div>
+          <div class="chat-card" data-animate data-delay="2">
+            <span class="label">清晰问题</span>
+            <div class="bubble ask">我想听会飞的小猪和会游泳的鱼，一起去海底寻宝的故事。</div>
+            <div class="bubble answer">飞飞小猪展开彩色翅膀，和小鱼一起游向海底海螺……</div>
+            <p>答案更像专门为你准备的。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <h2 data-animate>模糊问题，范围太大</h2>
+        <div class="judgement">
+          <div class="card bad" data-animate data-delay="1">
+            <span class="label">范围太大</span>
+            <div class="quote">AI 只能随便猜一个方向。</div>
+            <p>就像“我想要个玩具”，不知道是积木、娃娃，还是小汽车。</p>
+          </div>
+          <div class="card good" data-animate data-delay="2">
+            <span class="label">细节足够</span>
+            <div class="quote">AI 更知道该怎么回答。</div>
+            <p>就像“能拼城堡的乐高”，目标一下子清楚了。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <h2 data-animate>把问题变清晰：加 4 种细节</h2>
+        <div class="details">
+          <div class="detail" data-animate data-delay="1">
+            <b>加主角</b>
+            <span>故事里有谁？</span>
+          </div>
+          <div class="detail" data-animate data-delay="2">
+            <b>加地点</b>
+            <span>发生在哪里？</span>
+          </div>
+          <div class="detail" data-animate data-delay="3">
+            <b>加情节</b>
+            <span>发生什么事？</span>
+          </div>
+          <div class="detail" data-animate data-delay="4">
+            <b>加要求</b>
+            <span>结果要怎样？</span>
+          </div>
+        </div>
+        <div class="formula" data-animate data-delay="4">讲个故事 → 勇敢小老鼠 + 饼干房子 + 救朋友 + 结局好笑</div>
+      </div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <h2 data-animate>做一个问题升级实验</h2>
+        <div class="experiment">
+          <div class="picture-card" data-animate data-delay="1">
+            <span class="label">升级前</span>
+            <div class="quote">帮我画一幅画。</div>
+            <p>AI 可能不知道你想画什么。</p>
+          </div>
+          <div class="picture-card rich" data-animate data-delay="2">
+            <span class="label">升级后</span>
+            <div class="quote">画一只蓝色小恐龙，正在吃彩虹味冰淇淋。</div>
+            <div class="chips">
+              <span class="chip">蓝色小恐龙</span>
+              <span class="chip">彩虹味冰淇淋</span>
+              <span class="chip">棒棒糖森林</span>
+              <span class="chip">晴天</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <h2 data-animate>现在，换你来升级</h2>
+        <div class="practice" data-animate data-delay="1">
+          <div class="practice-row">
+            <div class="prompt">教我学英语。</div>
+            <div class="line"></div>
+          </div>
+          <div class="practice-row">
+            <div class="prompt">给我出几道数学题。</div>
+            <div class="line"></div>
+          </div>
+          <div class="practice-row">
+            <div class="prompt">今天天气怎么样？</div>
+            <div class="line"></div>
+          </div>
+        </div>
+        <p data-animate data-delay="2">选一个最好的问题去问 AI，再根据答案继续升级。</p>
+      </div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <h2 data-animate>细节越多，话就越生动</h2>
+        <div class="final-grid">
+          <div class="parent-card" data-animate data-delay="1">
+            <h3>小老师判断</h3>
+            <p>小刚的问题更清楚，因为他说出了想知道的方向，还请 AI 用自己能听懂的话解释。</p>
+          </div>
+          <div class="parent-card" data-animate data-delay="2">
+            <h3>家长 10 分钟陪伴</h3>
+            <p>在生活里找模糊指令，一起设计清晰问题，再用追问补上颜色、地点、人物和要求。</p>
+          </div>
+        </div>
+        <ul class="checklist" data-animate data-delay="3">
+          <li>我知道说得越清楚，答案越好。</li>
+          <li>我会用加细节的方法升级问题。</li>
+          <li>我做过一次模糊和清晰的对比实验。</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
