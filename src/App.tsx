@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import ImportDialog from "./components/ImportDialog";
 import LibraryView from "./components/LibraryView";
 import ReaderView from "./components/ReaderView";
-import { addItem, getItems, seedSamples, updateItem } from "./storage/htmlItemsStore";
+import { addItem, deleteLibraryItem, getItems, seedSamples, updateItem } from "./storage/htmlItemsStore";
 import type { HtmlItem } from "./types";
 
 export default function App() {
@@ -29,7 +29,7 @@ export default function App() {
         }
       } catch {
         if (active) {
-          setError("Could not open your local HTML shelf.");
+          setError("无法打开你的本地 HTML 书架。");
         }
       } finally {
         if (active) {
@@ -60,8 +60,16 @@ export default function App() {
     await refreshItems();
   }
 
+  async function removeItem(item: HtmlItem) {
+    await deleteLibraryItem(item.id);
+    if (selectedId === item.id) {
+      setSelectedId(null);
+    }
+    await refreshItems();
+  }
+
   if (loading) {
-    return <main className="loading-screen">Opening TypoFlow...</main>;
+    return <main className="loading-screen">正在打开字映...</main>;
   }
 
   if (error) {
@@ -83,7 +91,7 @@ export default function App() {
 
   return (
     <main className="app-shell">
-      <LibraryView items={items} onOpen={(item) => setSelectedId(item.id)} onImport={() => setImportOpen(true)} />
+      <LibraryView items={items} onOpen={(item) => setSelectedId(item.id)} onImport={() => setImportOpen(true)} onDelete={(item) => void removeItem(item)} />
       {importOpen ? <ImportDialog onClose={() => setImportOpen(false)} onSave={saveImportedItem} /> : null}
     </main>
   );

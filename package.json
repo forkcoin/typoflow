@@ -4,11 +4,19 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "samples:sync": "node scripts/sync-samples-manifest.mjs",
+    "predev": "npm run samples:sync",
     "dev": "vite --host 127.0.0.1",
+    "predev:lan": "npm run samples:sync",
+    "dev:lan": "vite --host 0.0.0.0",
+    "prebuild": "npm run samples:sync",
     "build": "tsc --noEmit && vite build",
     "test": "vitest run",
     "test:watch": "vitest",
-    "preview": "vite preview --host 127.0.0.1"
+    "prepreview": "npm run samples:sync",
+    "preview": "vite preview --host 127.0.0.1",
+    "prepreview:lan": "npm run samples:sync",
+    "preview:lan": "node scripts/preview-lan.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

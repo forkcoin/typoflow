@@ -14,6 +14,6 @@ describe("createItemFromHtml", () => {
   });
 
   it("rejects empty html", () => {
-    expect(() => createItemFromHtml("   ", "paste")).toThrow("HTML content is empty.");
+    expect(() => createItemFromHtml("   ", "paste")).toThrow("HTML 内容是空的。");
   });
 });

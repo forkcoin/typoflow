@@ -8,6 +8,7 @@ export interface HtmlItem {
   html: string;
   sourceType: HtmlSourceType;
   tags: string[];
+  folderName?: string;
   cover: string;
   createdAt: string;
   updatedAt: string;

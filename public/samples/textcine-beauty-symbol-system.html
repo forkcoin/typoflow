@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>美不是感觉，是一套符号系统</title>
+  <style>
+    :root {
+      --color-bg: #f7f4ed;
+      --color-panel: #fbfaf6;
+      --color-ink: #1b1d1b;
+      --color-muted: #646963;
+      --color-soft: #d8d4ca;
+      --color-line: #b9b3a7;
+      --color-accent: #315a52;
+      --color-accent-2: #8c3d2f;
+      --color-shadow: rgba(27, 29, 27, 0.1);
+      --font-serif: "Songti SC", "STSong", "Noto Serif CJK SC", "Source Han Serif SC", Georgia, serif;
+      --font-sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif;
+      --size-title: clamp(2.3rem, 8vw, 5.1rem);
+      --size-headline: clamp(1.55rem, 5vw, 3rem);
+      --size-subhead: clamp(1.12rem, 3vw, 1.55rem);
+      --size-body: clamp(1rem, 2.35vw, 1.22rem);
+      --size-caption: clamp(0.78rem, 2vw, 0.92rem);
+      --leading-tight: 1.18;
+      --leading-normal: 1.72;
+      --leading-loose: 1.96;
+      --space-screen: clamp(2rem, 6vw, 5rem);
+      --space-block: clamp(1.3rem, 4vw, 3rem);
+      --radius: 8px;
+      --max-copy: 28em;
+      --motion: 760ms;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+      background: var(--color-bg);
+    }
+
+    body {
+      margin: 0;
+      color: var(--color-ink);
+      background:
+        linear-gradient(90deg, rgba(49, 90, 82, 0.06) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(49, 90, 82, 0.05) 1px, transparent 1px),
+        var(--color-bg);
+      background-size: 72px 72px;
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.32;
+      background-image: radial-gradient(circle at 1px 1px, rgba(27, 29, 27, 0.16) 1px, transparent 0);
+      background-size: 18px 18px;
+      mix-blend-mode: multiply;
+    }
+
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 20;
+      width: var(--progress, 0%);
+      height: 4px;
+      background: var(--color-accent);
+      transition: width 180ms linear;
+    }
+
+    main {
+      width: 100%;
+    }
+
+    .screen {
+      position: relative;
+      min-height: 100svh;
+      padding: var(--space-screen);
+      display: grid;
+      align-items: center;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      isolation: isolate;
+    }
+
+    .screen::after {
+      content: attr(data-count);
+      position: absolute;
+      right: clamp(1rem, 4vw, 3rem);
+      bottom: clamp(1rem, 4vw, 2.3rem);
+      color: rgba(27, 29, 27, 0.34);
+      font: 600 var(--size-caption) / 1 var(--font-sans);
+      letter-spacing: 0;
+    }
+
+    .stage {
+      width: min(100%, 1040px);
+      margin: 0 auto;
+      display: grid;
+      gap: var(--space-block);
+    }
+
+    .stage.narrow {
+      width: min(100%, 820px);
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      color: var(--color-accent);
+      font-size: var(--size-caption);
+      font-weight: 650;
+      letter-spacing: 0;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: clamp(2.6rem, 10vw, 7rem);
+      height: 1px;
+      background: currentColor;
+      transform-origin: left;
+      animation: ruleIn var(--motion) ease both;
+    }
+
+    h1,
+    h2,
+    .hero-line,
+    .final-line {
+      margin: 0;
+      font-family: var(--font-serif);
+      font-weight: 700;
+      line-height: var(--leading-tight);
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 9.6em;
+      font-size: var(--size-title);
+    }
+
+    h2,
+    .hero-line,
+    .final-line {
+      max-width: 10.5em;
+      font-size: var(--size-headline);
+    }
+
+    p {
+      margin: 0;
+      max-width: var(--max-copy);
+      color: var(--color-muted);
+      font-size: var(--size-body);
+      line-height: var(--leading-normal);
+    }
+
+    .lead {
+      color: var(--color-ink);
+      font-size: var(--size-subhead);
+      line-height: var(--leading-loose);
+    }
+
+    .copy-stack {
+      display: grid;
+      gap: 1rem;
+      max-width: var(--max-copy);
+    }
+
+    .quote-block {
+      width: min(100%, 740px);
+      padding-left: clamp(1rem, 3vw, 1.6rem);
+      border-left: 2px solid var(--color-accent);
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    .quote-block strong {
+      color: var(--color-ink);
+      font-family: var(--font-serif);
+      font-size: clamp(1.25rem, 3.6vw, 2rem);
+      line-height: 1.45;
+      font-weight: 700;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 0.86fr) minmax(280px, 1.14fr);
+      gap: clamp(1.5rem, 5vw, 4rem);
+      align-items: center;
+    }
+
+    .axis {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: clamp(0.6rem, 2vw, 1.1rem);
+      align-items: stretch;
+    }
+
+    .axis-item {
+      min-height: clamp(180px, 28vw, 300px);
+      padding: clamp(1rem, 3vw, 1.6rem);
+      background: rgba(251, 250, 246, 0.76);
+      border: 1px solid rgba(49, 90, 82, 0.22);
+      border-radius: var(--radius);
+      box-shadow: 0 16px 40px var(--color-shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .axis-item b {
+      color: var(--color-accent);
+      font-size: var(--size-caption);
+    }
+
+    .axis-item span {
+      font-family: var(--font-serif);
+      font-size: clamp(1.28rem, 4vw, 2.35rem);
+      line-height: 1.25;
+    }
+
+    .axis-arrow {
+      align-self: center;
+      color: var(--color-accent-2);
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      font-family: var(--font-serif);
+    }
+
+    .chain {
+      display: grid;
+      gap: clamp(0.6rem, 2vw, 1rem);
+    }
+
+    .chain-row {
+      display: grid;
+      grid-template-columns: minmax(84px, 0.42fr) minmax(0, 1fr);
+      gap: clamp(0.8rem, 2vw, 1.3rem);
+      align-items: center;
+      padding: clamp(0.8rem, 2vw, 1.05rem) 0;
+      border-bottom: 1px solid rgba(27, 29, 27, 0.14);
+    }
+
+    .chain-row:last-child {
+      border-bottom: 0;
+    }
+
+    .chain-row b {
+      color: var(--color-accent);
+      font-size: clamp(1rem, 2.4vw, 1.28rem);
+    }
+
+    .chain-row span {
+      color: var(--color-ink);
+      font-family: var(--font-serif);
+      font-size: clamp(1.18rem, 3.3vw, 2rem);
+      line-height: 1.35;
+    }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(1rem, 3vw, 1.8rem);
+    }
+
+    .case {
+      padding: clamp(1rem, 3vw, 1.5rem);
+      border-top: 3px solid var(--color-accent);
+      background: rgba(251, 250, 246, 0.7);
+      border-radius: var(--radius);
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .case:nth-child(2) {
+      border-top-color: var(--color-accent-2);
+    }
+
+    .case h3 {
+      margin: 0;
+      font-family: var(--font-serif);
+      font-size: clamp(1.2rem, 3vw, 1.8rem);
+      line-height: 1.3;
+    }
+
+    .case p {
+      color: var(--color-muted);
+      font-size: clamp(0.95rem, 2.15vw, 1.08rem);
+    }
+
+    .tag-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(0.75rem, 2vw, 1rem);
+    }
+
+    .tag {
+      min-height: 132px;
+      padding: 1rem;
+      border: 1px solid rgba(27, 29, 27, 0.16);
+      border-radius: var(--radius);
+      background: rgba(251, 250, 246, 0.78);
+      display: grid;
+      align-content: space-between;
+      gap: 0.8rem;
+    }
+
+    .tag b {
+      color: var(--color-accent);
+      font-size: var(--size-caption);
+    }
+
+    .tag span {
+      font-family: var(--font-serif);
+      font-size: clamp(1.05rem, 2.6vw, 1.45rem);
+      line-height: 1.35;
+    }
+
+    .questions {
+      counter-reset: question;
+      display: grid;
+      gap: clamp(0.9rem, 2vw, 1.2rem);
+    }
+
+    .question {
+      counter-increment: question;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 1rem;
+      align-items: baseline;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(27, 29, 27, 0.16);
+    }
+
+    .question::before {
+      content: counter(question, decimal-leading-zero);
+      color: var(--color-accent-2);
+      font-family: var(--font-serif);
+      font-size: clamp(1.45rem, 4vw, 2.2rem);
+      line-height: 1;
+    }
+
+    .question span {
+      font-size: var(--size-subhead);
+      line-height: 1.55;
+    }
+
+    .order {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(0.75rem, 2vw, 1rem);
+    }
+
+    .order-item {
+      min-height: 148px;
+      padding: 1rem;
+      border-radius: var(--radius);
+      background: var(--color-ink);
+      color: var(--color-bg);
+      display: grid;
+      align-content: space-between;
+      box-shadow: 0 18px 42px var(--color-shadow);
+    }
+
+    .order-item b {
+      color: #d9c5a3;
+      font-size: var(--size-caption);
+    }
+
+    .order-item span {
+      font-family: var(--font-serif);
+      font-size: clamp(1.12rem, 3vw, 1.72rem);
+      line-height: 1.35;
+    }
+
+    .observe-card {
+      display: grid;
+      grid-template-columns: 0.75fr 1.25fr;
+      gap: clamp(1rem, 3vw, 1.8rem);
+      padding: clamp(1rem, 3vw, 1.6rem);
+      background: rgba(251, 250, 246, 0.82);
+      border: 1px solid rgba(27, 29, 27, 0.18);
+      border-radius: var(--radius);
+      box-shadow: 0 18px 40px var(--color-shadow);
+    }
+
+    .observe-card .object {
+      display: grid;
+      align-content: center;
+      gap: 1rem;
+      border-right: 1px solid rgba(27, 29, 27, 0.14);
+      padding-right: clamp(0.8rem, 2vw, 1.3rem);
+    }
+
+    .object strong {
+      font-family: var(--font-serif);
+      font-size: clamp(1.35rem, 3.8vw, 2.15rem);
+      line-height: 1.25;
+    }
+
+    .fields {
+      display: grid;
+      gap: 0.7rem;
+    }
+
+    .field {
+      display: grid;
+      grid-template-columns: 5em minmax(0, 1fr);
+      gap: 0.9rem;
+      padding-bottom: 0.66rem;
+      border-bottom: 1px solid rgba(27, 29, 27, 0.12);
+      font-size: clamp(0.92rem, 2.15vw, 1.06rem);
+      line-height: 1.55;
+    }
+
+    .field:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .field b {
+      color: var(--color-accent);
+    }
+
+    .final {
+      min-height: 100svh;
+      color: #f3f0e8;
+      background:
+        linear-gradient(135deg, rgba(49, 90, 82, 0.34), transparent 42%),
+        #171a18;
+    }
+
+    .final p,
+    .final .eyebrow {
+      color: rgba(243, 240, 232, 0.72);
+    }
+
+    .final .eyebrow::before {
+      background: rgba(243, 240, 232, 0.72);
+    }
+
+    .final-line {
+      color: #f3f0e8;
+      max-width: 12em;
+    }
+
+    .fade-up {
+      opacity: 0;
+      transform: translateY(1.2rem);
+      animation: fadeUp var(--motion) cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .delay-1 {
+      animation-delay: 140ms;
+    }
+
+    .delay-2 {
+      animation-delay: 280ms;
+    }
+
+    .delay-3 {
+      animation-delay: 420ms;
+    }
+
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes ruleIn {
+      from {
+        transform: scaleX(0);
+      }
+      to {
+        transform: scaleX(1);
+      }
+    }
+
+    @media (max-width: 760px) {
+      html {
+        scroll-snap-type: none;
+      }
+
+      .screen {
+        min-height: auto;
+        padding-block: clamp(3.4rem, 12vw, 5rem);
+      }
+
+      .split,
+      .axis,
+      .comparison,
+      .tag-grid,
+      .order,
+      .observe-card {
+        grid-template-columns: 1fr;
+      }
+
+      .axis-arrow {
+        transform: rotate(90deg);
+      }
+
+      .observe-card .object {
+        border-right: 0;
+        border-bottom: 1px solid rgba(27, 29, 27, 0.14);
+        padding-right: 0;
+        padding-bottom: 1rem;
+      }
+
+      .field {
+        grid-template-columns: 4.5em minmax(0, 1fr);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" aria-hidden="true"></div>
+  <main>
+    <section class="screen" data-count="01 / 11">
+      <div class="stage">
+        <div class="eyebrow fade-up">第 1 章</div>
+        <h1 class="fade-up delay-1">美不是感觉，<br>是一套符号系统</h1>
+        <p class="lead fade-up delay-2">你说不出的美，通常不是空白。它只是还没有被翻译成清楚的判断。</p>
+      </div>
+    </section>
+
+    <section class="screen" data-count="02 / 11">
+      <div class="stage split">
+        <div class="copy-stack">
+          <div class="eyebrow fade-up">问题从这里开始</div>
+          <h2 class="fade-up delay-1">好看的东西太多，语言却很快变少。</h2>
+        </div>
+        <div class="quote-block fade-up delay-2">
+          <strong>高级、松弛、干净、有氛围、很有感觉。</strong>
+          <p>这些词不是错。它们只是太快抵达结论，没有留下判断的路径。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" data-count="03 / 11">
+      <div class="stage narrow">
+        <div class="eyebrow fade-up">先给定义</div>
+        <div class="copy-stack">
+          <h2 class="fade-up delay-1">符号，就是功能之外传递出来的意义。</h2>
+          <p class="fade-up delay-2">一个物品、动作、材质、颜色或场景，除了“能做什么”，还会让人读到身份、情绪、关系和生活想象。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" data-count="04 / 11">
+      <div class="stage split">
+        <div class="copy-stack">
+          <div class="eyebrow fade-up">物品有两层</div>
+          <h2 class="fade-up delay-1">能用，和会说话。</h2>
+          <p class="fade-up delay-2">杯子能盛水，包能装东西，衣服能覆盖身体。这是功能层。但它们同时也在表达秩序、距离、自由、克制或亲近。</p>
+        </div>
+        <div class="axis fade-up delay-3" aria-label="功能层和符号层">
+          <div class="axis-item">
+            <b>功能层</b>
+            <span>它能做什么</span>
+          </div>
+          <div class="axis-arrow">→</div>
+          <div class="axis-item">
+            <b>符号层</b>
+            <span>它在说什么</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" data-count="05 / 11">
+      <div class="stage">
+        <div class="eyebrow fade-up">第一套翻译工具</div>
+        <h2 class="fade-up delay-1">把“有感觉”，拆成六段判断。</h2>
+        <div class="chain fade-up delay-2">
+          <div class="chain-row"><b>物件</b><span>它到底是什么？</span></div>
+          <div class="chain-row"><b>感官</b><span>它首先刺激了什么？</span></div>
+          <div class="chain-row"><b>情绪</b><span>它让人放松、紧张、清醒，还是被推远？</span></div>
+          <div class="chain-row"><b>身份</b><span>它暗示使用者是谁，或想成为谁？</span></div>
+          <div class="chain-row"><b>关系</b><span>它怎样改变人与人的距离？</span></div>
+          <div class="chain-row"><b>叙事</b><span>它把你放进了什么生活故事？</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" data-count="06 / 11">
+      <div class="stage">
+        <div class="eyebrow fade-up">同一件白衬衫</div>
+        <h2 class="fade-up delay-1">换了材质、搭配和场景，意义就会改变。</h2>
+        <div class="comparison fade-up delay-2">
+          <article class="case">
+            <h3>硬挺白衬衫 + 黑色西裤</h3>
+            <p>干净、挺括、平整。它更容易通向清醒、克制、专业、边界明确。</p>
+            <p>它在说：我准备好了，我能处理问题。</p>
+          </article>
+          <article class="case">
+            <h3>柔软白衬衫 + 旧牛仔裤</h3>
+            <p>柔软、松动、有身体痕迹。它更容易通向放松、生活感和不急迫。</p>
+            <p>它在说：我懂规则，但不完全被规则占据。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" data-count="07 / 11">
+      <div class="stage split">
+        <div class="copy-stack">
+          <div class="eyebrow fade-up">不要固定翻译</div>
+          <h2 class="fade-up delay-1">黑色不永远高级。白色不永远纯洁。真丝不永远性感。</h2>
+        </div>
+        <div class="copy-stack fade-up delay-2">
+          <p class="lead">一个东西的意义，要看它和谁在一起，在哪里出现，被谁使用，以什么状态被使用。</p>
+          <p>关键不是“这代表什么”，而是“在这个场景里，它怎样工作”。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" data-count="08 / 11">
+      <div class="stage">
+        <div class="eyebrow fade-up">防止过度解读</div>
+        <h2 class="fade-up delay-1">用三个问题，把判断拉回现场。</h2>
+        <div class="questions fade-up delay-2">
+          <div class="question"><span>我能不能指出具体线索：材质、颜色、光线、比例、气味、声音、摆放位置？</span></div>
+          <div class="question"><span>这些线索能不能共同指向某种情绪或身份？</span></div>
+          <div class="question"><span>换一个场景后，我的解释会不会改变？</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" data-count="09 / 11">
+      <div class="stage split">
+        <div class="copy-stack">
+          <div class="eyebrow fade-up">重新定义高级感</div>
+          <h2 class="fade-up delay-1">高级感不是贵，是低噪音的秩序。</h2>
+          <p class="fade-up delay-2">它不是价格本身，而是选择能力留下的痕迹。</p>
+        </div>
+        <div class="order fade-up delay-3">
+          <div class="order-item"><b>低噪音</b><span>没有太多元素互相争夺注意力</span></div>
+          <div class="order-item"><b>高一致性</b><span>功能、材质、比例、场景彼此支持</span></div>
+          <div class="order-item"><b>边界清楚</b><span>知道自己表达什么，也知道不表达什么</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" data-count="10 / 11">
+      <div class="stage">
+        <div class="eyebrow fade-up">练习</div>
+        <h2 class="fade-up delay-1">选三件物品，做一张符号观察卡。</h2>
+        <div class="tag-grid fade-up delay-2">
+          <div class="tag"><b>衣橱里</b><span>一件经常穿的衣物或配饰</span></div>
+          <div class="tag"><b>房间里</b><span>一件每天都会看到的物品</span></div>
+          <div class="tag"><b>随身处</b><span>包里、桌上或手机里的东西</span></div>
+        </div>
+        <div class="observe-card fade-up delay-3">
+          <div class="object">
+            <strong>米白色帆布托特包</strong>
+            <p>一个示范，不是标准答案。</p>
+          </div>
+          <div class="fields">
+            <div class="field"><b>感官</b><span>轻、软、无明显标志，边角有使用痕迹。</span></div>
+            <div class="field"><b>情绪</b><span>放松，不用太小心，有日常流动感。</span></div>
+            <div class="field"><b>身份</b><span>经常出门，带书和电脑，生活不完全被精致管理。</span></div>
+            <div class="field"><b>关系</b><span>降低距离感，比硬挺皮包更容易显得亲近。</span></div>
+            <div class="field"><b>判断</b><span>保留，但不用于正式商务场景。</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen final" data-count="11 / 11">
+      <div class="stage narrow">
+        <div class="eyebrow fade-up">片尾</div>
+        <div class="copy-stack">
+          <div class="final-line fade-up delay-1">你的生活已经在说话。</div>
+          <p class="lead fade-up delay-2">建立风格，并不是从零开始塑造一个全新的自己，而是先听懂你身边的东西正在替你说什么。</p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script>
+    const progress = document.querySelector(".progress");
+    const updateProgress = () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const ratio = scrollable > 0 ? window.scrollY / scrollable : 0;
+      progress.style.setProperty("--progress", `${Math.max(0, Math.min(1, ratio)) * 100}%`);
+    };
+
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    window.addEventListener("resize", updateProgress);
+    updateProgress();
+  </script>
+</body>
+</html>

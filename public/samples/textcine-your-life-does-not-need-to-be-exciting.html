@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>你的生活不需要先变精彩</title>
+  <style>
+    :root {
+      --color-bg: #f4f0e8;
+      --color-paper: #fffdf7;
+      --color-ink: #20211e;
+      --color-muted: #686a62;
+      --color-line: #d4cabd;
+      --color-accent: #2f5d50;
+      --color-warn: #9f3f36;
+      --color-soft: #e8dfd1;
+      --font-serif: "Songti SC", "Noto Serif SC", "STSong", serif;
+      --font-sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      --size-title: clamp(2.2rem, 8vw, 5.1rem);
+      --size-headline: clamp(1.55rem, 4.6vw, 3rem);
+      --size-body: clamp(1rem, 2.4vw, 1.22rem);
+      --size-caption: clamp(0.78rem, 1.7vw, 0.92rem);
+      --leading-tight: 1.22;
+      --leading-normal: 1.78;
+      --leading-loose: 2;
+      --spacing-screen: clamp(2.4rem, 7vw, 5.5rem);
+      --max-line-width: 28em;
+      --duration-slow: 900ms;
+      --duration-mid: 620ms;
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      background: var(--color-bg);
+      color: var(--color-ink);
+      font-family: var(--font-sans);
+      scroll-snap-type: y mandatory;
+      overflow-x: hidden;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background:
+        linear-gradient(rgba(32, 33, 30, 0.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(32, 33, 30, 0.02) 1px, transparent 1px),
+        var(--color-bg);
+      background-size: 32px 32px, 32px 32px, auto;
+    }
+
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 20;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--color-accent), var(--color-warn));
+      transform-origin: left;
+      animation: grow linear both;
+      animation-timeline: scroll();
+    }
+
+    @keyframes grow {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+
+    main {
+      width: min(100%, 560px);
+      margin: 0 auto;
+      background: rgba(255, 253, 247, 0.58);
+      box-shadow: 0 0 0 1px rgba(212, 202, 189, 0.5);
+    }
+
+    .screen {
+      position: relative;
+      min-height: 100svh;
+      scroll-snap-align: start;
+      display: grid;
+      align-items: center;
+      padding: var(--spacing-screen) clamp(1.25rem, 5vw, 3rem);
+      isolation: isolate;
+    }
+
+    .screen::before {
+      content: attr(data-number);
+      position: absolute;
+      top: clamp(1.2rem, 4vw, 2.2rem);
+      left: clamp(1.25rem, 5vw, 3rem);
+      color: var(--color-muted);
+      font: 500 var(--size-caption) / 1 var(--font-sans);
+    }
+
+    .screen::after {
+      content: "";
+      position: absolute;
+      inset: clamp(1rem, 4vw, 2rem);
+      border: 1px solid rgba(212, 202, 189, 0.82);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .stack {
+      display: grid;
+      gap: clamp(1rem, 3vw, 1.75rem);
+      width: 100%;
+    }
+
+    .kicker {
+      color: var(--color-accent);
+      font-size: var(--size-caption);
+      line-height: 1.5;
+      font-weight: 600;
+    }
+
+    h1,
+    h2 {
+      margin: 0;
+      font-family: var(--font-serif);
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 8.5em;
+      font-size: var(--size-title);
+      line-height: var(--leading-tight);
+    }
+
+    h2 {
+      max-width: 10em;
+      font-size: var(--size-headline);
+      line-height: 1.35;
+    }
+
+    p {
+      margin: 0;
+      max-width: var(--max-line-width);
+      color: var(--color-muted);
+      font-size: var(--size-body);
+      line-height: var(--leading-normal);
+    }
+
+    .lead {
+      color: var(--color-ink);
+      font-family: var(--font-serif);
+      font-size: clamp(1.25rem, 4vw, 2.2rem);
+      line-height: var(--leading-loose);
+    }
+
+    .rule {
+      width: min(100%, 18rem);
+      height: 1px;
+      background: var(--color-line);
+      transform-origin: left;
+    }
+
+    .tag-row,
+    .card-grid,
+    .doors,
+    .checklist {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .tag-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tag,
+    .material,
+    .ability,
+    .door,
+    .grade,
+    .check {
+      border: 1px solid var(--color-line);
+      background: rgba(255, 253, 247, 0.72);
+      border-radius: var(--radius);
+      color: var(--color-ink);
+    }
+
+    .tag {
+      padding: 0.78rem 0.9rem;
+      font-size: clamp(0.92rem, 2.1vw, 1.05rem);
+    }
+
+    .card-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .material {
+      padding: 0.95rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: baseline;
+    }
+
+    .material strong {
+      font-family: var(--font-serif);
+      font-size: clamp(1rem, 2.8vw, 1.22rem);
+      font-weight: 700;
+    }
+
+    .material span {
+      color: var(--color-muted);
+      font-size: var(--size-caption);
+      text-align: right;
+    }
+
+    .quote {
+      position: relative;
+      padding-left: 1.2rem;
+      border-left: 3px solid var(--color-accent);
+      font-family: var(--font-serif);
+      color: var(--color-ink);
+      font-size: clamp(1.25rem, 4vw, 2.3rem);
+      line-height: 1.55;
+      max-width: 12em;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: clamp(1rem, 3vw, 1.4rem);
+    }
+
+    .door {
+      padding: 1rem;
+      min-height: 6.4rem;
+      display: grid;
+      align-content: space-between;
+    }
+
+    .door b,
+    .ability b,
+    .grade b,
+    .check b {
+      font-family: var(--font-serif);
+      font-size: clamp(1.08rem, 3vw, 1.35rem);
+      font-weight: 700;
+    }
+
+    .door span,
+    .ability span,
+    .grade span,
+    .check span {
+      color: var(--color-muted);
+      font-size: var(--size-caption);
+      line-height: 1.6;
+    }
+
+    .abilities {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+
+    .ability {
+      padding: 1rem;
+      min-height: 6rem;
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .safety {
+      border-top: 4px solid var(--color-warn);
+      padding: clamp(1.4rem, 5vw, 2rem);
+      background: rgba(255, 253, 247, 0.8);
+      box-shadow: 0 18px 45px rgba(32, 33, 30, 0.08);
+    }
+
+    .safety .lead {
+      color: var(--color-warn);
+    }
+
+    .grades {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    .grade {
+      padding: 1rem;
+      display: grid;
+      gap: 0.4rem;
+      border-left-width: 5px;
+    }
+
+    .grade.green { border-left-color: var(--color-accent); }
+    .grade.yellow { border-left-color: #a17c33; }
+    .grade.red { border-left-color: var(--color-warn); }
+
+    .checklist {
+      grid-template-columns: 1fr;
+    }
+
+    .check {
+      padding: 0.95rem 1rem;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.75rem;
+      align-items: start;
+    }
+
+    .check::before {
+      content: "";
+      width: 1.05rem;
+      aspect-ratio: 1;
+      margin-top: 0.16rem;
+      border: 2px solid var(--color-accent);
+      border-radius: 3px;
+      background:
+        linear-gradient(135deg, transparent 45%, var(--color-accent) 46% 56%, transparent 57%),
+        linear-gradient(45deg, transparent 47%, var(--color-accent) 48% 58%, transparent 59%);
+      background-size: 80% 80%, 58% 58%;
+      background-position: 45% 45%, 36% 57%;
+      background-repeat: no-repeat;
+    }
+
+    .closing {
+      justify-items: start;
+      align-content: center;
+    }
+
+    .signature {
+      width: min(100%, 21rem);
+      padding-top: 1.2rem;
+      border-top: 1px solid var(--color-line);
+      color: var(--color-muted);
+      font-size: var(--size-caption);
+      line-height: 1.7;
+    }
+
+    [data-animate] {
+      opacity: 0;
+      transform: translateY(1.1rem);
+      animation: enter var(--duration-mid) ease forwards;
+    }
+
+    [data-delay="1"] { animation-delay: 160ms; }
+    [data-delay="2"] { animation-delay: 320ms; }
+    [data-delay="3"] { animation-delay: 480ms; }
+    [data-delay="4"] { animation-delay: 640ms; }
+
+    .rule[data-animate] {
+      transform: scaleX(0);
+      animation-name: lineIn;
+    }
+
+    @keyframes enter {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes lineIn {
+      to {
+        opacity: 1;
+        transform: scaleX(1);
+      }
+    }
+
+    @media (min-width: 720px) {
+      main {
+        margin-block: 0;
+      }
+
+      .screen {
+        min-height: 100vh;
+      }
+
+      .card-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .doors,
+      .grades {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .checklist {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 420px) {
+      .tag-row,
+      .abilities {
+        grid-template-columns: 1fr;
+      }
+
+      .material {
+        display: grid;
+      }
+
+      .material span {
+        text-align: left;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-delay: 0ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+
+      html {
+        scroll-snap-type: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" aria-hidden="true"></div>
+  <main>
+    <section class="screen" data-number="01">
+      <div class="stack">
+        <div class="kicker" data-animate>进入书写实验室</div>
+        <h1 data-animate data-delay="1">你的生活不需要先变精彩</h1>
+        <div class="rule" data-animate data-delay="2"></div>
+        <p data-animate data-delay="3">你不需要先有一个戏剧化的人生，才配开始写。</p>
+      </div>
+    </section>
+
+    <section class="screen" data-number="02">
+      <div class="stack">
+        <h2 data-animate>很多人以为，故事必须先长成这样</h2>
+        <div class="tag-row">
+          <div class="tag" data-animate data-delay="1">很大的转折</div>
+          <div class="tag" data-animate data-delay="2">很深的伤口</div>
+          <div class="tag" data-animate data-delay="3">很罕见的经历</div>
+          <div class="tag" data-animate data-delay="4">漂亮的成长结论</div>
+        </div>
+        <p data-animate data-delay="4">但真实的生活，常常不是这样开始的。</p>
+      </div>
+    </section>
+
+    <section class="screen" data-number="03">
+      <div class="stack">
+        <div class="kicker" data-animate>材料入口</div>
+        <h2 data-animate data-delay="1">它可能只是一个很小的细节</h2>
+        <div class="card-grid">
+          <div class="material" data-animate data-delay="1"><strong>没回的消息</strong><span>我为什么把沉默理解成否定</span></div>
+          <div class="material" data-animate data-delay="2"><strong>旧外套</strong><span>我曾经想成为谁</span></div>
+          <div class="material" data-animate data-delay="3"><strong>饭桌评价</strong><span>我为什么又开始解释</span></div>
+          <div class="material" data-animate data-delay="4"><strong>一封邮件</strong><span>我怎样误读一次结果</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" data-number="04">
+      <div class="stack">
+        <div class="quote" data-animate>你的生活，无需杜撰，已是最好的故事。</div>
+        <p data-animate data-delay="2">这里的“最好”，不是精彩、完整、励志。只是说：你已经有足够真实的经验，可以从中开始观察、整理和表达。</p>
+      </div>
+    </section>
+
+    <section class="screen" data-number="05">
+      <div class="stack">
+        <h2 data-animate>如果你不知道写什么</h2>
+        <p class="lead" data-animate data-delay="1">先不问“故事在哪里”。</p>
+        <p class="lead" data-animate data-delay="2">改问：最近什么东西反复出现？</p>
+        <p data-animate data-delay="3">一句话、一个动作、一个场所，或者听到某个名字时喉咙发紧。</p>
+      </div>
+    </section>
+
+    <section class="screen" data-number="06">
+      <div class="stack">
+        <div class="split">
+          <div class="door" data-animate>
+            <b>不是职业作家训练营</b>
+            <span>不教投稿策略、爆款标题、出版路径。</span>
+          </div>
+          <div class="door" data-animate data-delay="1">
+            <b>更像书写实验室</b>
+            <span>可以尝试、停下、重写，也可以只给自己看。</span>
+          </div>
+        </div>
+        <p class="lead" data-animate data-delay="2">文字先不是作品，而是工具。</p>
+      </div>
+    </section>
+
+    <section class="screen" data-number="07">
+      <div class="stack">
+        <div class="kicker" data-animate>你要练的不是文采</div>
+        <h2 data-animate data-delay="1">而是更准确地看见自己</h2>
+        <div class="abilities">
+          <div class="ability" data-animate data-delay="1"><b>看见</b><span>从混乱情绪里看见材料</span></div>
+          <div class="ability" data-animate data-delay="2"><b>区分</b><span>区分事实、感受、判断</span></div>
+          <div class="ability" data-animate data-delay="3"><b>承受</b><span>选择当前能写的范围</span></div>
+          <div class="ability" data-animate data-delay="4"><b>边界</b><span>判断哪些只留给自己</span></div>
+        </div>
+        <p data-animate data-delay="4">准确，比漂亮更重要。</p>
+      </div>
+    </section>
+
+    <section class="screen" data-number="08">
+      <div class="stack safety">
+        <h2 data-animate>书写可以很有力量</h2>
+        <p data-animate data-delay="1">但它不是心理治疗，也不能替代专业帮助。</p>
+        <p class="lead" data-animate data-delay="2">你有权写，也有权停。</p>
+        <p data-animate data-delay="3">如果书写让你明显离开当下，你可以停止。</p>
+      </div>
+    </section>
+
+    <section class="screen" data-number="09">
+      <div class="stack">
+        <h2 data-animate>先决定文字停在哪个房间</h2>
+        <div class="doors">
+          <div class="door" data-animate data-delay="1"><b>私人文本</b><span>只给自己，可以混乱、重复、未完成。</span></div>
+          <div class="door" data-animate data-delay="2"><b>分享文本</b><span>给可信的人，需要多一点边界。</span></div>
+          <div class="door" data-animate data-delay="3"><b>公开文本</b><span>面对不确定读者，需要更严格检查。</span></div>
+        </div>
+        <p data-animate data-delay="4">不是所有文本都要从私人走向公开。</p>
+      </div>
+    </section>
+
+    <section class="screen" data-number="10">
+      <div class="stack">
+        <div class="kicker" data-animate>开始前，只做最低版本</div>
+        <h2 data-animate data-delay="1">先选能承受的材料</h2>
+        <div class="grades">
+          <div class="grade green" data-animate data-delay="1"><b>绿</b><span>写起来轻，写完能回到日常。</span></div>
+          <div class="grade yellow" data-animate data-delay="2"><b>黄</b><span>有情绪，但可缩小范围慢慢写。</span></div>
+          <div class="grade red" data-animate data-delay="3"><b>红</b><span>目前可能过载，暂不写核心。</span></div>
+        </div>
+        <div class="checklist">
+          <div class="check" data-animate data-delay="1"><span><b>9 条具体材料</b><br>可以写、慢慢写、现在不写。</span></div>
+          <div class="check" data-animate data-delay="2"><span><b>3 条文本边界</b><br>私人、分享、公开，先做判断。</span></div>
+          <div class="check" data-animate data-delay="3"><span><b>一句暂停条件</b><br>知道什么时候可以停下来。</span></div>
+          <div class="check" data-animate data-delay="4"><span><b>从很小的地方开始</b><br>小，不代表浅。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen closing" data-number="END">
+      <div class="stack">
+        <h2 data-animate>欢迎进入书写实验室</h2>
+        <p class="lead" data-animate data-delay="1">你的生活不需要先变精彩，才值得被你认真看见。</p>
+        <div class="signature" data-animate data-delay="2">接下来，从一条能承受的材料开始。</div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

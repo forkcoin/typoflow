@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>第1课：AI做朋友</title>
+  <style>
+    :root {
+      --color-bg: #fbf7ef;
+      --color-paper: #fffdf7;
+      --color-text-primary: #20323b;
+      --color-text-secondary: #596a72;
+      --color-accent: #f16f4f;
+      --color-accent-soft: #ffe0d2;
+      --color-line: #92c6c1;
+      --color-deep: #183b4a;
+      --font-title: "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
+      --font-body: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      --size-title: clamp(2.2rem, 10vw, 5rem);
+      --size-headline: clamp(1.55rem, 6vw, 3rem);
+      --size-body: clamp(1rem, 3vw, 1.35rem);
+      --size-caption: clamp(0.78rem, 2.2vw, 0.98rem);
+      --leading-tight: 1.24;
+      --leading-normal: 1.75;
+      --spacing-screen: clamp(2.2rem, 7vw, 5rem);
+      --spacing-section: clamp(1.4rem, 4vw, 3rem);
+      --max-line-width: 26em;
+      --radius-card: 8px;
+      --motion-slow: 880ms;
+      --motion-medium: 620ms;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      overflow-x: hidden;
+      scroll-snap-type: y mandatory;
+      background: var(--color-bg);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100%;
+      overflow-x: hidden;
+      color: var(--color-text-primary);
+      font-family: var(--font-body);
+      background:
+        linear-gradient(90deg, rgba(24, 59, 74, 0.05) 1px, transparent 1px) 0 0 / 44px 44px,
+        linear-gradient(0deg, rgba(24, 59, 74, 0.04) 1px, transparent 1px) 0 0 / 44px 44px,
+        var(--color-bg);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.2;
+      background-image:
+        radial-gradient(circle at 20% 15%, rgba(146, 198, 193, 0.35), transparent 26%),
+        radial-gradient(circle at 82% 72%, rgba(241, 111, 79, 0.18), transparent 28%);
+      z-index: -1;
+    }
+
+    main {
+      width: 100%;
+    }
+
+    .scene {
+      min-height: 100svh;
+      scroll-snap-align: start;
+      padding: var(--spacing-screen) clamp(1.1rem, 5vw, 4rem);
+      display: grid;
+      place-items: center;
+      position: relative;
+      isolation: isolate;
+    }
+
+    .frame {
+      width: min(100%, 760px);
+      min-height: min(78svh, 760px);
+      display: grid;
+      align-content: center;
+      gap: var(--spacing-section);
+      position: relative;
+    }
+
+    .kicker {
+      margin: 0;
+      color: var(--color-accent);
+      font-size: var(--size-caption);
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    h1,
+    h2 {
+      margin: 0;
+      max-width: 9em;
+      font-family: var(--font-title);
+      font-weight: 900;
+      line-height: var(--leading-tight);
+      letter-spacing: 0;
+    }
+
+    h1 {
+      font-size: var(--size-title);
+    }
+
+    h2 {
+      font-size: var(--size-headline);
+    }
+
+    p {
+      margin: 0;
+      max-width: var(--max-line-width);
+      color: var(--color-text-secondary);
+      font-size: var(--size-body);
+      line-height: var(--leading-normal);
+      letter-spacing: 0;
+    }
+
+    strong {
+      color: var(--color-deep);
+      font-weight: 800;
+    }
+
+    .big-line {
+      display: block;
+      width: min(12rem, 44vw);
+      height: 6px;
+      background: var(--color-line);
+      transform-origin: left center;
+      animation: growLine var(--motion-slow) ease both;
+    }
+
+    .tag-row,
+    .secret-grid,
+    .question-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      max-width: var(--max-line-width);
+    }
+
+    .tag,
+    .secret,
+    .question {
+      border: 1px solid rgba(32, 50, 59, 0.14);
+      background: rgba(255, 253, 247, 0.86);
+      border-radius: var(--radius-card);
+      padding: 0.72rem 0.9rem;
+      color: var(--color-text-primary);
+      font-size: clamp(0.95rem, 2.7vw, 1.15rem);
+      line-height: 1.45;
+      box-shadow: 0 10px 30px rgba(32, 50, 59, 0.07);
+    }
+
+    .secret {
+      border-color: rgba(241, 111, 79, 0.35);
+      background: var(--color-accent-soft);
+      color: #5d281c;
+    }
+
+    .rule-card {
+      width: min(100%, 520px);
+      padding: clamp(1rem, 4vw, 1.6rem);
+      border-left: 6px solid var(--color-accent);
+      border-radius: var(--radius-card);
+      background: var(--color-paper);
+      box-shadow: 0 18px 42px rgba(24, 59, 74, 0.1);
+    }
+
+    .rule-card p {
+      color: var(--color-text-primary);
+      font-weight: 700;
+    }
+
+    .dialogue {
+      display: grid;
+      gap: 0.9rem;
+      max-width: min(100%, 560px);
+    }
+
+    .bubble {
+      width: fit-content;
+      max-width: min(100%, 30em);
+      padding: 0.9rem 1rem;
+      border-radius: var(--radius-card);
+      font-size: var(--size-body);
+      line-height: 1.62;
+      background: var(--color-paper);
+      border: 1px solid rgba(32, 50, 59, 0.12);
+      box-shadow: 0 14px 34px rgba(32, 50, 59, 0.08);
+    }
+
+    .bubble.ai {
+      justify-self: end;
+      background: #e8f4f2;
+      color: var(--color-deep);
+    }
+
+    .choice-list {
+      display: grid;
+      gap: 0.8rem;
+      max-width: var(--max-line-width);
+    }
+
+    .choice {
+      display: grid;
+      grid-template-columns: 2.4rem 1fr auto;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.85rem;
+      border-radius: var(--radius-card);
+      background: rgba(255, 253, 247, 0.82);
+      border: 1px solid rgba(32, 50, 59, 0.12);
+      color: var(--color-text-primary);
+      font-size: clamp(0.92rem, 2.8vw, 1.1rem);
+      line-height: 1.5;
+    }
+
+    .num {
+      width: 2.2rem;
+      height: 2.2rem;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: var(--color-deep);
+      color: #fffdf7;
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+
+    .mark {
+      min-width: 3rem;
+      color: var(--color-accent);
+      font-weight: 800;
+      text-align: right;
+    }
+
+    .footer-note {
+      padding-top: 0.8rem;
+      border-top: 1px solid rgba(32, 50, 59, 0.16);
+      color: var(--color-text-secondary);
+      font-size: var(--size-caption);
+    }
+
+    .scene::after {
+      content: attr(data-step);
+      position: absolute;
+      right: clamp(1rem, 4vw, 2rem);
+      bottom: clamp(1rem, 4vw, 2rem);
+      color: rgba(32, 50, 59, 0.28);
+      font: 700 var(--size-caption) var(--font-body);
+    }
+
+    .frame > * {
+      opacity: 0;
+      transform: translateY(1rem);
+      animation: riseIn var(--motion-medium) ease both;
+    }
+
+    .frame > *:nth-child(2) { animation-delay: 120ms; }
+    .frame > *:nth-child(3) { animation-delay: 240ms; }
+    .frame > *:nth-child(4) { animation-delay: 360ms; }
+    .frame > *:nth-child(5) { animation-delay: 480ms; }
+
+    @keyframes riseIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes growLine {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+
+    @media (max-width: 520px) {
+      .frame {
+        min-height: 82svh;
+      }
+
+      .choice {
+        grid-template-columns: 2.2rem 1fr;
+      }
+
+      .mark {
+        grid-column: 2;
+        text-align: left;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main aria-label="AI做朋友第一课文字短片">
+    <section class="scene" data-step="01">
+      <div class="frame">
+        <p class="kicker">第1学期 · 一年级上</p>
+        <h1>AI做朋友：<br>先说清楚我想要什么</h1>
+        <span class="big-line" aria-hidden="true"></span>
+        <p>这个学期，我们先学习一个小本领：把心里的想法，说成 AI 能听懂的话。</p>
+      </div>
+    </section>
+
+    <section class="scene" data-step="02">
+      <div class="frame">
+        <p class="kicker">第1课</p>
+        <h2>AI是什么？</h2>
+        <p>你可以把它想成一个住在电脑和手机里的聪明朋友。它会听你说话，也会回答问题。</p>
+        <div class="tag-row" aria-label="AI可能出现的地方">
+          <span class="tag">手机里</span>
+          <span class="tag">电脑里</span>
+          <span class="tag">智能音箱里</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene" data-step="03">
+      <div class="frame">
+        <p class="kicker">换个说法</p>
+        <h2>AI像一个<br>“电脑里的大脑”</h2>
+        <p>它没有我们的眼睛、耳朵和嘴巴，却能通过文字或声音，理解你的问题，再把答案说出来。</p>
+      </div>
+    </section>
+
+    <section class="scene" data-step="04">
+      <div class="frame">
+        <p class="kicker">它很会帮忙</p>
+        <h2>问天气、讲故事、想画法，AI都可能帮得上。</h2>
+        <p>但想让它帮对忙，我们要说清楚：想知道什么、想做什么、希望它怎么帮。</p>
+        <div class="question-row" aria-label="可以安全提问的例子">
+          <span class="question">给我讲一个恐龙故事</span>
+          <span class="question">帮我出几个拼音题</span>
+          <span class="question">怎么画一只可爱的猫</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene" data-step="05">
+      <div class="frame">
+        <p class="kicker">第一条规则</p>
+        <h2>和AI做朋友，先保护好自己的小秘密。</h2>
+        <div class="rule-card">
+          <p>真实姓名、家庭地址、电话、学校班级和照片，都不要告诉 AI。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene" data-step="06">
+      <div class="frame">
+        <p class="kicker">哪些是小秘密？</p>
+        <h2>看到这些信息，先停一下。</h2>
+        <div class="secret-grid" aria-label="隐私信息列表">
+          <span class="secret">我的名字</span>
+          <span class="secret">我的生日</span>
+          <span class="secret">我家的地址</span>
+          <span class="secret">爸爸妈妈的电话</span>
+          <span class="secret">学校和班级</span>
+          <span class="secret">我的照片</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene" data-step="07">
+      <div class="frame">
+        <p class="kicker">安全打招呼</p>
+        <h2>可以这样开始。</h2>
+        <div class="dialogue">
+          <div class="bubble">你好呀！我是一个一年级的小学生。我想认识你，你能告诉我你是什么吗？</div>
+          <div class="bubble ai">你好，我是 AI 助手。你可以问我知识、故事和学习问题。</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene" data-step="08">
+      <div class="frame">
+        <p class="kicker">先想后问</p>
+        <h2>问AI之前，先问问自己。</h2>
+        <p>我最好奇的是什么？我想让 AI 帮我回答、帮我想办法，还是帮我创作？</p>
+        <div class="rule-card">
+          <p>把问题说清楚，AI才更容易帮到你。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene" data-step="09">
+      <div class="frame">
+        <p class="kicker">自己来判断</p>
+        <h2>这些话，能不能对AI说？</h2>
+        <div class="choice-list">
+          <div class="choice"><span class="num">1</span><span>今天学了拼音，你能给我出几个题吗？</span><span class="mark">可以</span></div>
+          <div class="choice"><span class="num">2</span><span>我在某某学校一（1）班，我今天不开心。</span><span class="mark">不可以</span></div>
+          <div class="choice"><span class="num">3</span><span>我想听一个恐龙和外星人交朋友的故事。</span><span class="mark">可以</span></div>
+          <div class="choice"><span class="num">4</span><span>我妈妈的手机号，你帮我存一下。</span><span class="mark">不可以</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene" data-step="10">
+      <div class="frame">
+        <p class="kicker">今天的小结</p>
+        <h2>AI很聪明。<br>我也要很清楚、很安全。</h2>
+        <p>我知道 AI 像一个“电脑大脑”；我记住了不说小秘密；我可以用安全的问题，和 AI 打招呼。</p>
+        <p class="footer-note">和爸爸妈妈一起，再做一张“可以说 / 不能说”的 AI 提问卡。</p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

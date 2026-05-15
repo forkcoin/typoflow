@@ -1,0 +1,729 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>你不是一份岗位说明书</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --neutral-50: hsl(44, 35%, 96%);
+      --neutral-100: hsl(42, 28%, 91%);
+      --neutral-300: hsl(39, 16%, 72%);
+      --neutral-500: hsl(34, 12%, 46%);
+      --neutral-800: hsl(36, 18%, 14%);
+      --neutral-900: hsl(36, 22%, 9%);
+      --gold-300: hsl(41, 78%, 68%);
+      --gold-500: hsl(39, 82%, 52%);
+      --teal-500: hsl(174, 44%, 38%);
+      --clay-500: hsl(12, 46%, 48%);
+
+      --color-bg: var(--neutral-900);
+      --color-surface: var(--neutral-800);
+      --color-paper: var(--neutral-50);
+      --color-paper-muted: var(--neutral-100);
+      --color-text-primary: var(--neutral-50);
+      --color-text-secondary: var(--neutral-300);
+      --color-text-dark: var(--neutral-900);
+      --color-text-muted: var(--neutral-500);
+      --color-accent: var(--gold-500);
+      --color-accent-soft: var(--gold-300);
+      --color-balance: var(--teal-500);
+      --color-warning: var(--clay-500);
+      --color-line: hsla(44, 35%, 96%, 0.2);
+      --color-line-dark: hsla(36, 22%, 9%, 0.18);
+
+      --font-display: "Noto Serif SC", serif;
+      --font-body: "Noto Sans SC", sans-serif;
+
+      --size-kicker: clamp(0.78rem, 1.1vw, 0.95rem);
+      --size-caption: clamp(0.82rem, 1.5vw, 1rem);
+      --size-body: clamp(1rem, 2vw, 1.28rem);
+      --size-lead: clamp(1.18rem, 2.8vw, 1.65rem);
+      --size-headline: clamp(1.8rem, 5.7vw, 4.4rem);
+      --size-title: clamp(2.7rem, 9.4vw, 7.4rem);
+      --size-number: clamp(4.8rem, 18vw, 12rem);
+
+      --leading-tight: 1.18;
+      --leading-normal: 1.68;
+      --leading-loose: 1.92;
+
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --space-12: 3rem;
+      --space-16: 4rem;
+      --space-20: 5rem;
+      --space-24: 6rem;
+
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-full: 9999px;
+
+      --shadow-soft: 0 2rem 6rem hsla(36, 22%, 9%, 0.3);
+      --duration-fast: 220ms;
+      --duration-normal: 620ms;
+      --duration-slow: 1100ms;
+      --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--color-bg);
+      color: var(--color-text-primary);
+      font-family: var(--font-body);
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+
+    body {
+      min-height: 100%;
+      margin: 0;
+      overflow-x: hidden;
+      background:
+        linear-gradient(90deg, hsla(44, 35%, 96%, 0.035) 1px, transparent 1px),
+        linear-gradient(180deg, hsla(44, 35%, 96%, 0.03) 1px, transparent 1px),
+        radial-gradient(circle at 76% 12%, hsla(39, 82%, 52%, 0.18), transparent 24rem),
+        radial-gradient(circle at 14% 88%, hsla(174, 44%, 38%, 0.16), transparent 22rem),
+        var(--color-bg);
+      background-size: 4rem 4rem, 4rem 4rem, auto, auto, auto;
+    }
+
+    body::before {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      content: "";
+      opacity: 0.32;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.34'/%3E%3C/svg%3E");
+      mix-blend-mode: soft-light;
+    }
+
+    .film {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      scroll-snap-type: y mandatory;
+    }
+
+    .scene {
+      position: relative;
+      display: grid;
+      min-height: 100svh;
+      padding: clamp(2rem, 7vw, 6rem);
+      overflow: clip;
+      scroll-snap-align: start;
+      isolation: isolate;
+    }
+
+    .scene-inner {
+      position: relative;
+      display: grid;
+      width: 100%;
+      max-width: 70rem;
+      min-height: calc(100svh - clamp(4rem, 14vw, 12rem));
+      margin: auto;
+      align-content: center;
+      gap: var(--space-8);
+      min-width: 0;
+    }
+
+    .scene.is-light {
+      color: var(--color-text-dark);
+      background:
+        linear-gradient(90deg, hsla(36, 22%, 9%, 0.05) 1px, transparent 1px),
+        linear-gradient(180deg, hsla(36, 22%, 9%, 0.045) 1px, transparent 1px),
+        linear-gradient(135deg, var(--color-paper), var(--color-paper-muted));
+      background-size: 3.5rem 3.5rem, 3.5rem 3.5rem, auto;
+    }
+
+    .scene.is-light::before,
+    .scene.is-dark::before {
+      position: absolute;
+      inset: clamp(1rem, 3vw, 2.5rem);
+      z-index: -1;
+      content: "";
+      border: 1px solid currentColor;
+      opacity: 0.16;
+    }
+
+    .scene.is-dark::after {
+      position: absolute;
+      right: clamp(1rem, 7vw, 7rem);
+      bottom: clamp(2rem, 8vw, 7rem);
+      width: clamp(8rem, 27vw, 24rem);
+      aspect-ratio: 1;
+      z-index: -1;
+      content: "";
+      border: 1px solid var(--color-line);
+      transform: rotate(16deg);
+      opacity: 0.45;
+    }
+
+    .kicker {
+      margin: 0;
+      color: var(--color-accent-soft);
+      font-size: var(--size-kicker);
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .is-light .kicker {
+      color: var(--color-warning);
+    }
+
+    h1,
+    h2,
+    p {
+      margin: 0;
+    }
+
+    .title,
+    .headline,
+    .statement {
+      max-width: 11em;
+      font-family: var(--font-display);
+      font-weight: 900;
+      line-height: var(--leading-tight);
+      letter-spacing: 0;
+      text-wrap: balance;
+    }
+
+    .title {
+      font-size: var(--size-title);
+    }
+
+    .headline {
+      font-size: var(--size-headline);
+    }
+
+    .statement {
+      font-size: clamp(2.25rem, 8vw, 6rem);
+    }
+
+    .lead {
+      max-width: min(30em, 100%);
+      color: var(--color-text-secondary);
+      font-size: var(--size-lead);
+      font-weight: 400;
+      line-height: var(--leading-loose);
+      overflow-wrap: anywhere;
+    }
+
+    .is-light .lead,
+    .is-light .note,
+    .is-light .small {
+      color: var(--color-text-muted);
+    }
+
+    .body-copy {
+      max-width: min(31em, 100%);
+      font-size: var(--size-body);
+      line-height: var(--leading-normal);
+      overflow-wrap: anywhere;
+    }
+
+    .highlight {
+      color: var(--color-accent-soft);
+    }
+
+    .is-light .highlight {
+      color: var(--color-warning);
+    }
+
+    .divider {
+      width: min(16rem, 42vw);
+      height: 1px;
+      background: currentColor;
+      opacity: 0.28;
+      transform-origin: left;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-10);
+      align-items: center;
+    }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+      max-width: 62rem;
+    }
+
+    .column {
+      position: relative;
+      padding-block: var(--space-6);
+      border-top: 1px solid currentColor;
+    }
+
+    .column h3,
+    .metric h3 {
+      margin: 0 0 var(--space-4);
+      color: var(--color-accent-soft);
+      font-size: var(--size-caption);
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .is-light .column h3,
+    .is-light .metric h3 {
+      color: var(--color-warning);
+    }
+
+    .column p {
+      max-width: 19em;
+      font-family: var(--font-display);
+      font-size: clamp(1.3rem, 3.6vw, 2.5rem);
+      font-weight: 700;
+      line-height: 1.38;
+      text-wrap: balance;
+    }
+
+    .asset-board {
+      display: grid;
+      gap: var(--space-4);
+      max-width: 44rem;
+    }
+
+    .asset-row {
+      display: grid;
+      grid-template-columns: minmax(5rem, 0.48fr) 1fr;
+      gap: var(--space-4);
+      align-items: baseline;
+      padding-block: var(--space-3);
+      border-bottom: 1px solid var(--color-line-dark);
+      font-size: var(--size-body);
+      line-height: var(--leading-normal);
+    }
+
+    .asset-row strong {
+      color: var(--color-warning);
+      font-family: var(--font-display);
+      font-size: clamp(1.05rem, 2.4vw, 1.45rem);
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+      max-width: 66rem;
+    }
+
+    .metric {
+      min-height: 14rem;
+      padding-block: var(--space-6);
+      border-top: 1px solid currentColor;
+    }
+
+    .metric .num {
+      display: block;
+      margin-bottom: var(--space-4);
+      color: var(--color-accent-soft);
+      font-family: var(--font-display);
+      font-size: clamp(2.6rem, 9vw, 6.2rem);
+      font-weight: 900;
+      line-height: 0.86;
+    }
+
+    .metric p {
+      max-width: 14em;
+      font-size: var(--size-body);
+      line-height: var(--leading-normal);
+    }
+
+    .big-number {
+      position: absolute;
+      top: clamp(1rem, 4vw, 3rem);
+      right: clamp(1rem, 5vw, 4rem);
+      z-index: -1;
+      color: currentColor;
+      font-family: var(--font-display);
+      font-size: var(--size-number);
+      font-weight: 900;
+      line-height: 0.8;
+      opacity: 0.08;
+    }
+
+    .quote-stack {
+      display: grid;
+      gap: var(--space-6);
+      max-width: 54rem;
+    }
+
+    .quote-line {
+      padding-left: var(--space-6);
+      border-left: 3px solid var(--color-accent);
+      font-family: var(--font-display);
+      font-size: clamp(1.45rem, 4.8vw, 3.4rem);
+      font-weight: 700;
+      line-height: 1.32;
+      text-wrap: balance;
+    }
+
+    .note {
+      max-width: 32em;
+      color: var(--color-text-secondary);
+      font-size: var(--size-caption);
+      line-height: var(--leading-normal);
+    }
+
+    .exercise {
+      display: grid;
+      gap: var(--space-6);
+      max-width: 58rem;
+    }
+
+    .exercise-line {
+      display: grid;
+      gap: var(--space-3);
+      padding-block: var(--space-5);
+      border-top: 1px solid var(--color-line);
+    }
+
+    .exercise-line span {
+      color: var(--color-accent-soft);
+      font-size: var(--size-caption);
+      font-weight: 700;
+    }
+
+    .exercise-line p {
+      font-family: var(--font-display);
+      font-size: clamp(1.35rem, 4.2vw, 3rem);
+      font-weight: 700;
+      line-height: 1.36;
+      text-wrap: balance;
+    }
+
+    .closing {
+      display: grid;
+      gap: var(--space-8);
+      justify-items: start;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 2.5rem;
+      padding: 0 var(--space-4);
+      border: 1px solid currentColor;
+      border-radius: var(--radius-full);
+      color: var(--color-accent-soft);
+      font-size: var(--size-caption);
+      font-weight: 700;
+    }
+
+    .progress {
+      position: fixed;
+      right: clamp(0.75rem, 2vw, 1.5rem);
+      top: 50%;
+      z-index: 3;
+      display: grid;
+      gap: var(--space-2);
+      transform: translateY(-50%);
+    }
+
+    .progress a {
+      width: 0.65rem;
+      height: 0.65rem;
+      border: 1px solid var(--color-accent-soft);
+      border-radius: var(--radius-full);
+      opacity: 0.45;
+      transition: opacity var(--duration-fast) var(--ease-standard), background var(--duration-fast) var(--ease-standard);
+    }
+
+    .progress a.is-active {
+      background: var(--color-accent-soft);
+      opacity: 1;
+    }
+
+    .scene .kicker,
+    .scene .title,
+    .scene .headline,
+    .scene .statement,
+    .scene .lead,
+    .scene .body-copy,
+    .scene .divider,
+    .scene .column,
+    .scene .asset-row,
+    .scene .metric,
+    .scene .quote-line,
+    .scene .exercise-line,
+    .scene .pill {
+      animation: rise var(--duration-slow) var(--ease-standard) both;
+    }
+
+    .scene .divider,
+    .scene .column:nth-child(2),
+    .scene .asset-row:nth-child(2),
+    .scene .metric:nth-child(2),
+    .scene .quote-line:nth-child(2),
+    .scene .exercise-line:nth-child(2) {
+      animation-delay: 120ms;
+    }
+
+    .scene .lead,
+    .scene .asset-row:nth-child(3),
+    .scene .metric:nth-child(3),
+    .scene .exercise-line:nth-child(3) {
+      animation-delay: 210ms;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(1.5rem);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (min-width: 48rem) {
+      .split {
+        grid-template-columns: minmax(0, 0.85fr) minmax(18rem, 0.65fr);
+      }
+
+      .comparison {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .metric-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 42rem) {
+      .progress {
+        right: var(--space-3);
+      }
+
+      .scene {
+        padding: var(--space-8) var(--space-6);
+      }
+
+      .scene-inner {
+        min-height: calc(100svh - var(--space-16));
+      }
+
+      .asset-row {
+        grid-template-columns: 1fr;
+        gap: var(--space-2);
+      }
+
+      .lead,
+      .body-copy,
+      .asset-board,
+      .comparison,
+      .metric-grid,
+      .quote-stack,
+      .exercise {
+        width: calc(100vw - var(--space-12));
+        max-width: calc(100vw - var(--space-12));
+      }
+
+      .lead,
+      .body-copy {
+        word-break: break-all;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="progress" aria-label="短片进度">
+    <a href="#s1" class="is-active" aria-label="第 1 屏"></a>
+    <a href="#s2" aria-label="第 2 屏"></a>
+    <a href="#s3" aria-label="第 3 屏"></a>
+    <a href="#s4" aria-label="第 4 屏"></a>
+    <a href="#s5" aria-label="第 5 屏"></a>
+    <a href="#s6" aria-label="第 6 屏"></a>
+    <a href="#s7" aria-label="第 7 屏"></a>
+    <a href="#s8" aria-label="第 8 屏"></a>
+    <a href="#s9" aria-label="第 9 屏"></a>
+  </nav>
+
+  <main class="film">
+    <section class="scene is-dark" id="s1" aria-labelledby="t1">
+      <div class="scene-inner">
+        <p class="kicker">第 0 章</p>
+        <h1 class="title" id="t1">你不是一份岗位说明书</h1>
+        <div class="divider"></div>
+        <p class="lead">把自己当成一家公司经营，不是把人变成冷冰冰的赚钱机器，而是学会看见自己的资产、现金流、选择权和长期位置。</p>
+      </div>
+    </section>
+
+    <section class="scene is-light" id="s2" aria-labelledby="t2">
+      <div class="scene-inner split">
+        <div>
+          <p class="kicker">先保留警惕</p>
+          <h2 class="headline" id="t2">人不是公司，生活也不是报表。</h2>
+        </div>
+        <p class="body-copy">你有关系、有疲惫、有愿望。有些选择不能只用收益计算。这种警惕是对的。经营自己，不是把一切都货币化，而是知道什么值得投入，什么必须保护，什么需要拒绝。</p>
+      </div>
+    </section>
+
+    <section class="scene is-dark" id="s3" aria-labelledby="t3">
+      <span class="big-number">JD</span>
+      <div class="scene-inner">
+        <p class="kicker">岗位视角</p>
+        <h2 class="statement" id="t3">岗位说明书只描述你被雇来做什么。</h2>
+        <p class="lead">它很少描述：你正在积累什么，又正在被什么消耗。</p>
+      </div>
+    </section>
+
+    <section class="scene is-light" id="s4" aria-labelledby="t4">
+      <div class="scene-inner">
+        <p class="kicker">同样的岗位，不同的资产</p>
+        <h2 class="headline" id="t4">两个人都在做运营，三年后处境可能完全不同。</h2>
+        <div class="asset-board" aria-label="个人资产示例">
+          <div class="asset-row">
+            <strong>带不走</strong>
+            <span>只是更熟练地完成重复任务，离开公司后很难说清市场价值。</span>
+          </div>
+          <div class="asset-row">
+            <strong>带得走</strong>
+            <span>用户洞察、活动方法、协作经验、可复用模板、行业人脉。</span>
+          </div>
+          <div class="asset-row">
+            <strong>隐形负债</strong>
+            <span>用透支身体、压缩睡眠和无边界情绪劳动维持表现。</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene is-dark" id="s5" aria-labelledby="t5">
+      <div class="scene-inner">
+        <p class="kicker">视角切换</p>
+        <h2 class="headline" id="t5">员工视角让你完成任务；经营视角让你保留选择。</h2>
+        <div class="comparison">
+          <div class="column">
+            <h3>员工视角会问</h3>
+            <p>这是不是我的任务？工资和奖金是多少？上级怎样评价我？</p>
+          </div>
+          <div class="column">
+            <h3>经营视角会继续问</h3>
+            <p>这会不会增加我的资产？风险是否值得？成果能否被看见和复用？</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene is-light" id="s6" aria-labelledby="t6">
+      <span class="big-number">03</span>
+      <div class="scene-inner">
+        <p class="kicker">人生三表</p>
+        <h2 class="headline" id="t6">把模糊焦虑，放到一块经营仪表盘上。</h2>
+        <div class="metric-grid">
+          <div class="metric">
+            <span class="num">01</span>
+            <h3>资产负债表</h3>
+            <p>我拥有什么，又被什么拖住？</p>
+          </div>
+          <div class="metric">
+            <span class="num">02</span>
+            <h3>利润表</h3>
+            <p>这一段时间，我赚到了什么，付出了什么，最后剩下什么？</p>
+          </div>
+          <div class="metric">
+            <span class="num">03</span>
+            <h3>现金流量表</h3>
+            <p>我的钱、时间和精力，能不能持续流动？</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene is-dark" id="s7" aria-labelledby="t7">
+      <div class="scene-inner">
+        <p class="kicker">写给女性</p>
+        <h2 class="headline" id="t7">这不是要你变得更狠。</h2>
+        <div class="quote-stack">
+          <p class="quote-line">看见自己已经拥有的资产，而不是只看见自己还不够好。</p>
+          <p class="quote-line">为自己的能力定价，而不是等别人主动认可。</p>
+          <p class="quote-line">保护现金流、身体和注意力，而不是用过度消耗换短期成绩。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene is-light" id="s8" aria-labelledby="t8">
+      <div class="scene-inner">
+        <p class="kicker">本章练习</p>
+        <h2 class="headline" id="t8">画出你的第一张经营草图。</h2>
+        <div class="exercise">
+          <div class="exercise-line">
+            <span>第一步</span>
+            <p>写下你现在最常用的视角。</p>
+          </div>
+          <div class="exercise-line">
+            <span>第二步</span>
+            <p>写三表草图：资产、利润、现金流。</p>
+          </div>
+          <div class="exercise-line">
+            <span>第三步</span>
+            <p>写出一句话经营问题。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene is-dark" id="s9" aria-labelledby="t9">
+      <div class="scene-inner closing">
+        <p class="kicker">最后</p>
+        <h2 class="statement" id="t9">如果没有这个岗位，你还带得走什么？</h2>
+        <p class="lead">这句话，就是进入全书的入口。</p>
+        <span class="pill">下一章：个人资产负债表</span>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const scenes = Array.from(document.querySelectorAll(".scene"));
+    const dots = Array.from(document.querySelectorAll(".progress a"));
+
+    const observer = new IntersectionObserver((entries) => {
+      const active = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+      if (!active) return;
+
+      dots.forEach((dot) => {
+        dot.classList.toggle("is-active", dot.getAttribute("href") === `#${active.target.id}`);
+      });
+    }, { threshold: [0.45, 0.6, 0.75] });
+
+    scenes.forEach((scene) => observer.observe(scene));
+  </script>
+</body>
+</html>

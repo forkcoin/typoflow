@@ -1,4 +1,4 @@
-const CACHE_NAME = "typoflow-shell-v1";
+const CACHE_NAME = "typoflow-shell-v2";
 const SHELL_URLS = ["/", "/index.html", "/manifest.webmanifest", "/icons/icon.svg"];
 
 self.addEventListener("install", (event) => {
@@ -29,6 +29,11 @@ self.addEventListener("fetch", (event) => {
 
   if (request.mode === "navigate") {
     event.respondWith(fetch(request).catch(() => caches.match("/index.html")));
+    return;
+  }
+
+  if (url.pathname.startsWith("/samples/")) {
+    event.respondWith(fetch(request));
     return;
   }
 

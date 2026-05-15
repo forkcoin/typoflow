@@ -1,0 +1,154 @@
+/* Y2K Pocket Screen design system */
+
+:root {
+  /* ===== GLOBAL TOKENS ===== */
+  --porcelain-100: hsl(198, 62%, 94%);
+  --porcelain-200: hsl(196, 50%, 88%);
+  --porcelain-300: hsl(206, 36%, 76%);
+
+  --graphite-100: hsl(210, 22%, 96%);
+  --graphite-300: hsl(220, 15%, 58%);
+  --graphite-500: hsl(230, 19%, 40%);
+  --graphite-700: hsl(244, 28%, 24%);
+  --graphite-900: hsl(248, 42%, 12%);
+
+  --coral-100: hsl(318, 82%, 92%);
+  --coral-300: hsl(318, 86%, 74%);
+  --coral-500: hsl(318, 78%, 58%);
+  --coral-700: hsl(318, 68%, 38%);
+
+  --aqua-100: hsl(184, 78%, 92%);
+  --aqua-300: hsl(184, 74%, 72%);
+  --aqua-500: hsl(184, 72%, 48%);
+  --aqua-700: hsl(188, 64%, 30%);
+
+  --citron-100: hsl(78, 88%, 92%);
+  --citron-300: hsl(78, 86%, 66%);
+  --citron-500: hsl(78, 72%, 44%);
+
+  --danger-600: hsl(354, 74%, 44%);
+
+  --font-display: "Avenir Next", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-body: "Avenir Next", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-ui: var(--font-body);
+  --font-reading: "Source Han Serif SC", "Songti SC", "Noto Serif SC", "STSong", serif;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.125rem;
+  --text-display: 2.75rem;
+
+  --leading-tight: 1.1;
+  --leading-snug: 1.28;
+  --leading-normal: 1.58;
+  --tracking-normal: 0;
+  --tracking-wide: 0.04em;
+  --tracking-widest: 0.1em;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.375rem;
+  --radius-pill: 999rem;
+
+  --line: 0.0625rem;
+  --tap-size: 2.25rem;
+  --reader-control-size: 2.5rem;
+  --max-library: 29rem;
+
+  --shadow-soft: 0 1.25rem 2.75rem hsl(248, 42%, 12%, 0.26);
+  --shadow-dialog: 0 -1rem 3rem hsl(248, 42%, 12%, 0.22);
+
+  --duration-fast: 150ms;
+  --duration-normal: 240ms;
+  --duration-slow: 380ms;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-enter: cubic-bezier(0, 0, 0.2, 1);
+
+  /* ===== ALIAS TOKENS ===== */
+  --color-bg: hsl(218, 28%, 22%);
+  --color-bg-deep: hsl(255, 34%, 12%);
+  --color-surface: var(--porcelain-100);
+  --color-surface-glass: hsl(198, 62%, 94%, 0.92);
+  --color-text: var(--graphite-900);
+  --color-muted: var(--graphite-500);
+  --color-faint: var(--graphite-300);
+  --color-border: hsl(206, 34%, 42%, 0.32);
+  --color-border-strong: hsl(248, 42%, 12%, 0.62);
+  --color-accent: var(--coral-500);
+  --color-accent-soft: var(--coral-100);
+  --color-signal: var(--aqua-500);
+  --color-signal-soft: var(--aqua-100);
+  --color-highlight: var(--citron-300);
+  --color-warning: var(--citron-500);
+  --color-danger: var(--danger-600);
+  --color-reader-chrome: hsl(198, 62%, 94%, 0.88);
+
+  --cover-editorial: var(--coral-300);
+  --cover-night: var(--graphite-700);
+  --cover-brief: var(--citron-300);
+  --cover-paste: var(--aqua-300);
+  --cover-upload: var(--coral-100);
+
+  --effect-grid-vertical: hsl(184, 72%, 48%, 0.06);
+  --effect-grid-horizontal: hsl(318, 78%, 58%, 0.035);
+  --effect-loading-wash: hsl(184, 72%, 48%, 0.14);
+  --effect-entry-wash: hsl(196, 50%, 88%, 0.48);
+  --effect-cover-number: hsl(248, 42%, 12%, 0.72);
+  --effect-progress-track: hsl(220, 15%, 58%, 0.16);
+  --effect-backdrop: hsl(248, 42%, 12%, 0.46);
+  --effect-reader-menu-idle: hsl(198, 62%, 94%, 0.82);
+  --effect-shell-glow: hsl(318, 78%, 58%, 0.18);
+  --effect-shell-glow-cool: hsl(184, 72%, 48%, 0.14);
+  --effect-shell-grid: hsl(198, 62%, 94%, 0.04);
+  --effect-screen-line: hsl(248, 42%, 12%, 0.035);
+  --effect-screen-highlight: hsl(0, 0%, 100%, 0.56);
+  --effect-screen-active: hsl(318, 78%, 58%, 0.12);
+  --device-frame-bg: hsl(210, 20%, 78%);
+  --device-frame-bg-deep: hsl(238, 22%, 50%);
+  --device-frame-highlight: hsl(0, 0%, 100%, 0.62);
+  --device-border: hsl(196, 38%, 88%);
+  --device-button-bg: hsl(198, 62%, 94%, 0.58);
+  --device-control-bg: hsl(198, 32%, 82%, 0.74);
+
+  /* ===== COMPONENT TOKENS ===== */
+  --button-primary-bg: var(--color-accent);
+  --button-primary-text: var(--porcelain-100);
+  --button-secondary-bg: var(--color-surface);
+  --button-secondary-text: var(--color-text);
+  --button-border: var(--color-border);
+  --button-border-hover: var(--color-border-strong);
+
+  --library-bg: var(--color-bg);
+  --library-title-text: var(--color-text);
+  --library-muted-text: var(--color-muted);
+  --library-entry-border: var(--color-border);
+  --library-entry-border-hover: var(--color-border-strong);
+  --library-entry-highlight: var(--color-highlight);
+  --library-progress-fill: var(--color-accent);
+
+  --dialog-bg: var(--color-surface);
+  --dialog-border: var(--color-border);
+  --dialog-shadow: var(--shadow-dialog);
+
+  --reader-bg: var(--color-surface);
+  --reader-chrome-bg: var(--color-reader-chrome);
+  --reader-chrome-border: var(--color-border);
+  --reader-chrome-text: var(--color-text);
+  --reader-chrome-muted: var(--color-muted);
+}

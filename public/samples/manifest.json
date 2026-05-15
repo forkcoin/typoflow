@@ -1,0 +1,43 @@
+[
+  {
+    "path": "/samples/AI学伴成长记/textcine-ai-conversation-lesson.html",
+    "assets": [],
+    "folderName": "AI学伴成长记"
+  },
+  {
+    "path": "/samples/AI学伴成长记/textcine-ai-friend-first-lesson.html",
+    "assets": [],
+    "folderName": "AI学伴成长记"
+  },
+  {
+    "path": "/samples/AI学伴成长记/textcine-ai-xueban.html",
+    "assets": [],
+    "folderName": "AI学伴成长记"
+  },
+  {
+    "path": "/samples/chapter-00-personal-ceo.html",
+    "assets": []
+  },
+  {
+    "path": "/samples/textcine-beauty-symbol-system.html",
+    "assets": []
+  },
+  {
+    "path": "/samples/textcine-your-life-does-not-need-to-be-exciting.html",
+    "assets": []
+  },
+  {
+    "path": "/samples/Vibe Coding/textcine-ai-work-ability.html",
+    "assets": [
+      "/samples/Vibe Coding/yan-chu-fa-sui-text-film/verify.mjs"
+    ],
+    "folderName": "Vibe Coding"
+  },
+  {
+    "path": "/samples/Vibe Coding/yan-chu-fa-sui-text-film/index.html",
+    "assets": [
+      "/samples/Vibe Coding/yan-chu-fa-sui-text-film/verify.mjs"
+    ],
+    "folderName": "Vibe Coding"
+  }
+]

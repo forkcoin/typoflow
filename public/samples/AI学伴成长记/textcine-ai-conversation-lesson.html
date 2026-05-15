@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>第2课：和AI说说话</title>
+  <style>
+    :root {
+      --color-bg: #f7f2e8;
+      --color-paper: #fffaf0;
+      --color-ink: #1f2933;
+      --color-muted: #637083;
+      --color-line: #d8cfc0;
+      --color-accent: #256f7a;
+      --color-warm: #d96c3f;
+      --color-green: #557a46;
+      --color-shadow: rgba(56, 43, 28, 0.14);
+      --size-title: clamp(2.25rem, 8vw, 5rem);
+      --size-headline: clamp(1.55rem, 5vw, 3rem);
+      --size-body: clamp(1rem, 2.6vw, 1.3rem);
+      --size-caption: clamp(1rem, 2.1vw, 1.05rem);
+      --leading-tight: 1.22;
+      --leading-normal: 1.72;
+      --spacing-screen: clamp(2.25rem, 7vw, 5rem);
+      --spacing-section: clamp(1.4rem, 4vw, 3rem);
+      --radius: 22px;
+      --max-line-width: 27em;
+      --motion: 780ms;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      margin: 0;
+      min-height: 100%;
+      background: var(--color-bg);
+      color: var(--color-ink);
+      font-size: 16px;
+      font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+      scroll-snap-type: y mandatory;
+      overflow-x: hidden;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        linear-gradient(90deg, rgba(31, 41, 51, 0.035) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(31, 41, 51, 0.028) 1px, transparent 1px),
+        var(--color-bg);
+      background-size: 42px 42px;
+      overflow-x: hidden;
+    }
+
+    main {
+      width: 100%;
+    }
+
+    .screen {
+      position: relative;
+      min-height: 100svh;
+      width: 100%;
+      display: grid;
+      place-items: center;
+      padding: var(--spacing-screen) clamp(1.1rem, 5vw, 4.5rem);
+      scroll-snap-align: start;
+      isolation: isolate;
+    }
+
+    .screen::before {
+      content: "";
+      position: absolute;
+      inset: clamp(0.7rem, 2vw, 1.4rem);
+      border: 1px solid rgba(99, 112, 131, 0.2);
+      border-radius: clamp(18px, 4vw, 34px);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .stage {
+      width: min(100%, 980px);
+      display: grid;
+      gap: var(--spacing-section);
+      align-content: center;
+    }
+
+    .kicker {
+      color: var(--color-accent);
+      font-size: var(--size-caption);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    .hero-line {
+      margin: 0;
+      font-family: "Noto Serif SC", "Songti SC", "STSong", serif;
+      line-height: var(--leading-tight);
+      letter-spacing: 0;
+      text-wrap: balance;
+    }
+
+    h1 {
+      max-width: 8em;
+      font-size: var(--size-title);
+      font-weight: 900;
+    }
+
+    h2,
+    .hero-line {
+      max-width: 10em;
+      font-size: var(--size-headline);
+      font-weight: 900;
+    }
+
+    p {
+      margin: 0;
+      max-width: var(--max-line-width);
+      color: var(--color-muted);
+      font-size: var(--size-body);
+      line-height: var(--leading-normal);
+    }
+
+    .lead {
+      color: var(--color-ink);
+      font-size: clamp(1.08rem, 3vw, 1.55rem);
+      font-weight: 700;
+    }
+
+    .note {
+      display: inline-flex;
+      width: fit-content;
+      max-width: 100%;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.7rem 0.9rem;
+      border: 1px solid rgba(217, 108, 63, 0.35);
+      border-radius: 999px;
+      background: rgba(255, 250, 240, 0.82);
+      color: #8a482f;
+      font-size: var(--size-caption);
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .note::before {
+      content: "";
+      width: 0.62rem;
+      height: 0.62rem;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: var(--color-warm);
+    }
+
+    .question-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(0.85rem, 2.4vw, 1.4rem);
+    }
+
+    .question-card,
+    .choice,
+    .paper,
+    .parent-card {
+      border: 1px solid rgba(99, 112, 131, 0.18);
+      border-radius: var(--radius);
+      background: rgba(255, 250, 240, 0.88);
+      box-shadow: 0 18px 48px var(--color-shadow);
+    }
+
+    .question-card {
+      min-height: 165px;
+      padding: clamp(1rem, 3vw, 1.45rem);
+      display: grid;
+      align-content: space-between;
+      gap: 1.4rem;
+    }
+
+    .question-card strong,
+    .choice strong,
+    .paper strong {
+      display: block;
+      color: var(--color-ink);
+      font-size: clamp(1.08rem, 3vw, 1.45rem);
+      line-height: 1.45;
+      letter-spacing: 0;
+    }
+
+    .tag {
+      width: fit-content;
+      border-bottom: 3px solid rgba(37, 111, 122, 0.28);
+      color: var(--color-accent);
+      font-size: var(--size-caption);
+      font-weight: 800;
+    }
+
+    .chat {
+      display: grid;
+      gap: 0.85rem;
+      width: min(100%, 720px);
+    }
+
+    .bubble {
+      width: fit-content;
+      max-width: min(88%, 34em);
+      padding: 0.88rem 1rem;
+      border-radius: 20px;
+      color: var(--color-ink);
+      font-size: var(--size-body);
+      line-height: 1.62;
+      box-shadow: 0 14px 34px rgba(56, 43, 28, 0.1);
+    }
+
+    .bubble.you {
+      justify-self: start;
+      border-bottom-left-radius: 6px;
+      background: #ffffff;
+      border: 1px solid rgba(99, 112, 131, 0.16);
+    }
+
+    .bubble.ai {
+      justify-self: end;
+      border-bottom-right-radius: 6px;
+      background: #dff0ec;
+      border: 1px solid rgba(37, 111, 122, 0.18);
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: stretch;
+      gap: clamp(0.8rem, 3vw, 1.4rem);
+    }
+
+    .panel {
+      min-width: 0;
+      padding: clamp(1.1rem, 3vw, 1.6rem);
+      border: 1px solid rgba(99, 112, 131, 0.18);
+      border-radius: var(--radius);
+      background: rgba(255, 250, 240, 0.88);
+    }
+
+    .panel b {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--color-accent);
+      font-size: clamp(1.05rem, 2.8vw, 1.35rem);
+    }
+
+    .panel span {
+      display: block;
+      color: var(--color-ink);
+      font-size: clamp(1.25rem, 4vw, 2rem);
+      font-weight: 900;
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+
+    .arrow {
+      align-self: center;
+      width: clamp(2rem, 6vw, 4rem);
+      height: 2px;
+      background: var(--color-line);
+      position: relative;
+    }
+
+    .arrow::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: 50%;
+      width: 0.7rem;
+      height: 0.7rem;
+      border-top: 2px solid var(--color-line);
+      border-right: 2px solid var(--color-line);
+      transform: translateY(-50%) rotate(45deg);
+    }
+
+    .choices {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: clamp(0.75rem, 2vw, 1.1rem);
+    }
+
+    .choice {
+      min-height: 150px;
+      padding: clamp(0.95rem, 2.6vw, 1.3rem);
+      display: grid;
+      align-content: space-between;
+      gap: 1rem;
+    }
+
+    .choice small {
+      color: var(--color-muted);
+      font-size: var(--size-caption);
+      line-height: 1.5;
+    }
+
+    .dino-chat {
+      display: grid;
+      gap: 1rem;
+      width: min(100%, 790px);
+    }
+
+    .round {
+      display: grid;
+      grid-template-columns: clamp(3.4rem, 9vw, 5rem) 1fr;
+      gap: 0.8rem;
+      align-items: start;
+    }
+
+    .round-num {
+      display: grid;
+      place-items: center;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: var(--color-accent);
+      color: #fffaf0;
+      font-size: clamp(1rem, 3vw, 1.45rem);
+      font-weight: 900;
+      box-shadow: 0 12px 24px rgba(37, 111, 122, 0.22);
+    }
+
+    .round-copy {
+      padding: clamp(0.9rem, 2.5vw, 1.2rem);
+      border-radius: var(--radius);
+      background: rgba(255, 250, 240, 0.9);
+      border: 1px solid rgba(99, 112, 131, 0.18);
+    }
+
+    .round-copy b {
+      display: block;
+      margin-bottom: 0.3rem;
+      color: var(--color-warm);
+      font-size: var(--size-caption);
+    }
+
+    .round-copy span {
+      color: var(--color-ink);
+      font-size: var(--size-body);
+      line-height: 1.62;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(0.8rem, 2.5vw, 1.3rem);
+      position: relative;
+    }
+
+    .step {
+      min-height: 190px;
+      padding: clamp(1rem, 3vw, 1.45rem);
+      border-radius: var(--radius);
+      border: 2px solid rgba(37, 111, 122, 0.22);
+      background: rgba(255, 250, 240, 0.9);
+      display: grid;
+      align-content: center;
+      gap: 0.7rem;
+      text-align: center;
+    }
+
+    .step em {
+      color: var(--color-accent);
+      font-style: normal;
+      font-size: clamp(2.1rem, 8vw, 4.4rem);
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .step strong {
+      color: var(--color-ink);
+      font-size: clamp(1.25rem, 4vw, 2rem);
+      line-height: 1.25;
+    }
+
+    .paper {
+      width: min(100%, 760px);
+      padding: clamp(1.1rem, 4vw, 2rem);
+      display: grid;
+      gap: 1.15rem;
+    }
+
+    .blank {
+      display: grid;
+      gap: 0.55rem;
+      color: var(--color-muted);
+      font-size: var(--size-body);
+      line-height: 1.5;
+    }
+
+    .line {
+      display: block;
+      width: 100%;
+      height: 1.8rem;
+      border-bottom: 2px solid rgba(99, 112, 131, 0.28);
+    }
+
+    .mini-list {
+      display: grid;
+      gap: 0.65rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      color: var(--color-ink);
+      font-size: var(--size-body);
+      line-height: 1.55;
+    }
+
+    .mini-list li {
+      display: grid;
+      grid-template-columns: 1.6rem 1fr;
+      gap: 0.5rem;
+      align-items: start;
+    }
+
+    .mini-list li::before {
+      content: "";
+      width: 0.58rem;
+      height: 0.58rem;
+      margin-top: 0.58rem;
+      border-radius: 50%;
+      background: var(--color-green);
+    }
+
+    .final-grid {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: clamp(1rem, 3vw, 1.6rem);
+      align-items: stretch;
+    }
+
+    .parent-card {
+      padding: clamp(1rem, 3vw, 1.55rem);
+      display: grid;
+      gap: 0.7rem;
+      align-content: start;
+    }
+
+    .parent-card h3 {
+      margin: 0;
+      color: var(--color-accent);
+      font-size: clamp(1.12rem, 3vw, 1.4rem);
+      line-height: 1.35;
+    }
+
+    .parent-card p,
+    .parent-card li {
+      font-size: clamp(1rem, 2.4vw, 1.12rem);
+    }
+
+    .checklist {
+      display: grid;
+      gap: 0.7rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding-left: 1.7rem;
+      position: relative;
+      color: var(--color-ink);
+      line-height: 1.55;
+    }
+
+    .checklist li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.35rem;
+      width: 0.9rem;
+      height: 0.9rem;
+      border: 2px solid var(--color-green);
+      border-radius: 4px;
+      background: rgba(85, 122, 70, 0.08);
+    }
+
+    [data-animate] {
+      opacity: 0;
+      transform: translateY(18px);
+      animation: rise var(--motion) ease forwards;
+    }
+
+    [data-delay="1"] { animation-delay: 120ms; }
+    [data-delay="2"] { animation-delay: 240ms; }
+    [data-delay="3"] { animation-delay: 360ms; }
+    [data-delay="4"] { animation-delay: 480ms; }
+    [data-delay="5"] { animation-delay: 620ms; }
+
+    @keyframes rise {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .question-grid,
+      .choices,
+      .steps,
+      .final-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .question-card,
+      .choice,
+      .step {
+        min-height: auto;
+      }
+
+      .split {
+        grid-template-columns: 1fr;
+      }
+
+      .arrow {
+        width: 2px;
+        height: 2.6rem;
+        justify-self: center;
+      }
+
+      .arrow::after {
+        right: 50%;
+        top: auto;
+        bottom: 0;
+        transform: translateX(50%) rotate(135deg);
+      }
+
+      .round {
+        grid-template-columns: 3.35rem 1fr;
+      }
+
+      .note {
+        border-radius: 18px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-delay: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="screen">
+      <div class="stage">
+        <div class="kicker" data-animate>第2课 · 会提问</div>
+        <h1 data-animate data-delay="1">和AI说说话</h1>
+        <p class="lead" data-animate data-delay="2">今天，我们正式邀请 AI 陪我们玩一会儿。</p>
+        <div class="note" data-animate data-delay="3">记得：自己的小秘密，不告诉 AI。</div>
+      </div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <h2 data-animate>这些时候，可以请 AI 帮帮忙</h2>
+        <div class="question-grid">
+          <div class="question-card" data-animate data-delay="1">
+            <span class="tag">想知道</span>
+            <strong>天为什么是蓝色的？</strong>
+          </div>
+          <div class="question-card" data-animate data-delay="2">
+            <span class="tag">想听听</span>
+            <strong>妈妈忙的时候，谁来讲个故事？</strong>
+          </div>
+          <div class="question-card" data-animate data-delay="3">
+            <span class="tag">想画画</span>
+            <strong>小兔子怎样画才可爱？</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <h2 data-animate>和 AI 对话，就像和朋友发消息</h2>
+        <div class="chat">
+          <div class="bubble you" data-animate data-delay="1">你好，AI。我有一个问题想问你。</div>
+          <div class="bubble ai" data-animate data-delay="2">你好呀。你可以打字，也可以说出来。</div>
+          <div class="bubble you" data-animate data-delay="3">我说一句，你回一句，对吗？</div>
+          <div class="bubble ai" data-animate data-delay="4">对。这样一来一回，就是一次对话。</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <h2 data-animate>一个“愿望”，会变成一个“礼物”</h2>
+        <div class="split">
+          <div class="panel" data-animate data-delay="1">
+            <b>你输入</b>
+            <span>把想法说清楚</span>
+            <p>这句话叫“提示词”。</p>
+          </div>
+          <div class="arrow" data-animate data-delay="2"></div>
+          <div class="panel" data-animate data-delay="3">
+            <b>AI 输出</b>
+            <span>给你回答、故事、诗或图片</span>
+            <p>它会根据你的话来完成。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <h2 data-animate>第一次聊天，可以从喜欢的事开始</h2>
+        <div class="choices">
+          <div class="choice" data-animate data-delay="1">
+            <strong>讲故事</strong>
+            <small>指定主角和大概情节。</small>
+          </div>
+          <div class="choice" data-animate data-delay="2">
+            <strong>问为什么</strong>
+            <small>把你好奇的事问出来。</small>
+          </div>
+          <div class="choice" data-animate data-delay="3">
+            <strong>玩游戏</strong>
+            <small>猜谜语，或试试成语接龙。</small>
+          </div>
+          <div class="choice" data-animate data-delay="4">
+            <strong>出主意</strong>
+            <small>比如春天的画可以画什么。</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <h2 data-animate>我们用恐龙试一次</h2>
+        <div class="dino-chat">
+          <div class="round" data-animate data-delay="1">
+            <div class="round-num">1</div>
+            <div class="round-copy">
+              <b>开始对话</b>
+              <span>你好，AI。你了解恐龙吗？我想听听关于恐龙的事情。</span>
+            </div>
+          </div>
+          <div class="round" data-animate data-delay="2">
+            <div class="round-num">2</div>
+            <div class="round-copy">
+              <b>追问细节</b>
+              <span>霸王龙听起来好厉害！它是不是最厉害的恐龙？它吃什么呀？</span>
+            </div>
+          </div>
+          <div class="round" data-animate data-delay="3">
+            <div class="round-num">3</div>
+            <div class="round-copy">
+              <b>请它创作</b>
+              <span>你能编一个关于善良小霸王龙的故事吗？它不想吃肉，只想和食草恐龙做朋友。</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <div class="hero-line" data-animate>先问，<br>再追问，<br>再请它创作。</div>
+        <div class="steps">
+          <div class="step" data-animate data-delay="1">
+            <em>1</em>
+            <strong>说出第一个问题</strong>
+          </div>
+          <div class="step" data-animate data-delay="2">
+            <em>2</em>
+            <strong>问得更具体一点</strong>
+          </div>
+          <div class="step" data-animate data-delay="3">
+            <em>3</em>
+            <strong>让 AI 变出作品</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <h2 data-animate>现在，换你来试</h2>
+        <div class="paper" data-animate data-delay="1">
+          <strong>挑战：完成至少 3 个回合</strong>
+          <div class="blank">
+            <span>我想知道：</span>
+            <span class="line"></span>
+          </div>
+          <div class="blank">
+            <span>我想听一个关于 __________ 和 __________ 的故事。</span>
+            <span class="line"></span>
+          </div>
+          <ul class="mini-list">
+            <li>第一回合：提出你的想法。</li>
+            <li>第二回合：追问一个更详细的问题。</li>
+            <li>第三回合：请 AI 创作一首诗、一个小故事或一个谜语。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <h2 data-animate>这也是一次语文练习</h2>
+        <div class="final-grid">
+          <div class="parent-card" data-animate data-delay="1">
+            <h3>我会这样自查</h3>
+            <ul class="checklist">
+              <li>我知道对话是一问一答。</li>
+              <li>我能问 AI 问题，也能请它编故事。</li>
+              <li>我完成了一次连续对话。</li>
+            </ul>
+          </div>
+          <div class="parent-card" data-animate data-delay="2">
+            <h3>家长 10 分钟陪伴</h3>
+            <p>聊一聊孩子问了什么，验一验换个问法会不会更清楚，再请孩子围绕一个主题说出 3 个可以问 AI 的问题。</p>
+          </div>
+        </div>
+        <p data-animate data-delay="3">把话说完整，把事情说明白，别人和 AI 都更容易听懂。</p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

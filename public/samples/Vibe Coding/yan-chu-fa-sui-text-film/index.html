@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI时代的表达：言出法随</title>
+  <meta name="description" content="《AI时代的表达：言出法随》引言。">
+  <style>
+    :root {
+      /* Global tokens */
+      --ink-050: hsl(48 48% 96%);
+      --ink-100: hsl(48 34% 89%);
+      --ink-300: hsl(44 18% 62%);
+      --ink-500: hsl(42 16% 36%);
+      --ink-700: hsl(210 18% 16%);
+      --ink-900: hsl(214 24% 7%);
+      --signal-200: hsl(37 91% 74%);
+      --signal-500: hsl(36 91% 54%);
+      --signal-700: hsl(24 84% 45%);
+      --cyan-300: hsl(184 74% 68%);
+      --cyan-600: hsl(185 68% 39%);
+      --red-400: hsl(4 77% 62%);
+      --green-400: hsl(144 48% 55%);
+
+      /* Alias tokens */
+      --color-bg: var(--ink-900);
+      --color-bg-soft: hsl(214 20% 10%);
+      --color-surface: hsl(46 30% 91% / 0.94);
+      --color-surface-dim: hsl(43 18% 77% / 0.34);
+      --color-text: var(--ink-050);
+      --color-text-dark: var(--ink-900);
+      --color-muted: var(--ink-300);
+      --color-border: hsl(43 24% 78% / 0.38);
+      --color-primary: var(--signal-500);
+      --color-primary-strong: var(--signal-700);
+      --color-secondary: var(--cyan-300);
+      --color-danger: var(--red-400);
+      --color-success: var(--green-400);
+
+      /* Typography */
+      --font-display: "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
+      --font-body: "LXGW WenKai Screen", "PingFang SC", "Microsoft YaHei", sans-serif;
+      --font-mono: "IBM Plex Mono", "SFMono-Regular", monospace;
+      --text-xs: clamp(0.76rem, 0.72rem + 0.18vw, 0.84rem);
+      --text-sm: clamp(0.88rem, 0.84rem + 0.22vw, 0.98rem);
+      --text-base: clamp(1rem, 0.96rem + 0.38vw, 1.15rem);
+      --text-lg: clamp(1.22rem, 1.05rem + 0.86vw, 1.58rem);
+      --text-xl: clamp(1.52rem, 1.18rem + 1.64vw, 2.2rem);
+      --text-2xl: clamp(2rem, 1.32rem + 3.1vw, 3.18rem);
+      --text-display: clamp(2.78rem, 1.82rem + 4.62vw, 4.78rem);
+      --leading-tight: 1.16;
+      --leading-title: 1.24;
+      --leading-copy: 1.75;
+      --tracking-none: 0;
+      --tracking-wide: 0.08em;
+
+      /* Spacing */
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --space-12: 3rem;
+      --space-16: 4rem;
+      --space-20: 5rem;
+
+      /* Shape, shadow, motion */
+      --radius-sm: 0.25rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+      --shadow-paper: 0 1.25rem 3rem hsl(214 30% 3% / 0.38);
+      --shadow-glow: 0 0 2rem hsl(36 91% 54% / 0.2);
+      --duration-fast: 160ms;
+      --duration-normal: 300ms;
+      --duration-slow: 680ms;
+      --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+      --ease-reveal: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+      /* Component tokens */
+      --stage-inline: min(100%, 30rem);
+      --scene-pad: clamp(var(--space-5), 5vw, var(--space-10));
+      --hairline: 0.0625rem solid var(--color-border);
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --color-bg: hsl(42 34% 90%);
+        --color-bg-soft: hsl(44 30% 84%);
+        --color-text: var(--ink-900);
+        --color-muted: var(--ink-500);
+        --color-surface: hsl(214 24% 8% / 0.92);
+        --color-surface-dim: hsl(214 16% 18% / 0.14);
+        --color-text-dark: var(--ink-050);
+        --color-border: hsl(214 14% 18% / 0.2);
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-inline-size: 20rem;
+      scroll-behavior: smooth;
+      background: var(--color-bg);
+    }
+
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      color: var(--color-text);
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      line-height: var(--leading-copy);
+      letter-spacing: var(--tracking-none);
+      background:
+        radial-gradient(circle at 50% 0%, hsl(36 91% 54% / 0.18), transparent 24rem),
+        radial-gradient(circle at 90% 42%, hsl(184 74% 68% / 0.12), transparent 18rem),
+        linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-soft) 48%, var(--color-bg) 100%);
+    }
+
+    body::before {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      content: "";
+      opacity: 0.36;
+      background-image:
+        linear-gradient(hsl(48 40% 90% / 0.08) 0.0625rem, transparent 0.0625rem),
+        linear-gradient(90deg, hsl(48 40% 90% / 0.06) 0.0625rem, transparent 0.0625rem);
+      background-size: var(--space-8) var(--space-8);
+      mask-image: linear-gradient(180deg, transparent, black 12%, black 88%, transparent);
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .film {
+      inline-size: var(--stage-inline);
+      margin-inline: auto;
+      border-inline: var(--hairline);
+      background: linear-gradient(180deg, hsl(214 28% 6% / 0.52), hsl(214 24% 9% / 0.7));
+      box-shadow: var(--shadow-paper);
+    }
+
+    .progress {
+      position: fixed;
+      inset-block-start: 0;
+      inset-inline-start: 0;
+      z-index: 10;
+      inline-size: 100%;
+      block-size: var(--space-1);
+      transform-origin: left center;
+      transform: scaleX(0);
+      background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    }
+
+    .scene {
+      position: relative;
+      display: grid;
+      align-content: center;
+      min-block-size: 100svh;
+      padding: var(--scene-pad);
+      isolation: isolate;
+      overflow: hidden;
+      border-block-end: var(--hairline);
+    }
+
+    .scene::before {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      content: "";
+      opacity: 0.52;
+      background:
+        linear-gradient(180deg, transparent, hsl(214 24% 5% / 0.7)),
+        radial-gradient(circle at var(--lamp-x, 50%) var(--lamp-y, 18%), hsl(38 91% 62% / var(--lamp-alpha, 0.24)), transparent 16rem);
+    }
+
+    .scene__kicker {
+      margin: 0 0 var(--space-3);
+      color: var(--color-primary);
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      letter-spacing: var(--tracking-wide);
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-block: 0;
+    }
+
+    h1,
+    h2 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      line-height: var(--leading-title);
+      text-wrap: balance;
+    }
+
+    h1 {
+      font-size: var(--text-display);
+    }
+
+    h2 {
+      max-inline-size: 11em;
+      font-size: var(--text-2xl);
+    }
+
+    .bigline {
+      display: block;
+      margin-block-start: var(--space-3);
+      color: var(--color-primary);
+    }
+
+    .copy {
+      max-inline-size: 25em;
+      margin-block-start: var(--space-5);
+      color: hsl(48 48% 92% / 0.88);
+      text-wrap: pretty;
+    }
+
+    .quote {
+      position: relative;
+      max-inline-size: 13em;
+      margin-block-start: var(--space-8);
+      color: var(--color-text);
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      font-weight: 800;
+      line-height: 1.36;
+    }
+
+    .quote::before {
+      position: absolute;
+      inset-block-start: -0.8em;
+      inset-inline-start: -0.1em;
+      color: hsl(36 91% 54% / 0.32);
+      font-size: 4em;
+      line-height: 1;
+      content: "“";
+    }
+
+    .split-words {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin-block-start: var(--space-8);
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-block-size: var(--space-8);
+      padding: var(--space-1) var(--space-3);
+      border: var(--hairline);
+      border-radius: var(--radius-sm);
+      color: var(--chip-fg, var(--color-text));
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      background: var(--chip-bg, hsl(214 18% 12% / 0.76));
+    }
+
+    .chip--danger {
+      --chip-fg: hsl(4 90% 76%);
+      --chip-bg: hsl(4 77% 62% / 0.12);
+    }
+
+    .chip--ok {
+      --chip-fg: hsl(144 68% 72%);
+      --chip-bg: hsl(144 48% 55% / 0.12);
+    }
+
+    .paper {
+      position: relative;
+      margin-block-start: var(--space-8);
+      padding: var(--space-5);
+      border: var(--hairline);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-dark);
+      background:
+        linear-gradient(90deg, hsl(0 0% 100% / 0), hsl(36 91% 54% / 0.12)),
+        var(--color-surface);
+      box-shadow: var(--shadow-paper);
+    }
+
+    .paper::after {
+      position: absolute;
+      inset-block-start: var(--space-3);
+      inset-inline-end: calc(var(--space-3) * -1);
+      padding: var(--space-1) var(--space-2);
+      border: 0.0625rem solid hsl(4 77% 62% / 0.5);
+      color: var(--color-danger);
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      line-height: 1;
+      rotate: 7deg;
+      content: attr(data-stamp);
+      background: hsl(48 48% 96% / 0.9);
+    }
+
+    .receipt {
+      display: grid;
+      gap: var(--space-3);
+      margin-block-start: var(--space-6);
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+    }
+
+    .receipt__row {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--space-3);
+      padding-block-end: var(--space-2);
+      border-block-end: 0.0625rem dashed hsl(214 20% 20% / 0.28);
+    }
+
+    .receipt__row strong {
+      color: var(--color-primary-strong);
+      font-weight: 800;
+    }
+
+    .console {
+      margin-block-start: var(--space-8);
+      padding: var(--space-4);
+      border: var(--hairline);
+      border-radius: var(--radius-md);
+      color: hsl(48 48% 92%);
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      line-height: 1.7;
+      background: hsl(214 28% 5% / 0.88);
+      box-shadow: inset 0 0 0 0.0625rem hsl(184 74% 68% / 0.08), var(--shadow-glow);
+    }
+
+    .console__line {
+      display: block;
+      padding-block: var(--space-1);
+    }
+
+    .console__line::before {
+      color: var(--color-secondary);
+      content: "> ";
+    }
+
+    .redacted {
+      color: transparent;
+      text-shadow: 0 0 0 var(--color-danger);
+      background: linear-gradient(transparent 58%, hsl(4 77% 62% / 0.32) 58%);
+    }
+
+    .diagram {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+      margin-block-start: var(--space-8);
+    }
+
+    .node {
+      position: relative;
+      padding: var(--space-4);
+      border: var(--hairline);
+      border-radius: var(--radius-md);
+      background: hsl(214 18% 12% / 0.64);
+    }
+
+    .node + .node::before {
+      position: absolute;
+      inset-block-start: calc(var(--space-4) * -1);
+      inset-inline-start: var(--space-5);
+      inline-size: 0.0625rem;
+      block-size: var(--space-4);
+      content: "";
+      background: var(--color-primary);
+    }
+
+    .node b {
+      display: block;
+      color: var(--color-primary);
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      letter-spacing: var(--tracking-wide);
+    }
+
+    .node span {
+      display: block;
+      margin-block-start: var(--space-1);
+      color: hsl(48 48% 92% / 0.9);
+      font-size: var(--text-lg);
+      font-weight: 700;
+      line-height: 1.36;
+    }
+
+    .chain {
+      display: grid;
+      gap: var(--space-3);
+      margin-block-start: var(--space-8);
+      counter-reset: step;
+    }
+
+    .chain__item {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: var(--space-3);
+      align-items: start;
+      padding-block: var(--space-2);
+      border-block-end: var(--hairline);
+      color: hsl(48 48% 92% / 0.9);
+      font-size: var(--text-lg);
+      line-height: 1.42;
+      counter-increment: step;
+    }
+
+    .chain__item::before {
+      display: grid;
+      place-items: center;
+      inline-size: var(--space-8);
+      block-size: var(--space-8);
+      border: 0.0625rem solid var(--color-primary);
+      border-radius: 50%;
+      color: var(--color-primary);
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      content: counter(step, decimal-leading-zero);
+    }
+
+    .final-mark {
+      display: grid;
+      place-items: center;
+      inline-size: min(72vw, 18rem);
+      aspect-ratio: 1;
+      margin: var(--space-10) auto 0;
+      border: 0.14rem solid hsl(36 91% 54% / 0.65);
+      border-radius: 50%;
+      color: var(--color-primary);
+      font-family: var(--font-display);
+      font-size: var(--text-2xl);
+      font-weight: 900;
+      line-height: 1.15;
+      text-align: center;
+      box-shadow: inset 0 0 3rem hsl(36 91% 54% / 0.1), var(--shadow-glow);
+      transform: rotate(-8deg);
+    }
+
+    .footer-note {
+      margin-block-start: var(--space-8);
+      color: var(--color-muted);
+      font-size: var(--text-sm);
+      text-align: center;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(var(--space-5));
+      transition:
+        opacity var(--duration-slow) var(--ease-reveal),
+        transform var(--duration-slow) var(--ease-reveal);
+    }
+
+    .is-visible .reveal {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .is-visible .reveal:nth-child(2) {
+      transition-delay: var(--duration-fast);
+    }
+
+    .is-visible .reveal:nth-child(3) {
+      transition-delay: var(--duration-normal);
+    }
+
+    .scanline {
+      position: absolute;
+      inset-inline: 0;
+      inset-block-start: 0;
+      z-index: 1;
+      block-size: 18%;
+      pointer-events: none;
+      opacity: 0;
+      background: linear-gradient(180deg, transparent, hsl(184 74% 68% / 0.14), transparent);
+      transform: translateY(-100%);
+    }
+
+    .is-visible .scanline {
+      animation: scan var(--duration-slow) var(--ease-standard) both;
+    }
+
+    @keyframes scan {
+      0% {
+        opacity: 0;
+        transform: translateY(-100%);
+      }
+      24%,
+      70% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(560%);
+      }
+    }
+
+    @media (min-width: 54rem) {
+      body {
+        padding-block: var(--space-8);
+      }
+
+      .film {
+        border: var(--hairline);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+      }
+
+      .scene {
+        min-block-size: min(100svh, 54rem);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.001ms !important;
+      }
+
+      .reveal {
+        opacity: 1;
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" aria-hidden="true"></div>
+  <main class="film" aria-label="AI时代的表达：言出法随文字短片">
+    <section class="scene scene--title" style="--lamp-x: 48%; --lamp-y: 16%; --lamp-alpha: 0.28;">
+      <span class="scanline"></span>
+      <p class="scene__kicker reveal">Opening / 00</p>
+      <h1 class="reveal">你说了很多话<span class="bigline">但结果没有动</span></h1>
+      <p class="copy reveal">这个时代重新要求我们学会表达，不是因为话变少了，而是因为话和结果之间的距离，被看得更清楚了。</p>
+    </section>
+
+    <section class="scene" style="--lamp-x: 12%; --lamp-y: 18%; --lamp-alpha: 0.2;">
+      <p class="scene__kicker reveal">Scene / 01</p>
+      <h2 class="reveal">第一处失真，通常藏在一个小词里。</h2>
+      <div class="paper reveal" data-stamp="偏差">
+        <p class="quote">“帮我买瓶大一点的牛奶。”</p>
+        <div class="receipt" aria-label="牛奶规格理解偏差">
+          <div class="receipt__row"><span>说话者心里</span><strong>2L</strong></div>
+          <div class="receipt__row"><span>执行者理解</span><strong>1L</strong></div>
+          <div class="receipt__row"><span>问题来源</span><strong>大一点</strong></div>
+        </div>
+      </div>
+      <p class="copy reveal">不是对方不认真，而是指令没有给出可以落地的尺寸。</p>
+    </section>
+
+    <section class="scene" style="--lamp-x: 88%; --lamp-y: 18%; --lamp-alpha: 0.18;">
+      <span class="scanline"></span>
+      <p class="scene__kicker reveal">Scene / 02</p>
+      <h2 class="reveal">到了协作现场，模糊词会变成返工。</h2>
+      <div class="console reveal" aria-label="项目经理任务指令">
+        <span class="console__line">尽快完成市场调研报告</span>
+        <span class="console__line">数据要<span class="redacted">详实</span></span>
+        <span class="console__line">分析要<span class="redacted">深入</span></span>
+        <span class="console__line">下周一例会前给我</span>
+      </div>
+      <div class="split-words reveal" aria-label="模糊词">
+        <span class="chip chip--danger">尽快</span>
+        <span class="chip chip--danger">详实</span>
+        <span class="chip chip--danger">深入</span>
+        <span class="chip chip--danger">高质量</span>
+      </div>
+      <p class="copy reveal">这些词听起来专业，却没有告诉人：时间、范围、标准和交付物到底是什么。</p>
+    </section>
+
+    <section class="scene" style="--lamp-x: 50%; --lamp-y: 12%; --lamp-alpha: 0.22;">
+      <p class="scene__kicker reveal">Scene / 03</p>
+      <h2 class="reveal">AI把表达里的问题放大了。</h2>
+      <div class="console reveal" aria-label="AI指令示例">
+        <span class="console__line">画一个美丽的日落</span>
+        <span class="console__line">写一篇关于环保的深度文章</span>
+      </div>
+      <div class="diagram reveal">
+        <div class="node"><b>输入</b><span>美丽、深度、好看</span></div>
+        <div class="node"><b>机器理解</b><span>训练数据里的平均答案</span></div>
+        <div class="node"><b>输出</b><span>像对，又不真正对</span></div>
+      </div>
+    </section>
+
+    <section class="scene" style="--lamp-x: 18%; --lamp-y: 30%; --lamp-alpha: 0.2;">
+      <p class="scene__kicker reveal">Scene / 04</p>
+      <h2 class="reveal">过去还能糊弄过去，现在不行了。</h2>
+      <div class="chain reveal" aria-label="时代变化">
+        <div class="chain__item">信息不再稀缺，注意力才稀缺。</div>
+        <div class="chain__item">远程协作拿走了表情、语气和眼神。</div>
+        <div class="chain__item">AI不会替你脑补，只会执行你给出的字面信息。</div>
+      </div>
+      <p class="copy reveal">表达不清，不只是慢一点，而是会失去被理解、被执行、被相信的机会。</p>
+    </section>
+
+    <section class="scene" style="--lamp-x: 76%; --lamp-y: 18%; --lamp-alpha: 0.25;">
+      <span class="scanline"></span>
+      <p class="scene__kicker reveal">Scene / 05</p>
+      <h2 class="reveal">表达不是信息的包装，表达就是行动的起点。</h2>
+      <div class="paper reveal" data-stamp="发令">
+        <p class="quote">“把房间收拾干净。”</p>
+        <div class="receipt">
+          <div class="receipt__row"><span>孩子理解</span><strong>玩具堆到角落</strong></div>
+          <div class="receipt__row"><span>你的期待</span><strong>物品归位、床铺整洁</strong></div>
+          <div class="receipt__row"><span>真正缺失</span><strong>标准</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene" style="--lamp-x: 50%; --lamp-y: 16%; --lamp-alpha: 0.2;">
+      <p class="scene__kicker reveal">Scene / 06</p>
+      <h2 class="reveal">这不是提示词教材，而是表达训练。</h2>
+      <div class="split-words reveal" aria-label="提示词与表达训练区别">
+        <span class="chip chip--danger">咒语</span>
+        <span class="chip chip--danger">模板</span>
+        <span class="chip chip--danger">套话</span>
+        <span class="chip chip--ok">目标</span>
+        <span class="chip chip--ok">背景</span>
+        <span class="chip chip--ok">边界</span>
+        <span class="chip chip--ok">标准</span>
+      </div>
+      <p class="copy reveal">提示词只是一个应用场景。真正决定结果的，是你能不能把想法说成别人和 AI 都能执行的结构。</p>
+    </section>
+
+    <section class="scene" style="--lamp-x: 24%; --lamp-y: 18%; --lamp-alpha: 0.18;">
+      <p class="scene__kicker reveal">Scene / 07</p>
+      <h2 class="reveal">这本书的学习路径，是一条校准链。</h2>
+      <div class="chain reveal" aria-label="全书能力链">
+        <div class="chain__item">觉察：发现表达在失真。</div>
+        <div class="chain__item">构建：先说清目标、背景和边界。</div>
+        <div class="chain__item">校验：说清标准，拆解任务。</div>
+        <div class="chain__item">迭代：用反馈和多轮校准逼近结果。</div>
+        <div class="chain__item">迁移：把能力用到人、团队和 AI 场景。</div>
+      </div>
+    </section>
+
+    <section class="scene" style="--lamp-x: 50%; --lamp-y: 22%; --lamp-alpha: 0.32;">
+      <p class="scene__kicker reveal">Ending / 08</p>
+      <h2 class="reveal">你的语言，不只是声音或文字。</h2>
+      <p class="copy reveal">当目标清楚、背景充分、边界明确、标准可查，表达才会从“说过了”变成“做成了”。</p>
+      <div class="final-mark reveal">言出<br>法随</div>
+      <p class="footer-note reveal">从第一章开始，先学会看见失真。</p>
+    </section>
+  </main>
+
+  <script>
+    const scenes = [...document.querySelectorAll(".scene")];
+    const progress = document.querySelector(".progress");
+
+    const markVisible = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+        }
+      });
+    }, { threshold: 0.34 });
+
+    scenes.forEach((scene) => markVisible.observe(scene));
+
+    const updateProgress = () => {
+      const doc = document.documentElement;
+      const total = doc.scrollHeight - window.innerHeight;
+      const value = total > 0 ? window.scrollY / total : 0;
+      progress.style.transform = `scaleX(${Math.min(1, Math.max(0, value))})`;
+    };
+
+    updateProgress();
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    window.addEventListener("resize", updateProgress);
+  </script>
+</body>
+</html>

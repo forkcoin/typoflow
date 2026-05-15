@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>把模型的能力，变成你自己的工作能力</title>
+  <style>
+    :root {
+      --color-bg: #f4f1ea;
+      --color-panel: #fffcf4;
+      --color-text-primary: #171715;
+      --color-text-secondary: #656158;
+      --color-muted: #918a7b;
+      --color-line: rgba(23, 23, 21, 0.16);
+      --color-line-strong: rgba(23, 23, 21, 0.32);
+      --color-accent: #b84b37;
+      --color-accent-soft: #e8c9bd;
+      --color-field: #22201d;
+      --font-serif: "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
+      --font-sans: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "Heiti SC", sans-serif;
+      --font-mono: "SFMono-Regular", "Menlo", "Consolas", monospace;
+      --size-title: clamp(2.35rem, 8.5vw, 5.8rem);
+      --size-headline: clamp(1.65rem, 5vw, 3.4rem);
+      --size-kicker: clamp(0.78rem, 2vw, 0.95rem);
+      --size-body: clamp(1rem, 2.45vw, 1.26rem);
+      --size-caption: clamp(0.78rem, 1.9vw, 0.95rem);
+      --leading-tight: 1.18;
+      --leading-normal: 1.72;
+      --leading-loose: 1.95;
+      --spacing-screen: clamp(3rem, 8vw, 7rem);
+      --spacing-section: clamp(1.4rem, 4vw, 3.2rem);
+      --max-line-width: 27em;
+      --motion-slow: 980ms;
+      --motion-mid: 680ms;
+      --motion-fast: 380ms;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      background: var(--color-bg);
+      color: var(--color-text-primary);
+      scroll-snap-type: y proximity;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      overflow-x: hidden;
+      font-family: var(--font-sans);
+      line-height: var(--leading-normal);
+      background:
+        linear-gradient(90deg, rgba(23, 23, 21, 0.035) 1px, transparent 1px) 0 0 / 48px 48px,
+        linear-gradient(0deg, rgba(23, 23, 21, 0.032) 1px, transparent 1px) 0 0 / 48px 48px,
+        radial-gradient(circle at 50% 20%, rgba(184, 75, 55, 0.08), transparent 36rem),
+        var(--color-bg);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.36;
+      background-image:
+        linear-gradient(rgba(23, 23, 21, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(23, 23, 21, 0.025) 1px, transparent 1px);
+      background-size: 7px 7px, 11px 11px;
+      mix-blend-mode: multiply;
+    }
+
+    .film {
+      width: 100%;
+    }
+
+    .scene {
+      position: relative;
+      min-height: 100svh;
+      display: grid;
+      align-items: center;
+      padding: var(--spacing-screen) clamp(1.25rem, 5vw, 5rem);
+      scroll-snap-align: start;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .scene::after {
+      content: attr(data-scene);
+      position: absolute;
+      right: clamp(1rem, 4vw, 3.5rem);
+      bottom: clamp(1rem, 3vw, 2rem);
+      color: rgba(23, 23, 21, 0.28);
+      font: 500 var(--size-caption) / 1 var(--font-mono);
+      letter-spacing: 0;
+    }
+
+    .stage {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      position: relative;
+      display: grid;
+      gap: var(--spacing-section);
+      animation: rise var(--motion-slow) ease both;
+    }
+
+    .stage.narrow {
+      width: min(860px, 100%);
+    }
+
+    .stage.split {
+      grid-template-columns: minmax(0, 1.08fr) minmax(240px, 0.72fr);
+      align-items: center;
+      gap: clamp(2rem, 7vw, 6rem);
+    }
+
+    .kicker {
+      margin: 0;
+      color: var(--color-accent);
+      font: 700 var(--size-kicker) / 1.35 var(--font-sans);
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    p {
+      margin: 0;
+    }
+
+    h1,
+    h2 {
+      max-width: 11em;
+      font-family: var(--font-serif);
+      font-weight: 900;
+      line-height: var(--leading-tight);
+      letter-spacing: 0;
+    }
+
+    h1 {
+      font-size: var(--size-title);
+    }
+
+    h2 {
+      font-size: var(--size-headline);
+    }
+
+    .body {
+      max-width: var(--max-line-width);
+      color: var(--color-text-secondary);
+      font-size: var(--size-body);
+      line-height: var(--leading-loose);
+    }
+
+    .strong {
+      color: var(--color-text-primary);
+      font-weight: 600;
+    }
+
+    .accent {
+      color: var(--color-accent);
+    }
+
+    .deck {
+      display: grid;
+      gap: clamp(0.7rem, 2vw, 1rem);
+      max-width: 640px;
+    }
+
+    .term-row {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(7.2em, 0.55fr) minmax(0, 1fr);
+      align-items: start;
+      gap: clamp(1rem, 3vw, 2.4rem);
+      padding: clamp(1rem, 2.4vw, 1.35rem) 0;
+      border-top: 1px solid var(--color-line);
+      animation: lineIn var(--motion-mid) ease both;
+    }
+
+    .term-row:last-child {
+      border-bottom: 1px solid var(--color-line);
+    }
+
+    .term {
+      color: var(--color-text-primary);
+      font: 800 clamp(1.04rem, 2.7vw, 1.45rem) / 1.25 var(--font-sans);
+    }
+
+    .meaning {
+      color: var(--color-text-secondary);
+      font-size: var(--size-body);
+      line-height: 1.75;
+    }
+
+    .board {
+      position: relative;
+      display: grid;
+      gap: clamp(0.85rem, 2.2vw, 1.2rem);
+      padding: clamp(1.2rem, 3vw, 2rem);
+      color: #f8f1e7;
+      background: var(--color-field);
+      border: 1px solid rgba(255, 252, 244, 0.16);
+      box-shadow: 0 24px 70px rgba(23, 23, 21, 0.16);
+    }
+
+    .board::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: clamp(1.2rem, 3vw, 2rem);
+      width: 4px;
+      height: 42%;
+      background: var(--color-accent);
+    }
+
+    .board p {
+      font-size: clamp(0.96rem, 2.2vw, 1.12rem);
+      line-height: 1.75;
+      color: rgba(248, 241, 231, 0.76);
+    }
+
+    .board .main {
+      color: #fff7ed;
+      font-family: var(--font-serif);
+      font-size: clamp(1.35rem, 3.6vw, 2.25rem);
+      font-weight: 900;
+      line-height: 1.35;
+    }
+
+    .map {
+      position: relative;
+      display: grid;
+      gap: clamp(0.8rem, 2vw, 1rem);
+      padding: clamp(1rem, 2.4vw, 1.4rem) 0;
+    }
+
+    .map-item {
+      display: grid;
+      grid-template-columns: 2.2rem minmax(0, 1fr);
+      align-items: start;
+      gap: 1rem;
+    }
+
+    .dot {
+      width: 2.2rem;
+      height: 2.2rem;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--color-line-strong);
+      border-radius: 50%;
+      color: var(--color-accent);
+      font: 700 0.82rem / 1 var(--font-mono);
+      background: rgba(255, 252, 244, 0.48);
+    }
+
+    .map-item p {
+      padding-bottom: 0.9rem;
+      color: var(--color-text-secondary);
+      font-size: var(--size-body);
+      line-height: 1.7;
+      border-bottom: 1px solid var(--color-line);
+    }
+
+    .quote {
+      max-width: 13em;
+      color: var(--color-text-primary);
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 7vw, 5.1rem);
+      font-weight: 900;
+      line-height: 1.12;
+    }
+
+    .quote-mark {
+      display: block;
+      color: var(--color-accent);
+      font: 900 clamp(3rem, 11vw, 7rem) / 0.8 var(--font-serif);
+    }
+
+    .workbench {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(0.7rem, 2vw, 1rem);
+    }
+
+    .work-cell {
+      min-height: clamp(7rem, 18vw, 10rem);
+      padding: clamp(0.9rem, 2vw, 1.2rem);
+      border: 1px solid var(--color-line);
+      background: rgba(255, 252, 244, 0.5);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .work-cell b {
+      color: var(--color-text-primary);
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+    }
+
+    .work-cell span {
+      color: var(--color-muted);
+      font: 500 var(--size-caption) / 1.55 var(--font-sans);
+    }
+
+    .rail {
+      position: absolute;
+      left: clamp(1.25rem, 5vw, 4rem);
+      top: var(--spacing-screen);
+      bottom: var(--spacing-screen);
+      width: 1px;
+      background: linear-gradient(var(--color-line-strong), transparent);
+      transform-origin: top;
+      animation: scaleDown 1200ms ease both;
+    }
+
+    .final-field {
+      min-height: 64svh;
+      display: grid;
+      align-content: center;
+      gap: clamp(1.5rem, 4vw, 2.6rem);
+      padding: clamp(1.2rem, 4vw, 3.2rem);
+      color: #fff7ed;
+      background: var(--color-field);
+      box-shadow: inset 0 0 0 1px rgba(255, 252, 244, 0.14);
+    }
+
+    .final-field h2 {
+      max-width: 10em;
+      color: #fff7ed;
+    }
+
+    .final-field .body {
+      color: rgba(255, 247, 237, 0.76);
+    }
+
+    .closing-line {
+      width: min(360px, 55%);
+      height: 3px;
+      background: var(--color-accent);
+      transform-origin: left;
+      animation: scaleRight var(--motion-slow) ease 340ms both;
+    }
+
+    .delay-1 { animation-delay: 100ms; }
+    .delay-2 { animation-delay: 220ms; }
+    .delay-3 { animation-delay: 340ms; }
+    .delay-4 { animation-delay: 460ms; }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(1.1rem);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes lineIn {
+      from {
+        opacity: 0;
+        transform: translateX(-0.8rem);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes scaleRight {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+
+    @keyframes scaleDown {
+      from { transform: scaleY(0); }
+      to { transform: scaleY(1); }
+    }
+
+    @media (max-width: 820px) {
+      html {
+        scroll-snap-type: none;
+      }
+
+      .scene {
+        min-height: auto;
+        padding-top: clamp(4rem, 12vw, 6rem);
+        padding-bottom: clamp(4rem, 12vw, 6rem);
+      }
+
+      .stage.split {
+        grid-template-columns: 1fr;
+      }
+
+      h1,
+      h2,
+      .quote {
+        max-width: 100%;
+      }
+
+      .term-row {
+        grid-template-columns: 1fr;
+        gap: 0.45rem;
+      }
+
+      .workbench {
+        grid-template-columns: 1fr;
+      }
+
+      .rail {
+        display: none;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .scene {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+
+      .map-item {
+        grid-template-columns: 1.9rem minmax(0, 1fr);
+        gap: 0.75rem;
+      }
+
+      .dot {
+        width: 1.9rem;
+        height: 1.9rem;
+      }
+
+      .final-field {
+        min-height: 70svh;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="film" aria-label="把模型的能力，变成你自己的工作能力">
+    <section class="scene" data-scene="S01">
+      <div class="rail"></div>
+      <div class="stage narrow">
+        <p class="kicker">不用先相信术语</p>
+        <h1>把模型的能力，变成你自己的工作能力</h1>
+        <p class="body">Harness、Agent、Skill、Vibe Coding 听起来很新。但它们要解决的麻烦，其实很普通。</p>
+      </div>
+    </section>
+
+    <section class="scene" data-scene="S02">
+      <div class="stage split">
+        <div>
+          <p class="kicker">真实麻烦</p>
+          <h2>你说了想法，AI 做了一部分。</h2>
+          <p class="body">你继续让它改，它又改坏了别的地方；隔天回来，忘了上次做到哪一步；角色越开越多，文件和提示词反而开始互相覆盖。</p>
+        </div>
+        <div class="board">
+          <p class="main">问题不在词新不新。</p>
+          <p>问题在于：你有没有一套能让 AI 持续工作的安排。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene" data-scene="S03">
+      <div class="stage">
+        <p class="kicker">四个词，先这样理解</p>
+        <div class="deck">
+          <div class="term-row delay-1">
+            <div class="term">Vibe Coding</div>
+            <div class="meaning">先把脑子里还没完全说清的画面跑出来，再一边看、一边改、一边收紧。</div>
+          </div>
+          <div class="term-row delay-2">
+            <div class="term">Agent</div>
+            <div class="meaning">让 AI 承担某一类责任的角色。重点不是多，而是边界。</div>
+          </div>
+          <div class="term-row delay-3">
+            <div class="term">Skill</div>
+            <div class="meaning">把反复用到的一套做法，写成可调用的方法包。</div>
+          </div>
+          <div class="term-row delay-4">
+            <div class="term">Harness</div>
+            <div class="meaning">把任务顺序、上下文、检查点、角色和恢复路径串起来。</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene" data-scene="S04">
+      <div class="stage split">
+        <div>
+          <p class="kicker">核心变化</p>
+          <h2>你不再把所有希望，塞进一句提示词。</h2>
+          <p class="body">你开始给 AI 一个能工作的环境：目标说清，边界写明，产物可检查，错误能恢复，经验能沉淀。</p>
+        </div>
+        <div class="map">
+          <div class="map-item">
+            <div class="dot">01</div>
+            <p>想法进入任务</p>
+          </div>
+          <div class="map-item">
+            <div class="dot">02</div>
+            <p>任务进入文件</p>
+          </div>
+          <div class="map-item">
+            <div class="dot">03</div>
+            <p>文件接受检查</p>
+          </div>
+          <div class="map-item">
+            <div class="dot">04</div>
+            <p>检查改变下一步</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene" data-scene="S05">
+      <div class="stage narrow">
+        <span class="quote-mark">“</span>
+        <p class="quote">模型会继续变强。</p>
+        <p class="body">一部分拆任务、调用工具、修复错误、整理上下文的工作，会越来越自动化。你未必每次都要手动做。</p>
+      </div>
+    </section>
+
+    <section class="scene" data-scene="S06">
+      <div class="stage split">
+        <div>
+          <p class="kicker">但关键不会消失</p>
+          <h2>项目到底要去哪里，仍然需要你判断。</h2>
+          <p class="body">什么算做对，哪些东西不能动，什么风险可以接受，什么时候该继续，什么时候该停。这些判断，不能长期外包。</p>
+        </div>
+        <div class="board">
+          <p class="main">模型越方便，你越要保住自己的思考肌肉。</p>
+          <p>否则你只会看到一个看似完整的结果，却看不见它为什么成功，为什么失败。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene" data-scene="S07">
+      <div class="stage">
+        <p class="kicker">这本书的练习方向</p>
+        <h2>不是把你训练成术语很多的人。</h2>
+        <div class="workbench">
+          <div class="work-cell">
+            <b>把画面写成任务</b>
+            <span>让“好看、完整、顺手”变成能观察的验收项。</span>
+          </div>
+          <div class="work-cell">
+            <b>把任务拆成链条</b>
+            <span>让项目隔天回来还能继续，而不是重新猜一遍。</span>
+          </div>
+          <div class="work-cell">
+            <b>给角色划清边界</b>
+            <span>让 Agent 知道负责什么，也知道不能碰什么。</span>
+          </div>
+          <div class="work-cell">
+            <b>把经验沉淀成方法</b>
+            <span>让 Skill 减少重复交代，也减少每次执行的漂移。</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene" data-scene="S08">
+      <div class="stage split">
+        <div>
+          <p class="kicker">流程的分寸</p>
+          <h2>越到后面，越要学会不用。</h2>
+          <p class="body">小任务也许只需要一张想法落地卡；中等任务需要任务链和状态文件；责任真正分化时才需要 Agent；反复出现的做法，才值得沉淀成 Skill。</p>
+        </div>
+        <div class="board">
+          <p class="main">流程是为了保护直觉，不是替代直觉。</p>
+          <p>Vibe Coding 的珍贵之处，正是那个一开始模糊但真实的感觉。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene" data-scene="S09">
+      <div class="stage">
+        <div class="final-field">
+          <p class="kicker">结语</p>
+          <h2>会用 AI 的人，是能看见任务结构的人。</h2>
+          <div class="closing-line"></div>
+          <p class="body">模型会变，工具会换。目标要说清，边界要写明，产物要检查，错误要恢复，经验要沉淀。这些东西，不太会过期。</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
