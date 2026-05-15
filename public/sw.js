@@ -1,5 +1,7 @@
 const CACHE_NAME = "ziying-shell-v3";
-const SHELL_URLS = ["/", "/index.html", "/icons/icon.svg"];
+const BASE_PATH = new URL(self.registration.scope).pathname;
+const withBase = (path) => `${BASE_PATH}${path}`.replace(/\/{2,}/g, "/");
+const SHELL_URLS = [withBase(""), withBase("index.html"), withBase("icons/icon.svg")];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -28,16 +30,16 @@ self.addEventListener("fetch", (event) => {
   }
 
   if (request.mode === "navigate") {
-    event.respondWith(fetch(request).catch(() => caches.match("/index.html")));
+    event.respondWith(fetch(request).catch(() => caches.match(withBase("index.html"))));
     return;
   }
 
-  if (url.pathname.startsWith("/samples/")) {
+  if (url.pathname.startsWith(withBase("samples/"))) {
     event.respondWith(fetch(request));
     return;
   }
 
-  if (url.pathname === "/manifest.webmanifest") {
+  if (url.pathname === withBase("manifest.webmanifest")) {
     event.respondWith(fetch(request));
     return;
   }

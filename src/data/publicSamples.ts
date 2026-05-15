@@ -29,8 +29,12 @@ function cacheBustedPath(path: string, version: string): string {
   return `${path}${separator}v=${encodeURIComponent(version)}`;
 }
 
+function publicPath(path: string): string {
+  return `${import.meta.env.BASE_URL}${path.replace(/^\/+/, "")}`;
+}
+
 async function fetchFile(path: string, version: string): Promise<File> {
-  const response = await fetch(cacheBustedPath(path, version), { cache: "reload" });
+  const response = await fetch(cacheBustedPath(publicPath(path), version), { cache: "reload" });
   if (!response.ok) {
     throw new Error(`无法读取示例文件：${path}`);
   }
@@ -54,7 +58,7 @@ export async function loadPublicSampleItems(): Promise<HtmlItem[]> {
 
   try {
     const version = Date.now().toString(36);
-    const manifestResponse = await fetch(cacheBustedPath("/samples/manifest.json", version), { cache: "reload" });
+    const manifestResponse = await fetch(cacheBustedPath(publicPath("/samples/manifest.json"), version), { cache: "reload" });
     if (!manifestResponse.ok) {
       return [];
     }

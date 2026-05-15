@@ -1,4 +1,6 @@
 import react from "@vitejs/plugin-react";
+import { copyFile } from "node:fs/promises";
+import path from "node:path";
 import { defineConfig } from "vite";
 import { syncSamplesManifest } from "./scripts/sync-samples-manifest.mjs";
 
@@ -35,8 +37,18 @@ function samplesManifestPlugin() {
   };
 }
 
+function githubPagesFallbackPlugin() {
+  return {
+    name: "typoflow-github-pages-fallback",
+    async closeBundle() {
+      await copyFile(path.resolve("dist/index.html"), path.resolve("dist/404.html"));
+    },
+  };
+}
+
 export default defineConfig({
-  plugins: [samplesManifestPlugin(), react()],
+  base: process.env.VITE_BASE_PATH ?? "/",
+  plugins: [samplesManifestPlugin(), react(), githubPagesFallbackPlugin()],
   test: {
     environment: "jsdom",
     setupFiles: "./src/test/setup.ts",

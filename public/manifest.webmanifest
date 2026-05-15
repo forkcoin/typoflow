@@ -2,13 +2,13 @@
   "name": "字映",
   "short_name": "字映",
   "description": "一个用来阅读精美 HTML 的书架。",
-  "start_url": "/",
+  "start_url": ".",
   "display": "standalone",
   "background_color": "#f7f2ea",
   "theme_color": "#f7f2ea",
   "icons": [
     {
-      "src": "/icons/icon.svg",
+      "src": "icons/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
