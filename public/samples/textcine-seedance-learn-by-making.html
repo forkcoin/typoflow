@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Seedance 2.0 边做边学：做一条磁吸蝴蝶结短片</title>
+  <style>
+    :root {
+      --color-bg: #fbfaf7;
+      --color-ink: #1f2226;
+      --color-soft: #5f656c;
+      --color-faint: #9aa0a6;
+      --color-line: rgba(31, 34, 38, 0.14);
+      --color-card: rgba(255, 255, 255, 0.78);
+      --color-rose: #cc3f5f;
+      --color-blue: #2c69c9;
+      --color-green: #2e7c62;
+      --color-violet: #8f539e;
+      --shadow: 0 22px 54px rgba(31, 34, 38, 0.12);
+      --font-title: "Songti SC", "Noto Serif SC", "STSong", serif;
+      --font-body: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+      --title: clamp(2.35rem, 7.4vw, 5.2rem);
+      --headline: clamp(1.7rem, 4.8vw, 3.25rem);
+      --body: clamp(1.05rem, 2.4vw, 1.25rem);
+      --small: clamp(1rem, 2vw, 1.05rem);
+      --screen-pad: clamp(2rem, 6vw, 5rem);
+      --gap: clamp(1.2rem, 3.4vw, 2.5rem);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-snap-type: y mandatory;
+      background: var(--color-bg);
+    }
+
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      color: var(--color-ink);
+      background:
+        linear-gradient(90deg, rgba(31, 34, 38, 0.035) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(31, 34, 38, 0.035) 1px, transparent 1px),
+        var(--color-bg);
+      background-size: 44px 44px;
+      font-family: var(--font-body);
+      letter-spacing: 0;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        linear-gradient(180deg, rgba(251, 250, 247, 0.95), rgba(251, 250, 247, 0.72)),
+        radial-gradient(circle at 18% 20%, rgba(204, 63, 95, 0.11), transparent 26%),
+        radial-gradient(circle at 84% 78%, rgba(46, 124, 98, 0.1), transparent 28%);
+      pointer-events: none;
+    }
+
+    .progress {
+      position: fixed;
+      inset: 0 0 auto;
+      height: 4px;
+      background: rgba(31, 34, 38, 0.08);
+      z-index: 20;
+    }
+
+    .progress span {
+      display: block;
+      width: 100%;
+      height: 100%;
+      transform-origin: left;
+      background: linear-gradient(90deg, var(--color-rose), var(--color-blue), var(--color-green));
+      animation: progress linear both;
+      animation-timeline: scroll(root);
+    }
+
+    .screen {
+      position: relative;
+      min-height: 100svh;
+      display: grid;
+      align-items: center;
+      padding: var(--screen-pad);
+      scroll-snap-align: start;
+    }
+
+    .stage {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: var(--gap);
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 1.02fr) minmax(300px, 0.98fr);
+      gap: clamp(2rem, 5vw, 4.5rem);
+      align-items: center;
+    }
+
+    .kicker {
+      color: var(--color-rose);
+      font-size: var(--small);
+      font-weight: 800;
+    }
+
+    h1,
+    h2 {
+      margin: 0;
+      font-family: var(--font-title);
+      font-weight: 900;
+      line-height: 1.16;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 10.5em;
+      font-size: var(--title);
+    }
+
+    h2 {
+      max-width: 12em;
+      font-size: var(--headline);
+    }
+
+    p {
+      max-width: 29em;
+      margin: 0;
+      color: var(--color-soft);
+      font-size: var(--body);
+      line-height: 1.72;
+    }
+
+    strong {
+      color: var(--color-ink);
+      font-weight: 800;
+    }
+
+    .big {
+      max-width: 11em;
+      font-family: var(--font-title);
+      font-size: clamp(1.8rem, 5.6vw, 4.2rem);
+      font-weight: 900;
+      line-height: 1.22;
+    }
+
+    .card,
+    .step,
+    .prompt,
+    .shot,
+    .check {
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-card);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .card {
+      min-height: 180px;
+      padding: clamp(1rem, 3vw, 1.5rem);
+      display: grid;
+      align-content: space-between;
+      gap: 1rem;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.9rem;
+    }
+
+    .card b,
+    .step b,
+    .shot b,
+    .check b {
+      display: block;
+      margin-bottom: 0.4rem;
+      font-size: clamp(1.15rem, 2.6vw, 1.42rem);
+    }
+
+    .card span,
+    .step span,
+    .shot span,
+    .check span {
+      color: var(--color-soft);
+      font-size: var(--small);
+      line-height: 1.58;
+    }
+
+    .badge {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--color-ink);
+      font-weight: 900;
+    }
+
+    .card:nth-child(2) .badge,
+    .shot:nth-child(2) .time {
+      background: var(--color-rose);
+    }
+
+    .card:nth-child(3) .badge,
+    .shot:nth-child(3) .time {
+      background: var(--color-blue);
+    }
+
+    .card:nth-child(4) .badge,
+    .shot:nth-child(4) .time {
+      background: var(--color-green);
+    }
+
+    .prompt {
+      padding: clamp(1.15rem, 3.5vw, 2rem);
+      border-top: 3px solid var(--color-ink);
+      border-bottom: 3px solid var(--color-ink);
+      font-size: clamp(1.15rem, 3.2vw, 1.8rem);
+      line-height: 1.75;
+    }
+
+    .prompt .muted {
+      color: var(--color-faint);
+    }
+
+    .mention {
+      display: inline-flex;
+      align-items: center;
+      min-height: 2.15em;
+      padding: 0 0.62em;
+      border: 1px solid rgba(44, 105, 201, 0.24);
+      border-radius: 999px;
+      color: var(--color-blue);
+      background: rgba(44, 105, 201, 0.08);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .steps,
+    .shots,
+    .checks {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .steps {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .step,
+    .shot,
+    .check {
+      min-height: 225px;
+      padding: 1rem;
+    }
+
+    .shot {
+      display: grid;
+      gap: 1rem;
+      align-content: start;
+    }
+
+    .shots {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .time {
+      width: max-content;
+      padding: 0.42rem 0.72rem;
+      border-radius: 999px;
+      color: #fff;
+      background: var(--color-ink);
+      font-size: var(--small);
+      font-weight: 900;
+    }
+
+    .checks {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .hero-case {
+      min-height: min(68svh, 640px);
+      position: relative;
+      display: grid;
+      align-items: end;
+      overflow: hidden;
+      padding: clamp(1.3rem, 4vw, 2.8rem);
+      border-radius: var(--radius);
+      color: #fff;
+      background:
+        linear-gradient(135deg, rgba(31, 34, 38, 0.9), rgba(31, 34, 38, 0.52)),
+        linear-gradient(90deg, #8d2132, #dd6480 35%, #975aa9 68%, #342925);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-case::before,
+    .hero-case::after {
+      content: "";
+      position: absolute;
+      width: min(42vw, 340px);
+      aspect-ratio: 1;
+      border: 2px solid rgba(255, 255, 255, 0.34);
+      transform: rotate(16deg);
+      right: 9%;
+      top: 16%;
+    }
+
+    .hero-case::after {
+      width: min(28vw, 210px);
+      right: auto;
+      left: 8%;
+      top: auto;
+      bottom: 13%;
+      transform: rotate(-12deg);
+    }
+
+    .hero-case h2,
+    .hero-case p,
+    .hero-case .kicker {
+      position: relative;
+      color: #fff;
+    }
+
+    .hero-case p {
+      color: rgba(255, 255, 255, 0.78);
+    }
+
+    .number {
+      position: absolute;
+      right: clamp(1rem, 3vw, 2rem);
+      bottom: clamp(1rem, 3vw, 2rem);
+      color: rgba(31, 34, 38, 0.32);
+      font-size: var(--small);
+      font-weight: 800;
+    }
+
+    .warn {
+      border-left: 4px solid var(--color-rose);
+      padding: 1rem 0 1rem 1rem;
+    }
+
+    .reveal {
+      animation: rise 760ms ease both;
+    }
+
+    .d1 { animation-delay: 100ms; }
+    .d2 { animation-delay: 220ms; }
+    .d3 { animation-delay: 340ms; }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(1rem); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes progress {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+
+    @media (max-width: 860px) {
+      html {
+        scroll-snap-type: y proximity;
+      }
+
+      .screen {
+        min-height: 100svh;
+        padding-top: clamp(3rem, 12vw, 5rem);
+        padding-bottom: clamp(3rem, 12vw, 5rem);
+      }
+
+      .split,
+      .cards,
+      .steps,
+      .shots,
+      .checks {
+        grid-template-columns: 1fr;
+      }
+
+      .card,
+      .step,
+      .shot,
+      .check {
+        min-height: auto;
+      }
+
+      .hero-case {
+        min-height: 560px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" aria-hidden="true"><span></span></div>
+  <main>
+    <section class="screen">
+      <div class="stage">
+        <div class="kicker reveal">Seedance 2.0 边做边学</div>
+        <h1 class="reveal d1">今天只做一条短片</h1>
+        <p class="reveal d2">目标很具体：做一条 15 秒的磁吸蝴蝶结穿搭配饰短片。做完这条，你就能理解素材、提示词、时间线和修改方法。</p>
+      </div>
+      <div class="number">01 / 20</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">先别学全部功能</div>
+          <h2 class="reveal d1">初学者最需要的是完成一条</h2>
+          <p class="reveal d2">Seedance 2.0 能做很多事，但第一次培训不需要全学。我们从一个真实小任务开始：把一个商品想法变成可生成的视频提示词。</p>
+        </div>
+        <div class="cards reveal d3">
+          <div class="card"><span class="badge">1</span><div><b>想法</b><span>我要做什么视频？给谁看？</span></div></div>
+          <div class="card"><span class="badge">2</span><div><b>素材</b><span>图片、视频、音频分别负责什么？</span></div></div>
+          <div class="card"><span class="badge">3</span><div><b>提示词</b><span>把想法拆成时间线和画面要求。</span></div></div>
+          <div class="card"><span class="badge">4</span><div><b>修改</b><span>看第一版哪里不对，再定向调整。</span></div></div>
+        </div>
+      </div>
+      <div class="number">02 / 20</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <div class="kicker reveal">第一步：把任务说成人话</div>
+        <h2 class="reveal d1">先不要写专业提示词</h2>
+        <div class="prompt reveal d2">
+          我想做一条 15 秒短片。<br>
+          主角是磁吸蝴蝶结。<br>
+          风格适合小红书穿搭用户。<br>
+          要展示颜色、磁吸扣、佩戴场景和品牌名。
+        </div>
+        <p class="reveal d3">这已经是一个合格的起点。专业提示词不是凭空写出来的，它通常是从这类口语想法扩展出来的。</p>
+      </div>
+      <div class="number">03 / 20</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">提示词的真相</div>
+          <h2 class="reveal d1">那些看起来很专业的提示词，常常是让 AI 先帮忙写的</h2>
+          <p class="reveal d2">新手不必一开始就会写镜头、节奏、光影。你可以先告诉 AI 你想要什么，再让 AI 帮你整理成 Seedance 能读懂的版本。</p>
+        </div>
+        <div class="prompt reveal d3">
+          请把我的想法整理成 Seedance 2.0 可用提示词。<br>
+          按 0-15 秒拆时间线。<br>
+          写清楚商品、镜头、场景、情绪和结尾。
+        </div>
+      </div>
+      <div class="number">04 / 20</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <div class="kicker reveal">AI 会帮你拆成这样</div>
+        <h2 class="reveal d1">一条短片先分四段</h2>
+        <div class="shots reveal d2">
+          <div class="shot"><span class="time">0-2 秒</span><div><b>先抓眼</b><span>四款蝴蝶结快速出现，建立颜色和款式记忆。</span></div></div>
+          <div class="shot"><span class="time">3-6 秒</span><div><b>讲功能</b><span>特写磁吸扣吸合和拉开，展示方便和质感。</span></div></div>
+          <div class="shot"><span class="time">7-12 秒</span><div><b>给场景</b><span>通勤、发型、包包、西装领多场景佩戴。</span></div></div>
+          <div class="shot"><span class="time">13-15 秒</span><div><b>收品牌</b><span>四款同框，品牌名出现，画面完整结束。</span></div></div>
+        </div>
+      </div>
+      <div class="number">05 / 20</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">第二步：准备素材</div>
+          <h2 class="reveal d1">素材不是越多越好</h2>
+          <p class="reveal d2">新手先准备最关键的素材：商品图、佩戴场景图、参考节奏视频。素材越多，越要告诉 AI 每个素材负责什么。</p>
+        </div>
+        <div class="cards reveal d3">
+          <div class="card"><span class="badge">图</span><div><b>商品图</b><span>四款蝴蝶结的颜色、材质、品牌细节。</span></div></div>
+          <div class="card"><span class="badge">图</span><div><b>场景图</b><span>大衣、马尾、包带、西装领的穿搭参考。</span></div></div>
+          <div class="card"><span class="badge">视</span><div><b>参考视频</b><span>只参考节奏、转场或镜头，不一定参考人物。</span></div></div>
+          <div class="card"><span class="badge">音</span><div><b>音乐</b><span>如果有音乐，就说明它负责氛围和卡点。</span></div></div>
+        </div>
+      </div>
+      <div class="number">06 / 20</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <div class="kicker reveal">第三步：给素材分工</div>
+        <h2 class="reveal d1">用 @素材名 避免 AI 混淆</h2>
+        <div class="prompt reveal d2">
+          <span class="mention">@图片1</span> 是四款蝴蝶结商品图。<br>
+          <span class="mention">@图片2</span> 参考通勤大衣佩戴场景。<br>
+          <span class="mention">@图片3</span> 参考包包装饰场景。<br>
+          <span class="mention">@视频1</span> 只参考快速闪切节奏。
+        </div>
+        <p class="reveal d3">重点是“只参考什么”。这样能减少 AI 把人物、场景、商品关系搞混。</p>
+      </div>
+      <div class="number">07 / 20</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <div class="hero-case reveal">
+          <div>
+            <div class="kicker">现在开始做</div>
+            <h2>磁吸蝴蝶结 15 秒短片</h2>
+            <p>我们把它做成一条适合内部培训展示的小红书感商品短片：清楚、轻快、有场景感。</p>
+          </div>
+        </div>
+      </div>
+      <div class="number">08 / 20</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">第 1 段</div>
+          <h2 class="reveal d1">0-2 秒：先让人停下来</h2>
+          <p class="reveal d2">开头不要急着解释功能。先让观众看到款式和质感，知道这条视频在讲什么。</p>
+        </div>
+        <div class="prompt reveal d3">
+          0-2 秒：快速四格闪切。<br>
+          红、粉、紫、豹纹四款蝴蝶结依次定格。<br>
+          特写缎面光泽和品牌字样。
+        </div>
+      </div>
+      <div class="number">09 / 20</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">第 2 段</div>
+          <h2 class="reveal d1">3-6 秒：只讲一个卖点</h2>
+          <p class="reveal d2">新手提示词最容易贪多。这里就讲“磁吸扣方便”，不要同时塞进十个功能。</p>
+        </div>
+        <div class="prompt reveal d3">
+          3-6 秒：特写银色磁吸扣。<br>
+          磁扣轻轻吸合，再一拉分开。<br>
+          画面突出方便、顺滑、有质感。
+        </div>
+      </div>
+      <div class="number">10 / 20</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <div class="kicker reveal">第 3 段</div>
+        <h2 class="reveal d1">7-12 秒：把商品放进真实生活</h2>
+        <div class="shots reveal d2">
+          <div class="shot"><span class="time">通勤</span><div><b>酒红款</b><span>别在大衣领口，干净利落。</span></div></div>
+          <div class="shot"><span class="time">发型</span><div><b>粉色款</b><span>绑在马尾，甜美轻盈。</span></div></div>
+          <div class="shot"><span class="time">包包</span><div><b>紫色款</b><span>系在包带上，小众精致。</span></div></div>
+          <div class="shot"><span class="time">西装</span><div><b>豹纹款</b><span>挂在领口，增加气场。</span></div></div>
+        </div>
+      </div>
+      <div class="number">11 / 20</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">第 4 段</div>
+          <h2 class="reveal d1">13-15 秒：让画面完整结束</h2>
+          <p class="reveal d2">结尾要告诉 AI 停在哪里。否则它可能继续乱切，或者结束得很突然。</p>
+        </div>
+        <div class="prompt reveal d3">
+          13-15 秒：四款蝴蝶结并排陈列。<br>
+          背景干净，品牌名出现。<br>
+          镜头稳定停住，形成完整收尾。
+        </div>
+      </div>
+      <div class="number">12 / 20</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <div class="kicker reveal">把四段合起来</div>
+        <h2 class="reveal d1">这就是第一版完整提示词</h2>
+        <div class="prompt reveal d2">
+          制作一条 15 秒磁吸蝴蝶结穿搭配饰短片。<br>
+          0-2 秒四款蝴蝶结快速闪切，展示颜色、缎面光泽和品牌字样。<br>
+          3-6 秒特写银色磁吸扣吸合再拉开，突出方便和质感。<br>
+          7-12 秒切换大衣领口、马尾、包带、西装领四个佩戴场景。<br>
+          13-15 秒四款蝴蝶结并排陈列，品牌名出现，镜头稳定收尾。
+        </div>
+      </div>
+      <div class="number">13 / 20</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">再加一层风格</div>
+          <h2 class="reveal d1">风格要具体，不要只写“高级”</h2>
+          <p class="reveal d2">“高级”太宽泛。更好的写法是说清楚光线、节奏、颜色和用户感受。</p>
+        </div>
+        <div class="prompt reveal d3">
+          风格清爽、轻快、适合小红书穿搭内容。<br>
+          光线柔和，颜色干净。<br>
+          节奏有卡点感，但不要廉价闪烁。<br>
+          商品颜色不能改变。
+        </div>
+      </div>
+      <div class="number">14 / 20</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <div class="kicker reveal">生成前检查</div>
+        <h2 class="reveal d1">先问自己 6 个问题</h2>
+        <div class="checks reveal d2">
+          <div class="check"><b>主角清楚吗？</b><span>主角是蝴蝶结，不是模特。</span></div>
+          <div class="check"><b>时间清楚吗？</b><span>每一段都有秒数。</span></div>
+          <div class="check"><b>素材清楚吗？</b><span>每个 @素材名 都有任务。</span></div>
+          <div class="check"><b>场景清楚吗？</b><span>通勤、马尾、包包、西装领。</span></div>
+          <div class="check"><b>风格清楚吗？</b><span>清爽、轻快、穿搭感。</span></div>
+          <div class="check"><b>限制清楚吗？</b><span>不要改变商品颜色，不要真人正脸素材。</span></div>
+        </div>
+      </div>
+      <div class="number">15 / 20</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">第一次生成后</div>
+          <h2 class="reveal d1">不要整段推翻，只改一个问题</h2>
+          <p class="reveal d2">新手最容易看到不满意就重写。更好的方式是先判断问题属于哪一类。</p>
+        </div>
+        <div class="cards reveal d3">
+          <div class="card"><span class="badge">色</span><div><b>颜色错了</b><span>补一句：保持原商品颜色。</span></div></div>
+          <div class="card"><span class="badge">节</span><div><b>节奏太乱</b><span>把每段秒数写得更明确。</span></div></div>
+          <div class="card"><span class="badge">景</span><div><b>场景不对</b><span>删掉模糊场景，只保留四个穿搭场景。</span></div></div>
+          <div class="card"><span class="badge">尾</span><div><b>结尾没收住</b><span>指定最后一帧：四款同框、品牌名出现。</span></div></div>
+        </div>
+      </div>
+      <div class="number">16 / 20</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage">
+        <div class="kicker reveal">如果你想让 AI 继续帮忙</div>
+        <h2 class="reveal d1">把问题说给 AI，让它改提示词</h2>
+        <div class="prompt reveal d2">
+          第一版视频里商品颜色变了，节奏也太快。<br>
+          请帮我保留原提示词结构，<br>
+          只加强“保持商品颜色”和“每段镜头更稳定”的要求。
+        </div>
+        <p class="reveal d3">这比“重新帮我写一个”更稳，因为它只改一个方向。</p>
+      </div>
+      <div class="number">17 / 20</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">入口怎么选</div>
+          <h2 class="reveal d1">这条案例建议走全能参考</h2>
+          <p class="reveal d2">因为它需要图片、可能还需要参考视频或音乐。只用一张首帧图时，才更适合走首尾帧入口。</p>
+        </div>
+        <div class="cards reveal d3">
+          <div class="card"><span class="badge">首</span><div><b>首尾帧</b><span>只有首帧图和文字，适合简单动起来。</span></div></div>
+          <div class="card"><span class="badge">全</span><div><b>全能参考</b><span>图片、视频、音频、文本一起用，适合本案例。</span></div></div>
+        </div>
+      </div>
+      <div class="number">18 / 20</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">最后记住一件事</div>
+          <h2 class="reveal d1">提示词不是一次写对，而是一轮一轮变清楚</h2>
+          <p class="reveal d2">你真正要练的不是背术语，而是把想法拆清楚：谁是主角、素材怎么用、每几秒发生什么、哪里不能出错。</p>
+        </div>
+        <div class="prompt reveal d3">
+          人话想法<br>
+          → AI 帮你拆提示词<br>
+          → 你补素材关系<br>
+          → 生成第一版<br>
+          → 只改一个问题
+        </div>
+      </div>
+      <div class="number">19 / 20</div>
+    </section>
+
+    <section class="screen">
+      <div class="stage split">
+        <div>
+          <div class="kicker reveal">收束</div>
+          <h2 class="reveal d1">现在可以真的去做这一条了</h2>
+          <p class="reveal d2">打开即梦，进入全能参考，上传素材，把提示词粘进去。第一版不完美没关系，按问题一点点改。</p>
+        </div>
+        <div class="warn reveal d3">
+          <p><strong>重要限制：</strong>当前不支持上传包含写实真人脸部的图片或视频素材。培训示例建议优先使用商品、手部、局部穿搭、背影、非写实角色。</p>
+          <p>体验入口：https://jimeng.jianying.com/</p>
+        </div>
+      </div>
+      <div class="number">20 / 20</div>
+    </section>
+  </main>
+</body>
+</html>
