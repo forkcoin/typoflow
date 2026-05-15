@@ -4,3 +4,4 @@ dist/
 .superpowers/
 .playwright-cli/
 *.log
+.vercel
