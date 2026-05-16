@@ -1,0 +1,1438 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>生活美学：建立你的日常审美与表达系统</title>
+  <style>
+    :root {
+      --color-paper: #f5f0e7;
+      --color-paper-warm: #efe4d2;
+      --color-ink: #171816;
+      --color-ink-soft: #44463f;
+      --color-muted: #74746a;
+      --color-line: rgba(23, 24, 22, 0.16);
+      --color-night: #111412;
+      --color-night-soft: #1d211d;
+      --color-night-text: #f3eee5;
+      --color-clay: #b45f43;
+      --color-sage: #6d826d;
+      --color-blue: #667d97;
+      --color-gold: #b29a62;
+      --font-serif: "Noto Serif SC", "Songti SC", "STSong", "Source Han Serif SC", serif;
+      --font-sans: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      --type-hero: 5rem;
+      --type-title: 3.25rem;
+      --type-head: 2rem;
+      --type-body: 1.14rem;
+      --type-caption: 0.82rem;
+      --leading-tight: 1.12;
+      --leading-body: 1.72;
+      --space-scene: 5rem;
+      --space-gap: 2rem;
+      --max-copy: 29rem;
+      --duration-enter: 900ms;
+      --duration-line: 1100ms;
+      --ease-out: cubic-bezier(0.19, 1, 0.22, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--color-night);
+    }
+
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      color: var(--color-ink);
+      background: var(--color-night);
+      font-family: var(--font-sans);
+      letter-spacing: 0;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button {
+      font: inherit;
+      color: inherit;
+    }
+
+    .film {
+      min-height: 100svh;
+      scroll-snap-type: y mandatory;
+    }
+
+    .scene {
+      position: relative;
+      min-height: 100svh;
+      padding: var(--space-scene);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      scroll-snap-align: start;
+      isolation: isolate;
+      background:
+        radial-gradient(circle at 18% 12%, rgba(180, 95, 67, 0.08), transparent 28rem),
+        radial-gradient(circle at 82% 88%, rgba(102, 125, 151, 0.08), transparent 30rem),
+        linear-gradient(115deg, rgba(255, 255, 255, 0.44), transparent 38%),
+        var(--color-paper);
+    }
+
+    .scene::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      opacity: 0.7;
+      background-image:
+        linear-gradient(var(--color-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--color-line) 1px, transparent 1px);
+      background-size: 84px 84px;
+      mask-image: radial-gradient(circle at center, black, transparent 78%);
+    }
+
+    .scene::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.28;
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(23, 24, 22, 0.05) 0 1px, transparent 1px),
+        radial-gradient(circle at 70% 80%, rgba(23, 24, 22, 0.04) 0 1px, transparent 1px);
+      background-size: 19px 19px, 29px 29px;
+    }
+
+    .scene.night {
+      color: var(--color-night-text);
+      background:
+        radial-gradient(circle at 28% 24%, rgba(178, 154, 98, 0.15), transparent 26rem),
+        radial-gradient(circle at 76% 72%, rgba(102, 125, 151, 0.18), transparent 28rem),
+        linear-gradient(135deg, #0e100f, var(--color-night-soft));
+    }
+
+    .scene.night::before {
+      --color-line: rgba(243, 238, 229, 0.12);
+      opacity: 0.35;
+    }
+
+    .scene.night::after {
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(243, 238, 229, 0.07) 0 1px, transparent 1px),
+        radial-gradient(circle at 70% 80%, rgba(243, 238, 229, 0.05) 0 1px, transparent 1px);
+    }
+
+    .scene.sage {
+      background:
+        radial-gradient(circle at 76% 18%, rgba(109, 130, 109, 0.18), transparent 26rem),
+        linear-gradient(140deg, #f3efe5, #e6ece1);
+    }
+
+    .scene.blue {
+      background:
+        radial-gradient(circle at 18% 18%, rgba(102, 125, 151, 0.2), transparent 24rem),
+        linear-gradient(140deg, #eef0ed, #e2e8ed);
+    }
+
+    .frame {
+      width: min(100%, 1050px);
+      min-height: min(72svh, 820px);
+      display: grid;
+      align-content: center;
+      gap: var(--space-gap);
+      position: relative;
+      z-index: 2;
+    }
+
+    .frame.narrow {
+      width: min(100%, 820px);
+    }
+
+    .kicker {
+      margin: 0;
+      color: var(--color-clay);
+      font-size: var(--type-caption);
+      font-weight: 700;
+      line-height: 1.4;
+      text-transform: uppercase;
+    }
+
+    .night .kicker {
+      color: #d8bd7b;
+    }
+
+    .headline,
+    .title,
+    .hero {
+      margin: 0;
+      font-family: var(--font-serif);
+      font-weight: 900;
+      line-height: var(--leading-tight);
+      letter-spacing: 0;
+      max-width: 11em;
+    }
+
+    .hero {
+      font-size: var(--type-hero);
+    }
+
+    .title {
+      font-size: var(--type-title);
+    }
+
+    .headline {
+      font-size: var(--type-head);
+    }
+
+    .body {
+      margin: 0;
+      max-width: var(--max-copy);
+      color: var(--color-ink-soft);
+      font-size: var(--type-body);
+      line-height: var(--leading-body);
+    }
+
+    .night .body {
+      color: rgba(243, 238, 229, 0.76);
+    }
+
+    .accent {
+      color: var(--color-clay);
+    }
+
+    .nowrap {
+      white-space: nowrap;
+    }
+
+    .night .accent {
+      color: #d8bd7b;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(26px);
+    }
+
+    .in-view .reveal {
+      animation: rise var(--duration-enter) var(--ease-out) forwards;
+      animation-delay: var(--d, 0ms);
+    }
+
+    @keyframes rise {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .underbar {
+      position: relative;
+      display: inline-block;
+    }
+
+    .underbar::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0.05em;
+      height: 0.12em;
+      background: color-mix(in srgb, var(--color-clay) 72%, transparent);
+      transform: scaleX(0);
+      transform-origin: left;
+    }
+
+    .in-view .underbar::after {
+      animation: draw var(--duration-line) var(--ease-out) 480ms forwards;
+    }
+
+    @keyframes draw {
+      to {
+        transform: scaleX(1);
+      }
+    }
+
+    .signal-field {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .signal {
+      position: absolute;
+      width: 0.62rem;
+      height: 0.62rem;
+      border-radius: 50%;
+      background: var(--color-clay);
+      opacity: 0.52;
+      transform: scale(0);
+    }
+
+    .signal:nth-child(1) { left: 14%; top: 22%; background: var(--color-sage); }
+    .signal:nth-child(2) { left: 82%; top: 16%; background: var(--color-blue); }
+    .signal:nth-child(3) { left: 68%; top: 76%; background: var(--color-gold); }
+    .signal:nth-child(4) { left: 22%; top: 82%; background: var(--color-clay); }
+    .signal:nth-child(5) { left: 50%; top: 12%; background: var(--color-ink); }
+
+    .in-view .signal {
+      animation: ping 1600ms var(--ease-out) forwards;
+      animation-delay: calc(var(--i) * 170ms + 320ms);
+    }
+
+    @keyframes ping {
+      58% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    .two-cases {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+      align-items: stretch;
+    }
+
+    .case {
+      min-height: 14rem;
+      padding: 1.4rem;
+      border: 1px solid var(--color-line);
+      border-radius: 8px;
+      display: grid;
+      align-content: space-between;
+      background: rgba(255, 255, 255, 0.28);
+      box-shadow: 0 16px 40px rgba(23, 24, 22, 0.08);
+    }
+
+    .case p {
+      margin: 0;
+      font-family: var(--font-serif);
+      font-size: 1.45rem;
+      line-height: 1.45;
+      font-weight: 700;
+    }
+
+    .case-lines {
+      height: 4rem;
+      position: relative;
+      border-top: 1px solid var(--color-line);
+    }
+
+    .case-lines i {
+      position: absolute;
+      display: block;
+      background: var(--color-ink);
+      opacity: 0.55;
+    }
+
+    .case-lines i:nth-child(1) { left: 6%; bottom: 0.6rem; width: 44%; height: 1px; }
+    .case-lines i:nth-child(2) { left: 16%; bottom: 1.6rem; width: 68%; height: 1px; }
+    .case-lines i:nth-child(3) { right: 10%; bottom: 2.6rem; width: 30%; height: 1px; }
+
+    .tag-strike {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 0.5rem;
+    }
+
+    .tag-strike span {
+      position: relative;
+      display: inline-flex;
+      min-height: 3rem;
+      align-items: center;
+      padding: 0.4rem 0.86rem;
+      border: 1px solid rgba(243, 238, 229, 0.26);
+      border-radius: 8px;
+      color: rgba(243, 238, 229, 0.84);
+    }
+
+    .tag-strike span::after {
+      content: "";
+      position: absolute;
+      left: 0.55rem;
+      right: 0.55rem;
+      top: 50%;
+      height: 1px;
+      background: #d8bd7b;
+      transform: scaleX(0);
+      transform-origin: left;
+    }
+
+    .in-view .tag-strike span::after {
+      animation: draw 620ms var(--ease-out) forwards;
+      animation-delay: var(--d, 0ms);
+    }
+
+    .decode-field {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 1.3rem;
+      align-items: center;
+      margin-top: 1rem;
+    }
+
+    .decode-card {
+      border: 1px solid var(--color-line);
+      border-radius: 8px;
+      padding: 1.4rem;
+      min-height: 11rem;
+      background: rgba(255, 255, 255, 0.22);
+      display: grid;
+      align-content: center;
+      gap: 0.6rem;
+    }
+
+    .decode-card b {
+      font-family: var(--font-serif);
+      font-size: 1.7rem;
+    }
+
+    .decode-card span {
+      color: var(--color-muted);
+      line-height: 1.6;
+    }
+
+    .ring {
+      width: 8.5rem;
+      height: 8.5rem;
+      border: 1px solid var(--color-line);
+      border-radius: 50%;
+      position: relative;
+      display: grid;
+      place-items: center;
+      color: var(--color-clay);
+      font-family: var(--font-serif);
+      font-weight: 900;
+    }
+
+    .ring::before,
+    .ring::after {
+      content: "";
+      position: absolute;
+      border: 1px solid var(--color-line);
+      border-radius: 50%;
+    }
+
+    .ring::before { inset: 1rem; }
+    .ring::after { inset: 2rem; border-color: rgba(180, 95, 67, 0.34); }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.8rem;
+      margin-top: 1rem;
+    }
+
+    .step {
+      position: relative;
+      min-height: 14rem;
+      border-left: 1px solid var(--color-line);
+      padding: 1rem 1rem 1rem 1.2rem;
+      display: grid;
+      align-content: space-between;
+    }
+
+    .step strong {
+      display: block;
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      line-height: 1.1;
+    }
+
+    .step small {
+      color: var(--color-muted);
+      line-height: 1.5;
+      font-size: var(--type-caption);
+    }
+
+    .step::before {
+      content: attr(data-step);
+      color: var(--color-clay);
+      font-family: var(--font-serif);
+      font-weight: 900;
+      font-size: 1rem;
+    }
+
+    .color-lab {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .color-bars {
+      display: grid;
+      gap: 1.25rem;
+    }
+
+    .bar {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .bar label {
+      color: var(--color-muted);
+      font-size: var(--type-caption);
+    }
+
+    .track {
+      height: 1.1rem;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--color-line);
+      background: linear-gradient(90deg, #677e98, #ede5ce, #b45f43);
+      transform: scaleX(0);
+      transform-origin: left;
+    }
+
+    .bar:nth-child(2) .track {
+      background: linear-gradient(90deg, #191a18, #75766f, #f8f3ea);
+    }
+
+    .bar:nth-child(3) .track {
+      background: linear-gradient(90deg, #9c9c93, #b8a06e, #d8653b);
+    }
+
+    .in-view .track {
+      animation: draw 900ms var(--ease-out) forwards;
+      animation-delay: var(--d, 0ms);
+    }
+
+    .swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.8rem;
+    }
+
+    .swatch {
+      min-height: 9rem;
+      border-radius: 8px;
+      border: 1px solid var(--color-line);
+      padding: 0.8rem;
+      display: grid;
+      align-content: end;
+      font-size: var(--type-caption);
+      color: rgba(23, 24, 22, 0.72);
+    }
+
+    .swatch:nth-child(1) { background: #f0dfc3; }
+    .swatch:nth-child(2) { background: #91a291; }
+    .swatch:nth-child(3) { background: #bd6d4f; color: #fff8ef; }
+
+    .texture-shape {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+      align-items: stretch;
+      margin-top: 1rem;
+    }
+
+    .texture-panel,
+    .shape-panel {
+      min-height: 18rem;
+      border: 1px solid var(--color-line);
+      border-radius: 8px;
+      padding: 1.2rem;
+      position: relative;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.24);
+    }
+
+    .texture-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.42;
+      background:
+        repeating-linear-gradient(45deg, rgba(23, 24, 22, 0.08) 0 2px, transparent 2px 8px),
+        radial-gradient(circle at 70% 20%, rgba(178, 154, 98, 0.35), transparent 8rem);
+    }
+
+    .texture-panel p,
+    .shape-panel p {
+      position: relative;
+      margin: 0;
+      font-family: var(--font-serif);
+      font-size: 1.55rem;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .shape-lines {
+      position: absolute;
+      inset: auto 1.2rem 1.2rem 1.2rem;
+      height: 9rem;
+    }
+
+    .shape-lines i {
+      position: absolute;
+      display: block;
+      border: 1px solid var(--color-ink);
+      opacity: 0.7;
+    }
+
+    .shape-lines i:nth-child(1) {
+      width: 5rem;
+      height: 5rem;
+      border-radius: 50%;
+      left: 0;
+      bottom: 0.8rem;
+    }
+
+    .shape-lines i:nth-child(2) {
+      width: 7rem;
+      height: 0;
+      right: 1rem;
+      top: 1rem;
+      transform: rotate(-18deg);
+    }
+
+    .shape-lines i:nth-child(3) {
+      width: 4.2rem;
+      height: 4.2rem;
+      right: 5rem;
+      bottom: 0;
+      transform: rotate(45deg);
+    }
+
+    .meaning-tags {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: 1.4rem;
+    }
+
+    .meaning {
+      min-height: 11rem;
+      border: 1px solid rgba(243, 238, 229, 0.16);
+      border-radius: 8px;
+      padding: 1rem;
+      display: grid;
+      align-content: space-between;
+      background: rgba(243, 238, 229, 0.05);
+    }
+
+    .meaning b {
+      color: #d8bd7b;
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+    }
+
+    .meaning span {
+      color: rgba(243, 238, 229, 0.66);
+      line-height: 1.55;
+    }
+
+    .system-map {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 1.4rem;
+      align-items: center;
+      margin-top: 1rem;
+    }
+
+    .tone-board {
+      border: 1px solid var(--color-line);
+      border-radius: 8px;
+      padding: 1.2rem;
+      min-height: 17rem;
+      display: grid;
+      gap: 0.8rem;
+      background: rgba(255, 255, 255, 0.24);
+    }
+
+    .tone-row {
+      display: grid;
+      grid-template-columns: 5.5rem 1fr;
+      gap: 1rem;
+      align-items: center;
+      color: var(--color-muted);
+      font-size: var(--type-caption);
+    }
+
+    .tone-line {
+      height: 0.75rem;
+      border-radius: 999px;
+      background: var(--color-sage);
+      transform: scaleX(0);
+      transform-origin: left;
+    }
+
+    .tone-row:nth-child(2) .tone-line { width: 76%; background: var(--color-gold); }
+    .tone-row:nth-child(3) .tone-line { width: 32%; background: var(--color-clay); }
+
+    .in-view .tone-line {
+      animation: draw 800ms var(--ease-out) forwards;
+      animation-delay: var(--d, 0ms);
+    }
+
+    .noise-box {
+      border: 1px solid var(--color-line);
+      border-radius: 8px;
+      padding: 1.2rem;
+      min-height: 17rem;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      background:
+        linear-gradient(45deg, rgba(180, 95, 67, 0.1), transparent),
+        rgba(255, 255, 255, 0.2);
+      font-family: var(--font-serif);
+      font-weight: 900;
+      font-size: 1.8rem;
+      line-height: 1.2;
+    }
+
+    .context-frame {
+      min-height: 18rem;
+      border: 1px solid rgba(243, 238, 229, 0.22);
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      position: relative;
+      margin-top: 1rem;
+      background: rgba(243, 238, 229, 0.04);
+    }
+
+    .context-frame::before,
+    .context-frame::after {
+      content: "";
+      position: absolute;
+      border: 1px solid rgba(216, 189, 123, 0.58);
+      border-radius: 8px;
+    }
+
+    .context-frame::before { inset: 1.2rem; }
+    .context-frame::after { inset: 3rem; opacity: 0.52; }
+
+    .funnel {
+      display: grid;
+      gap: 0.75rem;
+      margin-top: 1.3rem;
+      width: min(100%, 720px);
+    }
+
+    .funnel span {
+      display: block;
+      min-height: 3.6rem;
+      border: 1px solid var(--color-line);
+      border-radius: 8px;
+      padding: 0.9rem 1.1rem;
+      font-family: var(--font-serif);
+      font-size: 1.55rem;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.28);
+    }
+
+    .funnel span:nth-child(1) { width: 100%; }
+    .funnel span:nth-child(2) { width: 78%; }
+    .funnel span:nth-child(3) { width: 56%; color: var(--color-clay); }
+
+    .channels {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.8rem;
+      margin-top: 1rem;
+    }
+
+    .channel {
+      min-height: 13rem;
+      border: 1px solid var(--color-line);
+      border-radius: 8px;
+      padding: 1rem;
+      display: grid;
+      align-content: space-between;
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .channel b {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+    }
+
+    .channel span {
+      color: var(--color-muted);
+      line-height: 1.5;
+    }
+
+    .distance {
+      margin-top: 1.4rem;
+      border: 1px solid var(--color-line);
+      border-radius: 8px;
+      padding: 1.2rem;
+      background: rgba(255, 255, 255, 0.23);
+    }
+
+    .distance-track {
+      position: relative;
+      height: 1.1rem;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--color-blue), var(--color-gold), var(--color-clay));
+      margin: 1.2rem 0;
+      transform: scaleX(0);
+      transform-origin: left;
+    }
+
+    .in-view .distance-track {
+      animation: draw 950ms var(--ease-out) 300ms forwards;
+    }
+
+    .distance-labels {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      color: var(--color-muted);
+      font-size: var(--type-caption);
+    }
+
+    .distance-labels span:nth-child(2) { text-align: center; }
+    .distance-labels span:nth-child(3) { text-align: right; }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .action-note {
+      min-height: 16rem;
+      border: 1px solid var(--color-line);
+      border-radius: 8px;
+      padding: 1.3rem;
+      display: grid;
+      align-content: space-between;
+      background: rgba(255, 255, 255, 0.36);
+      box-shadow: 0 18px 44px rgba(23, 24, 22, 0.08);
+    }
+
+    .action-note b {
+      color: var(--color-clay);
+      font-family: var(--font-serif);
+      font-size: 1.55rem;
+    }
+
+    .action-note p {
+      margin: 0;
+      font-size: 1.28rem;
+      line-height: 1.6;
+    }
+
+    .archive-wheel {
+      position: relative;
+      width: min(72vw, 28rem);
+      aspect-ratio: 1;
+      margin-top: 1rem;
+      border-radius: 50%;
+      border: 1px solid rgba(243, 238, 229, 0.2);
+      display: grid;
+      place-items: center;
+    }
+
+    .archive-wheel::before {
+      content: "";
+      position: absolute;
+      inset: 13%;
+      border-radius: 50%;
+      border: 1px solid rgba(216, 189, 123, 0.38);
+    }
+
+    .archive-wheel strong {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      color: #d8bd7b;
+    }
+
+    .wheel-item {
+      position: absolute;
+      width: 6rem;
+      height: 6rem;
+      border: 1px solid rgba(243, 238, 229, 0.18);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(243, 238, 229, 0.05);
+      color: rgba(243, 238, 229, 0.82);
+      font-size: 1rem;
+    }
+
+    .wheel-item:nth-child(2) { top: -0.2rem; left: 50%; transform: translateX(-50%); }
+    .wheel-item:nth-child(3) { right: -0.2rem; top: 50%; transform: translateY(-50%); }
+    .wheel-item:nth-child(4) { bottom: -0.2rem; left: 50%; transform: translateX(-50%); }
+    .wheel-item:nth-child(5) { left: -0.2rem; top: 50%; transform: translateY(-50%); }
+
+    .ending {
+      display: grid;
+      gap: 1.4rem;
+      max-width: 820px;
+    }
+
+    .ending .title {
+      max-width: 10em;
+    }
+
+    .book-title {
+      color: var(--color-muted);
+      font-size: var(--type-caption);
+      line-height: 1.6;
+      max-width: 22rem;
+    }
+
+    .scene-index {
+      position: fixed;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 30;
+      display: grid;
+      gap: 0.42rem;
+    }
+
+    .scene-index button {
+      width: 0.62rem;
+      height: 0.62rem;
+      padding: 0;
+      border: 1px solid rgba(23, 24, 22, 0.35);
+      border-radius: 50%;
+      background: rgba(245, 240, 231, 0.6);
+      cursor: pointer;
+    }
+
+    .scene-index button.is-active {
+      background: var(--color-clay);
+      border-color: var(--color-clay);
+    }
+
+    .controls {
+      position: fixed;
+      left: 50%;
+      bottom: 1rem;
+      z-index: 31;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 0.45rem;
+      padding: 0.45rem;
+      border: 1px solid rgba(23, 24, 22, 0.14);
+      border-radius: 999px;
+      background: rgba(245, 240, 231, 0.78);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 12px 36px rgba(17, 20, 18, 0.16);
+    }
+
+    .controls button {
+      width: 2.35rem;
+      height: 2.35rem;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(23, 24, 22, 0.08);
+      color: var(--color-ink);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      line-height: 1;
+    }
+
+    .controls button:hover,
+    .controls button:focus-visible {
+      outline: 2px solid var(--color-clay);
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 920px) {
+      :root {
+        --type-hero: 3.8rem;
+        --type-title: 2.7rem;
+        --type-head: 1.8rem;
+        --space-scene: 3.8rem 2.3rem;
+      }
+
+      .steps,
+      .channels {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .color-lab,
+      .system-map {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      :root {
+        --type-hero: 2.22rem;
+        --type-title: 2.02rem;
+        --type-head: 1.5rem;
+        --type-body: 0.98rem;
+        --space-scene: 3.4rem 1.05rem 4.6rem;
+        --space-gap: 0.95rem;
+      }
+
+      .frame {
+        min-height: auto;
+      }
+
+      .two-cases,
+      .decode-field,
+      .texture-shape {
+        grid-template-columns: 1fr;
+      }
+
+      .decode-field {
+        gap: 0.9rem;
+      }
+
+      .ring {
+        width: 6.2rem;
+        height: 6.2rem;
+        justify-self: center;
+      }
+
+      .steps,
+      .channels,
+      .actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.62rem;
+      }
+
+      .step,
+      .channel,
+      .case,
+      .action-note {
+        min-height: 7.5rem;
+        padding: 0.82rem;
+      }
+
+      .step strong,
+      .channel b,
+      .action-note b {
+        font-size: 1.22rem;
+      }
+
+      .step small,
+      .channel span {
+        line-height: 1.42;
+      }
+
+      .swatch-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .swatch {
+        min-height: 5.4rem;
+      }
+
+      .texture-panel,
+      .shape-panel,
+      .tone-board,
+      .noise-box {
+        min-height: 10.8rem;
+        padding: 0.9rem;
+      }
+
+      .texture-panel p,
+      .shape-panel p {
+        font-size: 1.24rem;
+      }
+
+      .shape-lines {
+        height: 5.5rem;
+      }
+
+      .meaning-tags {
+        grid-template-columns: 1fr;
+        gap: 0.58rem;
+      }
+
+      .meaning {
+        min-height: 5.9rem;
+        padding: 0.78rem;
+      }
+
+      .meaning b {
+        font-size: 1.12rem;
+      }
+
+      .meaning span {
+        line-height: 1.38;
+      }
+
+      .tone-board {
+        gap: 0.45rem;
+      }
+
+      .noise-box {
+        font-size: 1.34rem;
+      }
+
+      .action-note p {
+        font-size: 1rem;
+        line-height: 1.45;
+      }
+
+      .scene-index {
+        right: 0.5rem;
+        gap: 0.28rem;
+      }
+
+      .scene-index button {
+        width: 0.52rem;
+        height: 0.52rem;
+      }
+
+      .controls {
+        bottom: 0.72rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+
+      .reveal {
+        opacity: 1;
+        transform: none;
+      }
+
+      .track,
+      .tone-line,
+      .distance-track,
+      .underbar::after {
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="film" id="film">
+    <section class="scene" data-scene="1">
+      <div class="signal-field" aria-hidden="true">
+        <i class="signal" style="--i:1"></i>
+        <i class="signal" style="--i:2"></i>
+        <i class="signal" style="--i:3"></i>
+        <i class="signal" style="--i:4"></i>
+        <i class="signal" style="--i:5"></i>
+      </div>
+      <div class="frame narrow">
+        <p class="kicker reveal">生活美学</p>
+        <h1 class="hero reveal" style="--d:140ms">你每天都在读符号，<br>也每天都在发出符号。</h1>
+        <p class="body reveal" style="--d:320ms">一间房、一件衣服、一只杯子，都在<span class="nowrap">替你向世界说话。</span></p>
+      </div>
+    </section>
+
+    <section class="scene" data-scene="2">
+      <div class="frame">
+        <p class="kicker reveal">两个日常困惑</p>
+        <div class="two-cases">
+          <article class="case reveal" style="--d:120ms">
+            <p>房间明明收拾干净了，为什么还是像出租屋？</p>
+            <div class="case-lines" aria-hidden="true"><i></i><i></i><i></i></div>
+          </article>
+          <article class="case reveal" style="--d:280ms">
+            <p>衣服明明很好，为什么穿上却像借来的？</p>
+            <div class="case-lines" aria-hidden="true"><i></i><i></i><i></i></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene night" data-scene="3">
+      <div class="frame narrow">
+        <p class="kicker reveal">先放下两个念头</p>
+        <h2 class="title reveal" style="--d:160ms">审美不是天赋，也不是用钱堆出来的特权。</h2>
+        <div class="tag-strike reveal" style="--d:360ms" aria-hidden="true">
+          <span style="--d:520ms">天赋</span>
+          <span style="--d:680ms">同款</span>
+          <span style="--d:840ms">昂贵</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene" data-scene="4">
+      <div class="frame">
+        <p class="kicker reveal">核心定义</p>
+        <h2 class="title reveal" style="--d:140ms">审美，是读取生活符号，并用它们表达自己的能力。</h2>
+        <div class="decode-field">
+          <div class="decode-card reveal" style="--d:280ms">
+            <b>解码</b>
+            <span>看见颜色、材质、形状正在传递什么感受。</span>
+          </div>
+          <div class="ring reveal" style="--d:420ms" aria-hidden="true">符号</div>
+          <div class="decode-card reveal" style="--d:560ms">
+            <b>编码</b>
+            <span>有意识地组织物品、空间、穿搭和关系表达。</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene sage" data-scene="5">
+      <div class="frame">
+        <p class="kicker reveal">全书路径</p>
+        <h2 class="title reveal" style="--d:120ms">看见、判断、组织、适配。</h2>
+        <div class="steps">
+          <div class="step reveal" data-step="01" style="--d:260ms"><strong>看见</strong><small>从模糊觉得，进入清楚看见。</small></div>
+          <div class="step reveal" data-step="02" style="--d:380ms"><strong>判断</strong><small>解释符号意义，检查整体是否成立。</small></div>
+          <div class="step reveal" data-step="03" style="--d:500ms"><strong>组织</strong><small>把偏好变成稳定的个人表达系统。</small></div>
+          <div class="step reveal" data-step="04" style="--d:620ms"><strong>适配</strong><small>在关系和场景里准确调整表达强度。</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene" data-scene="6">
+      <div class="frame">
+        <p class="kicker reveal">第一部分：看见</p>
+        <div class="color-lab">
+          <div>
+            <h2 class="title reveal" style="--d:120ms">颜色先于内容抵达你的情绪。</h2>
+            <p class="body reveal" style="--d:280ms">色相、明度、饱和度，是控制颜色情绪的三个开关。</p>
+          </div>
+          <div class="color-bars reveal" style="--d:380ms">
+            <div class="bar"><label>色相：冷暖</label><div class="track" style="--d:520ms"></div></div>
+            <div class="bar"><label>明度：轻重</label><div class="track" style="--d:680ms"></div></div>
+            <div class="bar"><label>饱和度：强弱</label><div class="track" style="--d:840ms"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene blue" data-scene="7">
+      <div class="frame">
+        <p class="kicker reveal">感知继续打开</p>
+        <h2 class="headline reveal" style="--d:120ms">材质把触感提前送到眼前；形状决定距离、力量和秩序。</h2>
+        <div class="texture-shape">
+          <div class="texture-panel reveal" style="--d:280ms"><p>粗糙、光滑、柔软、锋利，都会先于语言被读到。</p></div>
+          <div class="shape-panel reveal" style="--d:420ms">
+            <p>轮廓、线条、密度，决定一件东西靠近你，还是推开你。</p>
+            <div class="shape-lines" aria-hidden="true"><i></i><i></i><i></i></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene night" data-scene="8">
+      <div class="frame">
+        <p class="kicker reveal">第二部分：判断</p>
+        <h2 class="title reveal" style="--d:120ms">你买的常常不是物，而是它附带的意义。</h2>
+        <div class="meaning-tags">
+          <div class="meaning reveal" style="--d:280ms"><b>粗陶杯</b><span>手工、质朴、慢生活。</span></div>
+          <div class="meaning reveal" style="--d:420ms"><b>帆布包</b><span>耐造、行动、日常。</span></div>
+          <div class="meaning reveal" style="--d:560ms"><b>真丝衬衫</b><span>精致、脆弱、需要被照顾。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene" data-scene="9">
+      <div class="frame">
+        <p class="kicker reveal">一致性</p>
+        <h2 class="title reveal" style="--d:120ms">单品不差，整体却会互相打架。</h2>
+        <div class="system-map">
+          <div class="tone-board reveal" style="--d:280ms">
+            <div class="tone-row"><span>主基调</span><i class="tone-line" style="--d:420ms"></i></div>
+            <div class="tone-row"><span>配角</span><i class="tone-line" style="--d:560ms"></i></div>
+            <div class="tone-row"><span>噪音</span><i class="tone-line" style="--d:700ms"></i></div>
+          </div>
+          <div class="noise-box reveal" style="--d:460ms">不是更多，<br>而是更一致。</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene night" data-scene="10">
+      <div class="frame narrow">
+        <p class="kicker reveal">语境</p>
+        <h2 class="hero reveal" style="--d:160ms">没有脱离场景的<span class="accent">高级感</span>。</h2>
+        <div class="context-frame reveal" style="--d:360ms" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <section class="scene" data-scene="11">
+      <div class="frame">
+        <p class="kicker reveal">第三部分：组织</p>
+        <h2 class="title reveal" style="--d:120ms">喜欢不等于适合；适合也不等于<span class="underbar">表达你</span>。</h2>
+        <div class="funnel">
+          <span class="reveal" style="--d:260ms">我喜欢什么？</span>
+          <span class="reveal" style="--d:400ms">它适合我的生活吗？</span>
+          <span class="reveal" style="--d:540ms">它能说出我想被看见的部分吗？</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene sage" data-scene="12">
+      <div class="frame">
+        <p class="kicker reveal">表达系统</p>
+        <h2 class="headline reveal" style="--d:120ms">你的表达，不只发生在穿衣镜前。</h2>
+        <div class="channels">
+          <div class="channel reveal" style="--d:260ms"><b>衣服</b><span>替你说话。</span></div>
+          <div class="channel reveal" style="--d:380ms"><b>房间</b><span>持续发声。</span></div>
+          <div class="channel reveal" style="--d:500ms"><b>小物</b><span>组成风格骨架。</span></div>
+          <div class="channel reveal" style="--d:620ms"><b>朋友圈</b><span>也是一个生活场景。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene blue" data-scene="13">
+      <div class="frame">
+        <p class="kicker reveal">第四部分：适配</p>
+        <h2 class="headline reveal" style="--d:120ms">礼物是关系判断，边界可以不靠解释被读懂，同一个人也要在不同场合调整表达强度。</h2>
+        <div class="distance reveal" style="--d:320ms">
+          <div class="distance-track"></div>
+          <div class="distance-labels"><span>亲疏</span><span>边界</span><span>场景强度</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene" data-scene="14">
+      <div class="frame">
+        <p class="kicker reveal">从今晚开始</p>
+        <h2 class="title reveal" style="--d:120ms">所有练习，都从你已经拥有的生活开始。</h2>
+        <div class="actions">
+          <div class="action-note reveal" style="--d:280ms"><b>今晚</b><p>写下一件喜欢的物品，和一件别扭的物品。</p></div>
+          <div class="action-note reveal" style="--d:440ms"><b>周末</b><p>观察一个舒服的人，和一个别扭的人。</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene night" data-scene="15">
+      <div class="frame">
+        <p class="kicker reveal">终章</p>
+        <h2 class="title reveal" style="--d:120ms">建立你的生活表达档案。</h2>
+        <p class="body reveal" style="--d:280ms">记录、分析、行动、迭代。把审美从模糊直觉，变成可以持续更新的个人系统。</p>
+        <div class="archive-wheel reveal" style="--d:420ms">
+          <strong>档案</strong>
+          <span class="wheel-item">记录</span>
+          <span class="wheel-item">分析</span>
+          <span class="wheel-item">行动</span>
+          <span class="wheel-item">迭代</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene" data-scene="16">
+      <div class="frame ending">
+        <p class="kicker reveal">片尾</p>
+        <h2 class="title reveal" style="--d:120ms">生活不是被装饰出来的，而是被组织出来的。</h2>
+        <h2 class="hero reveal" style="--d:340ms">你的生活，就是你最伟大的作品。</h2>
+        <p class="book-title reveal" style="--d:560ms">《生活美学：建立你的日常审美与表达系统》</p>
+      </div>
+    </section>
+  </main>
+
+  <nav class="scene-index" aria-label="场景导航"></nav>
+  <div class="controls" aria-label="播放控制">
+    <button type="button" id="prev" aria-label="上一屏">↑</button>
+    <button type="button" id="play" aria-label="播放或暂停">▶</button>
+    <button type="button" id="next" aria-label="下一屏">↓</button>
+  </div>
+
+  <script>
+    const scenes = Array.from(document.querySelectorAll(".scene"));
+    const index = document.querySelector(".scene-index");
+    const playButton = document.querySelector("#play");
+    const prevButton = document.querySelector("#prev");
+    const nextButton = document.querySelector("#next");
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let current = 0;
+    let timer = null;
+
+    scenes.forEach((scene, i) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.setAttribute("aria-label", `第 ${i + 1} 屏`);
+      button.addEventListener("click", () => goTo(i, false));
+      index.appendChild(button);
+    });
+
+    const dots = Array.from(index.querySelectorAll("button"));
+
+    function setCurrent(next) {
+      current = Math.max(0, Math.min(scenes.length - 1, next));
+      dots.forEach((dot, i) => dot.classList.toggle("is-active", i === current));
+    }
+
+    function goTo(next, fromTimer) {
+      setCurrent(next);
+      scenes[current].scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+      if (fromTimer && current === scenes.length - 1) {
+        stop();
+      }
+    }
+
+    function stop() {
+      if (timer) window.clearInterval(timer);
+      timer = null;
+      playButton.textContent = "▶";
+    }
+
+    function play() {
+      if (reduceMotion) return;
+      stop();
+      playButton.textContent = "Ⅱ";
+      timer = window.setInterval(() => {
+        const next = current + 1 >= scenes.length ? scenes.length - 1 : current + 1;
+        goTo(next, true);
+      }, 5200);
+    }
+
+    playButton.addEventListener("click", () => {
+      if (timer) stop();
+      else play();
+    });
+
+    prevButton.addEventListener("click", () => {
+      stop();
+      goTo(current - 1, false);
+    });
+
+    nextButton.addEventListener("click", () => {
+      stop();
+      goTo(current + 1, false);
+    });
+
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowDown" || event.key === "PageDown") {
+        event.preventDefault();
+        stop();
+        goTo(current + 1, false);
+      }
+      if (event.key === "ArrowUp" || event.key === "PageUp") {
+        event.preventDefault();
+        stop();
+        goTo(current - 1, false);
+      }
+      if (event.key === " ") {
+        event.preventDefault();
+        if (timer) stop();
+        else play();
+      }
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const indexValue = scenes.indexOf(entry.target);
+          setCurrent(indexValue);
+          entry.target.classList.add("in-view");
+        }
+      });
+    }, { threshold: 0.55 });
+
+    scenes.forEach((scene) => observer.observe(scene));
+    scenes[0].classList.add("in-view");
+    setCurrent(0);
+  </script>
+</body>
+</html>
